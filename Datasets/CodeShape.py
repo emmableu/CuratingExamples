@@ -42,24 +42,18 @@ def json_data2tree(data, root_name):
     for target_obj in targets_obj:
         opcode = 'stage' if target_obj['isStage'] is True else 'sprite'
         target_node = Node(target_obj['name'], parent=root, opcode=opcode)
-        # node_map[target_obj['name']] = target_node
         blocks = target_obj['blocks']
         for key in blocks.keys():
             block = blocks[key]
-            print(block)
-            tmpBlkNode = Node(key, opcode=block['opcode'])
-            try:
-            # if block['parent']:
-                tmpBlkNode.parentKey = block['parent']
-            # if block['next']:
-                tmpBlkNode.childKey = block['next']
-            except:
-                continue
-            node_map[key] = tmpBlkNode
-            if block['parent'] is None:
-                tmpBlkNode.parent = target_node
+            tmp_blk_node = Node(key, opcode=block['opcode'])
+            if hasattr(block, 'parent'):
+                tmp_blk_node.parentKey = block['parent']
+            if hasattr(block, 'next'):
+                tmp_blk_node.childKey = block['next']
+            node_map[key] = tmp_blk_node
+            if not hasattr(block, 'parent'):
+                tmp_blk_node.parent = target_node
         for key in blocks.keys():
-            block = blocks[key]
             nd = node_map[key]
             if hasattr(nd, 'childKey') and nd.childKey in node_map.keys():
                 nd.children = [node_map[nd.childKey]]
@@ -185,18 +179,18 @@ def combination(data, num_list):
 
 # test_shape = get_code_shape('scratch.json', 'targets', [[2, 3], [1, 1]])
 # print(test_shape)
-test_tree = json_data2tree(json_data, 'targets')
-# for pre, fill, node in RenderTree(test_tree):
-#     print("%s%s" % (pre, node.opcode))
-
-
-path_list = get_all_path([], [], test_tree)
-# print(len(path_list))
-# for path in path_list:
-#     print(' => '.join(i.opcode for i in path))
-
-
-test_combination = combination(json_data, [[3, 0]])
-for k, v in test_combination.items():
-    print(k, v)
+# test_tree = json_data2tree(json_data, 'targets')
+# # for pre, fill, node in RenderTree(test_tree):
+# #     print("%s%s" % (pre, node.opcode))
+#
+#
+# path_list = get_all_path([], [], test_tree)
+# # print(len(path_list))
+# # for path in path_list:
+# #     print(' => '.join(i.opcode for i in path))
+#
+#
+# test_combination = combination(json_data, [[3, 0]])
+# for k, v in test_combination.items():
+#     print(k, v)
 
