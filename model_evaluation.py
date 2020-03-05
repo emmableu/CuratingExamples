@@ -40,12 +40,6 @@ no_tuning_models = [baseline, knn, lr, svm_c, svm_nu, svm_linear, dt, adaboost, 
                     bernoulli_nb, multi_nb, complement_nb, mlp]
 
 
-def get_xy_from_csv(filename):
-    data = pd.read_csv(filename)
-    x = data.iloc[:, 3:-1]
-    y = data.iloc[:, -1]
-    return x, y
-
 
 def main():
     x1, y1 = get_xy_from_csv("preprocessed_data/team_seasons_classified_1.csv")

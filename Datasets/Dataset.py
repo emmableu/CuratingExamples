@@ -7,6 +7,49 @@ from Test import *
 from ActionData import *
 import os
 
+import pandas as pd
+import warnings
+import sklearn
+from classifiers.Baseline import BaselineModel
+from classifiers.knn_classifiers.KNN import KNNModel
+from classifiers.lr_classifiers.LogisticRegression import LRModel
+from classifiers.svm_classifiers.SVM_C import SVMCModel
+from classifiers.svm_classifiers.SVM_Nu import SVMNuModel
+from classifiers.svm_classifiers.SVM_Linear import SVMLinearModel
+from classifiers.decision_tree_classifiers.DecisionTree import DecisionTreeModel
+from classifiers.emsemble_classifiers.AdaBoost import AdaBoostModel
+from classifiers.emsemble_classifiers.Bagging import BaggingModel
+from classifiers.emsemble_classifiers.RandomForest import RandomForestModel
+from classifiers.bayes_classifiers.GaussianNB import GaussianNBModel
+from classifiers.bayes_classifiers.BernoulliNB import BernoulliNBModel
+from classifiers.bayes_classifiers.MultinomialNB import MultinomialNBModel
+from classifiers.bayes_classifiers.ComplementNB import ComplementNBModel
+from classifiers.neural_network_classifiers.MLPModel import MLPModel
+
+warnings.filterwarnings("ignore", category=sklearn.exceptions.ConvergenceWarning)
+
+baseline = BaselineModel()
+knn = KNNModel()
+lr = LRModel()
+svm_c = SVMCModel()
+svm_nu = SVMNuModel()
+svm_linear = SVMLinearModel()
+dt = DecisionTreeModel()
+adaboost = AdaBoostModel()
+bagging = BaggingModel()
+rf = RandomForestModel()
+gaussian_nb = GaussianNBModel()
+bernoulli_nb = BernoulliNBModel()
+multi_nb = MultinomialNBModel()
+complement_nb = ComplementNBModel()
+mlp = MLPModel()
+
+# Removed baseline from models in case baseline result changes
+no_tuning_models = [baseline, knn, lr, svm_c, svm_nu, svm_linear, dt, adaboost, bagging, rf, gaussian_nb,
+                    bernoulli_nb, multi_nb, complement_nb, mlp]
+
+
+
 
 class LabelData(object):
     """docstring for LabelData."""
@@ -66,38 +109,26 @@ class Dataset:
         return code_state
 
 
-    def create_action_data(self):
+    def get_result(self):
         code_state = self.create_code_state()
         action_name_s = ['keymove', 'jump', 'costopall', 'wrap', 'cochangescore', 'movetomouse', 'moveanimate']
-        # action_name_s = ['cochangescore']
+        action_name_s = ['cochangescore']
         for action_name in action_name_s:
             print("action_name: ", action_name)
             self.action_data = ActionData(code_state = code_state, game_label = self.data , action_name = action_name)
             self.action_data.get_yes_patterns()
             self.action_data.get_pattern_statistics()
-            # model =
             self.action_data.model_performance()
-            # print(self.action_data.pattern_set)
+            save_dir = self.root_dir + "Datasets/data/" + "game_labels_" \
+                       + str(self.total) + str(self.code_shape_p_q_list) + "/" + action_name
+            x, y = self.action_data.get_xy()
+            for model in no_tuning_models:
+                for test_size in [3/4, 2/3, 1/2, 1/3]:
+                    model.get_and_save_performance(x, y, save_dir, test_size)
+                    print("--------------"+  action_name + model.get_name()  + test_size+ "--------------")
+                    print(model.get_confusion_matrix())
+                    print(model.get_performance())
 
-
-        # self.action = {}
-        # action_name_s = ['keymove', 'jump', 'costopall', 'wrap', 'cochangescore', 'movetomouse', 'moveanimate']
-        # for action_name in action_name_s:
-        #     d = LabelData(action_name)
-        #     labeldf = d.populate(self.data, action_name)
-        #     pid, abstract, label = [],[],[]
-        #     for i in (labeldf.index):
-        #         p = labeldf.at[i, 'pid']
-        #         pid.append(p)
-        #         json_code = get_json(p)
-        #         a = self.get_code_shape_from_code(json_code, self.code_shape_p_q_list)
-        #         print(a)
-        #         abstract.append(a)
-        #         label.append(labeldf.at[i, 'label'])
-        #     self.action[action_name]["pid"] = pid
-        #     self.action[action_name]["abstract"] = abstract
-        #     self.action[action_name]["label"] = label
-        #     self.action[action_name]["df"] = list2df([pid, abstract, label], ['pid', 'abstract', 'label'])
 
 
 

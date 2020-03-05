@@ -34,6 +34,17 @@ def save_obj(obj, name, dir, sub_dir):
         pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
 
 
+def is_obj(name, dir, sub_dir):
+    if sub_dir:
+        csv_dir = dir +"/"+ sub_dir
+        pickle_dir = dir +"/"+ sub_dir + '/pickle_files'
+    else:
+        csv_dir = dir
+        pickle_dir = dir + '/pickle_files'
+    atom_mkdir(pickle_dir)
+    return os.path.isfile(pickle_dir+ "/" + name + ".pkl")
+
+
 def load_obj(name, dir, sub_dir):
     if sub_dir:
         pickle_dir = dir +"/"+ sub_dir + '/pickle_files'

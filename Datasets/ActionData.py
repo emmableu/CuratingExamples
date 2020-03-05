@@ -55,13 +55,41 @@ class ActionData:
             pattern_df = self.__get_pattern_df(pattern)
             test = Test(pattern_df)
 
-            if test.freq_compare_test():
-                if test.chi_square_test():
-                    if test.kruskal_wallis_test():
-                        print("pattern", pattern)
-                        significant_patterns.append(pattern)
+            if test.freq_compare_test() == "discard":
+                continue
+            elif test.freq_compare_test() or test.chi_square_test() or test.kruskal_wallis_test():
+                significant_patterns.append(pattern)
         print(len(significant_patterns))
         print(significant_patterns)
+        return significant_patterns
+
+
+    def get_xy(self):
+        total = len(self.game_label.index)
+        significant_patterns = self.get_pattern_statistics()
+        num_patterns = len(significant_patterns)
+        x = np.zeros((total, num_patterns))
+        y = np.zeros(total)
+        for game_index, i in enumerate(self.game_label.index):
+            pid = self.game_label.at[i, 'pid']
+            code_shape = self.__get_code_shape_from_pid(pid)
+            for pattern_index, p in enumerate(significant_patterns):
+                try:
+                    occurance = code_shape[p]
+                except KeyError:
+                    occurance = 0
+                x[game_index][pattern_index] = occurance
+            if self.game_label.at[i, self.action_name]:
+                y[game_index] = 1
+            else:
+                y[game_index] = 0
+
+
+
+        return x,y
+
+
+
 
 
 

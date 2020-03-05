@@ -41,6 +41,8 @@ class Test:
         yes_freq, no_freq = self.get_freq("yes"), self.get_freq("no")
         if yes_freq >= 1.3* no_freq:
             return True
+        elif yes_freq < no_freq:
+            return "discard"
         else:
             return False
 

@@ -3,7 +3,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, roc_curve, auc
 from sklearn.model_selection import cross_val_predict
-
+import sys
+sys.path.append("/Users/wwang33/Documents/IJAIED20/CuratingExamples/my_module")
+from save_load_pickle import *
 
 class Model:
     def __init__(self):
@@ -30,67 +32,58 @@ class Model:
     def get_performance(self):
         return self.performance
 
-    def save_performance(self, filename):
-        if os.path.isfile(filename):
+    def save_performance(self, save_dir, test_size):
+        if is_obj("results_ysize"+str(test_size), dataset.root_dir + "Datasets/data",
+                        "game_labels_" + str(dataset.total) + "/performance" + str(dataset.code_shape_p_q_list)):
             evaluation_metrics = pd.read_csv(filename, index_col=0)
             new_row = self.performance
             self.performance = new_row
             evaluation_metrics.loc[self.name] = new_row
-            evaluation_metrics.to_csv(filename)
+            save_obj(evaluation_metrics,  "results_ysize"+str(test_size), save_dir, "")
         else:
             new_row = self.performance
             self.performance = new_row
             df = pd.DataFrame.from_dict({self.name: self.performance}, orient="index")
-            df.to_csv(filename)
+            save_obj(df, "results_ysize"+str(test_size), save_dir, "")
 
-    def draw_and_save_roc(self, fpr, tpr, roc_auc, figure_path):
-        plt.title('Receiver Operating Characteristic')
-        plt.plot(fpr, tpr, 'b', label='AUC = %0.2f' % roc_auc)
-        plt.legend(loc='lower right')
-        plt.plot([0, 1], [0, 1], 'r--')
-        plt.xlim([0, 1])
-        plt.ylim([0, 1])
-        plt.ylabel('True Positive Rate')
-        plt.xlabel('False Positive Rate')
-        figure_name = self.get_name().replace(" ", "_")
-        path = figure_path+figure_name+"_ROC.png"
-        plt.savefig(path)
-        plt.clf()
+    def get_and_save_performance(self,x, y, save_dir, test_size):
+            X_train, X_test, y_train, y_test = train_test_split(
+             x, y, test_size= test_size, random_state=0)
+            r = 0
+            while len(set(y_train)) == 1:
+                r += 1
+                X_train, X_test, y_train, y_test = train_test_split(
+                    x, y, test_size=test_size, random_state=r)
+            self.model.fit(X_train,y_train)
+            y_pred = self.model.predict(X_test)
+            self.confusion_matrix = confusion_matrix(y_test, y_pred)
+            fpr, tpr, threshold = roc_curve(y_test, y_pred)
+            roc_auc = auc(fpr, tpr)
 
-    def get_and_save_performance(self, x, y, filename, figure_path):
-        y_pred = cross_val_predict(self.model, x, y, cv=10)
-        self.confusion_matrix = confusion_matrix(y, y_pred)
-        fpr, tpr, threshold = roc_curve(y, y_pred)
-        roc_auc = auc(fpr, tpr)
+            def tn(y_test, y_pred): return confusion_matrix(y_test, y_pred)[0, 0]
 
-        def tn(y, y_pred): return confusion_matrix(y, y_pred)[0, 0]
+            def fp(y_test, y_pred): return confusion_matrix(y_test, y_pred)[0, 1]
 
-        def fp(y, y_pred): return confusion_matrix(y, y_pred)[0, 1]
+            def fn(y_test, y_pred): return confusion_matrix(y_test, y_pred)[1, 0]
 
-        def fn(y, y_pred): return confusion_matrix(y, y_pred)[1, 0]
+            def tp(y_test, y_pred): return confusion_matrix(y_test, y_pred)[1, 1]
 
-        def tp(y, y_pred): return confusion_matrix(y, y_pred)[1, 1]
-
-        tp, tn, fp, fn = int(tn(y, y_pred)), int(tp(y, y_pred)), int(fn(y, y_pred)), int(fp(y, y_pred))
-        accuracy = (tp + tn) / (tp + tn + fp + fn)
-        if tp == 0 and fp == 0 and fn == 0:
-            precision = 1
-            recall = 1
-            f1 = 1
-        elif tp == 0 and (fp > 0 or fn > 0):
-            precision = 0
-            recall = 0
-            f1 = 0
-        else:
-            precision = tp / (tp + fp)
-            recall = tp / (tp + fn)
-            f1 = 2 * (precision) * (recall) / (precision + recall)
-        # precision = tp / (tp + fp)
-        # recall = tp / (tp + fn)
-        # f1 = 2 * (precision) * (recall) / (precision + recall)
-        perf = {"tp": tp, "tn": tn, "fp": fp, "fn": fn, "accuracy": accuracy, "precision": precision, "recall": recall,
-                "f1": f1, "auc": roc_auc}
-        self.performance = perf
-        self.save_performance(filename)
-        self.draw_and_save_roc(fpr, tpr, roc_auc, figure_path)
-        return perf
+            tp, tn, fp, fn = int(tn(y_test, y_pred)), int(tp(y_test, y_pred)), int(fn(y_test, y_pred)), int(fp(y_test, y_pred))
+            accuracy = (tp + tn) / (tp + tn + fp + fn)
+            if tp == 0 and fp == 0 and fn == 0:
+                precision = 1
+                recall = 1
+                f1 = 1
+            elif tp == 0 and (fp > 0 or fn > 0):
+                precision = 0
+                recall = 0
+                f1 = 0
+            else:
+                precision = tp / (tp + fp)
+                recall = tp / (tp + fn)
+                f1 = 2 * (precision) * (recall) / (precision + recall)
+            perf = {"tp": tp, "tn": tn, "fp": fp, "fn": fn, "accuracy": accuracy, "precision": precision, "recall": recall,
+                    "f1": f1, "auc": roc_auc}
+            self.performance = perf
+            self.save_performance( save_dir, test_size)
+            return perf
