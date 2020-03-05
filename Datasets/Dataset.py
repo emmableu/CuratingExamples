@@ -7,6 +7,7 @@ from Test import *
 from ActionData import *
 import numpy as np
 from sklearn.model_selection import train_test_split
+from tqdm import tqdm
 
 
 import pandas as pd
@@ -100,8 +101,7 @@ class Dataset:
         example row: ['2312424', {'sprite|repeat': 3, 'sprite|repeat|else': 1}]
         '''
         code_state = pd.DataFrame(columns = ['pid', 'codeshape_count_dict'] )
-        for i in self.data.index:
-            print(i)
+        for i in tqdm(self.data.index):
             pid = self.data.at[i, 'pid']
             json_code = get_json(pid)
             a = self.get_code_shape_from_code(json_code, self.code_shape_p_q_list)
@@ -131,13 +131,13 @@ class Dataset:
         code_state = load_obj( "code_state" + str(self.code_shape_p_q_list), self.root_dir+"Datasets/data", "game_labels_" + str(self.total))
         action_name_s = ['keymove', 'jump', 'costopall', 'wrap', 'cochangescore', 'movetomouse', 'moveanimate']
         action_name_s = ['cochangescore']
-        for action_name in action_name_s:
+        for action_name in tqdm(action_name_s):
             print("action_name: ", action_name)
             self.action_data = ActionData(code_state = code_state, game_label = self.data , action_name = action_name)
 
             save_dir = self.root_dir + "Datasets/data/" + "game_labels_" \
                        + str(self.total) + str(self.code_shape_p_q_list) + "/" + action_name
-            for model in no_tuning_models:
+            for model in tqdm(no_tuning_models):
                 for test_size in [3/4, 2/3, 1/2, 1/3]:
                     train_pid, test_pid = self.get_train_test_pid(test_size, action_name)
                     # self.action_data.get_yes_patterns(train_pid)
