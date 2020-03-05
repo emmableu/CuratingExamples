@@ -47,18 +47,24 @@ class Test:
             return False
 
     def chi_square_test(self):
-        obs = np.array([[self.pattern_exist_yes, self.pattern_non_exist_yes], [self.pattern_exist_no, self.pattern_non_exist_no]])
-        chi2, p, dof, ex = chi2_contingency(obs, correction=False)
-        if p <= 0.3:
-            return True
-        else:
+        try:
+            obs = np.array([[self.pattern_exist_yes, self.pattern_non_exist_yes], [self.pattern_exist_no, self.pattern_non_exist_no]])
+            chi2, p, dof, ex = chi2_contingency(obs, correction=False)
+            if p <= 0.3:
+                return True
+            else:
+                return False
+        except:
             return False
 
     def kruskal_wallis_test(self):
-        p = stats.kruskal(self.yes_occurance_list, self.no_occurance_list).pvalue
-        if p <= 0.2:
-            return True
-        else:
+        try:
+            p = stats.kruskal(self.yes_occurance_list, self.no_occurance_list).pvalue
+            if p <= 0.2:
+                return True
+            else:
+                return False
+        except:
             return False
 
 

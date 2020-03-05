@@ -84,7 +84,7 @@ def df2list(df,body):
 
 def get_json(pid):
     import json
-    file_path = "/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets/data/game_raw_jsons/"
+    file_path = "/home/wwang33/IJAIED20/CuratingExamples/Datasets/data/game_raw_jsons/"
     file_list = os.listdir(file_path)
     for file_name in file_list:
         with open(file_path + '/' + file_name, 'r') as project:  ##  "with" is Python's crash resistant file open

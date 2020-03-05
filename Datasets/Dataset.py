@@ -1,11 +1,13 @@
 import sys
-sys.path.append("/Users/wwang33/Documents/IJAIED20/CuratingExamples/my_module")
+sys.path.append("/home/wwang33/IJAIED20/CuratingExamples/my_module")
 from save_load_pickle import *
 import pandas as pd
 from CodeShape import *
 from Test import *
 from ActionData import *
-import os
+import numpy as np
+from sklearn.model_selection import train_test_split
+
 
 import pandas as pd
 import warnings
@@ -74,12 +76,14 @@ class LabelData(object):
 class Dataset:
 
     def __init__(self, total, code_shape_p_q_list, embedding_param = None, allow_gap = True):
-        self.root_dir = "/Users/wwang33/Documents/IJAIED20/CuratingExamples/"
+        self.root_dir = "/home/wwang33/IJAIED20/CuratingExamples/"
         self.total = total
         self.code_shape_p_q_list = code_shape_p_q_list
         self.embedding_param = embedding_param
         self.file_path = self.root_dir + "Datasets/data/game_label_" + str(total) + ".csv"
         self.data = pd.read_csv(self.file_path)
+        self.data = self.data[self.data.good == True].reset_index(drop = True)
+        print(self.data)
         self.allow_gap = allow_gap
 
     def get_code_shape_from_code(self, json_code, code_shape_p_q_list, allow_gap=True):
@@ -108,24 +112,39 @@ class Dataset:
 
         return code_state
 
+    def get_train_test_pid(self, test_size, action_name):
+        pid = self.data['pid'].to_list()
+        train_pid, test_pid = train_test_split(
+            pid, test_size=test_size, random_state=0)
+        y_train = self.data[self.data.pid.isin(train_pid)][action_name].to_list()
+        r = 0
+        while len(set(y_train)) == 1:
+            r += 1
+            train_pid, test_pid = train_test_split(
+                pid, test_size=test_size, random_state=r)
+            y_train = self.data[self.data.pid.isin(train_pid)][action_name].to_list()
+
+        return train_pid, test_pid
+
 
     def get_result(self):
-        code_state = self.create_code_state()
+        code_state = load_obj( "code_state" + str(self.code_shape_p_q_list), self.root_dir+"Datasets/data", "game_labels_" + str(self.total))
         action_name_s = ['keymove', 'jump', 'costopall', 'wrap', 'cochangescore', 'movetomouse', 'moveanimate']
         action_name_s = ['cochangescore']
         for action_name in action_name_s:
             print("action_name: ", action_name)
             self.action_data = ActionData(code_state = code_state, game_label = self.data , action_name = action_name)
-            self.action_data.get_yes_patterns()
-            self.action_data.get_pattern_statistics()
-            self.action_data.model_performance()
+
             save_dir = self.root_dir + "Datasets/data/" + "game_labels_" \
                        + str(self.total) + str(self.code_shape_p_q_list) + "/" + action_name
-            x, y = self.action_data.get_xy()
             for model in no_tuning_models:
                 for test_size in [3/4, 2/3, 1/2, 1/3]:
-                    model.get_and_save_performance(x, y, save_dir, test_size)
-                    print("--------------"+  action_name + model.get_name()  + test_size+ "--------------")
+                    train_pid, test_pid = self.get_train_test_pid(test_size, action_name)
+                    # self.action_data.get_yes_patterns(train_pid)
+                    # self.action_data.get_pattern_statistics(train_pid)
+                    X_train, X_test, y_train, y_test = self.action_data.get_xy(train_pid, test_pid)
+                    model.get_and_save_performance(X_train, X_test, y_train, y_test, save_dir, test_size)
+                    print("--------------"+  action_name + model.get_name()  +  str(test_size)+ "--------------")
                     print(model.get_confusion_matrix())
                     print(model.get_performance())
 
