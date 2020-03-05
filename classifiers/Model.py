@@ -94,4 +94,3 @@ class Model:
         self.save_performance(filename)
         self.draw_and_save_roc(fpr, tpr, roc_auc, figure_path)
         return perf
-

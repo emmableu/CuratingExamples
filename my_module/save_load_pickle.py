@@ -12,6 +12,7 @@ def save_pickle(obj, name, dir, sub_dir):
         pickle_dir = dir + '/pickle_files'
     atom_mkdir(csv_dir)
     atom_mkdir(pickle_dir)
+    # print("pickle_dir: ", pickle_dir)
     with open(pickle_dir + '/' + name + '.pkl', 'wb') as f:
         pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
 

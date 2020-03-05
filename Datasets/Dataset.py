@@ -3,6 +3,8 @@ sys.path.append("/Users/wwang33/Documents/IJAIED20/CuratingExamples/my_module")
 from save_load_pickle import *
 import pandas as pd
 from CodeShape import *
+from Test import *
+from ActionData import *
 import os
 
 
@@ -43,25 +45,60 @@ class Dataset:
         else:
             test_shape = get_code_shape(json_code, 'targets', code_shape_p_q_list)
         return test_shape
-    def create_input_data(self):
-        self.action = {}
+
+
+    def create_code_state(self):
+        '''
+        :return: pd DataFrame, columns = ['pid', 'codeshape_count_dict']
+        example row: ['2312424', {'sprite|repeat': 3, 'sprite|repeat|else': 1}]
+        '''
+        code_state = pd.DataFrame(columns = ['pid', 'codeshape_count_dict'] )
+        for i in self.data.index:
+            print(i)
+            pid = self.data.at[i, 'pid']
+            json_code = get_json(pid)
+            a = self.get_code_shape_from_code(json_code, self.code_shape_p_q_list)
+            # print(a)
+            new_row = {"pid": pid, "codeshape_count_dict": a}
+            code_state.loc[len(code_state)] = new_row
+        save_pickle(code_state, "code_state" + str(self.code_shape_p_q_list), self.root_dir+"Datasets/data", "game_labels_" + str(self.total))
+
+        return code_state
+
+
+    def create_action_data(self):
+        code_state = self.create_code_state()
         action_name_s = ['keymove', 'jump', 'costopall', 'wrap', 'cochangescore', 'movetomouse', 'moveanimate']
+        # action_name_s = ['cochangescore']
         for action_name in action_name_s:
-            d = LabelData(action_name)
-            labeldf = d.populate(self.data, action_name)
-            pid, abstract, label = [],[],[]
-            for i in (labeldf.index):
-                p = labeldf.at[i, 'pid']
-                pid.append(p)
-                json_code = get_json(p)
-                print("json_code: ", json_code)
-                a = self.get_code_shape_from_code(json_code, self.code_shape_p_q_list)
-                abstract.append(a)
-                label.append(labeldf.at[i, 'label'])
-            self.action[action_name]["pid"] = pid
-            self.action[action_name]["abstract"] = abstract
-            self.action[action_name]["label"] = label
-            self.action[action_name]["df"] = list2df([pid, abstract, label], ['pid', 'abstract', 'label'])
+            print("action_name: ", action_name)
+            self.action_data = ActionData(code_state = code_state, game_label = self.data , action_name = action_name)
+            self.action_data.get_yes_patterns()
+            self.action_data.get_pattern_statistics()
+            # model =
+            self.action_data.model_performance()
+            # print(self.action_data.pattern_set)
+
+
+        # self.action = {}
+        # action_name_s = ['keymove', 'jump', 'costopall', 'wrap', 'cochangescore', 'movetomouse', 'moveanimate']
+        # for action_name in action_name_s:
+        #     d = LabelData(action_name)
+        #     labeldf = d.populate(self.data, action_name)
+        #     pid, abstract, label = [],[],[]
+        #     for i in (labeldf.index):
+        #         p = labeldf.at[i, 'pid']
+        #         pid.append(p)
+        #         json_code = get_json(p)
+        #         a = self.get_code_shape_from_code(json_code, self.code_shape_p_q_list)
+        #         print(a)
+        #         abstract.append(a)
+        #         label.append(labeldf.at[i, 'label'])
+        #     self.action[action_name]["pid"] = pid
+        #     self.action[action_name]["abstract"] = abstract
+        #     self.action[action_name]["label"] = label
+        #     self.action[action_name]["df"] = list2df([pid, abstract, label], ['pid', 'abstract', 'label'])
+
 
 
 
