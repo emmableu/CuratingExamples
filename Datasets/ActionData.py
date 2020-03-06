@@ -1,7 +1,8 @@
 import sys
-sys.path.append("/home/wwang33/IJAIED20/CuratingExamples/my_module")
+sys.path.append("/Users/wwang33/Documents/IJAIED20/CuratingExamples/my_module")
 from Test import *
 import pandas as pd
+from save_load_pickle import *
 
 class ActionData:
     def __init__(self, code_state, game_label , action_name):
@@ -9,28 +10,9 @@ class ActionData:
         self.game_label = game_label
         self.action_name = action_name
 
-    def __get_code_shape_from_pid(self, pid):
-        for i in self.code_state.index:
-            if self.code_state.at[i, 'pid'] == pid:
-                return self.code_state.at[i, 'codeshape_count_dict']
-
-    def get_yes_patterns(self, train_pid):
-        pool = self.game_label[self.game_label.pid.isin(train_pid)].reset_index(drop = True)
-        self.pattern_set = set()
-        for i in pool.index:
-            if pool.at[i, 'good'] and pool.at[i, 'good'] == True:
-                if pool.at[i, self.action_name] == True:
-                    pid = pool.at[i, 'pid']
-                    code_shape = self.__get_code_shape_from_pid(pid)
-                    new_pattern_s = code_shape.keys()
-                    self.__atomic_add(new_pattern_s)
-
-    def __atomic_add(self, new_pattern_s):
-        for pattern in new_pattern_s:
-            self.pattern_set.add(pattern)
-
 
     def __get_pattern_df(self, pattern, train_pid):
+
         pool = self.game_label[self.game_label.pid.isin(train_pid)].reset_index(drop = True)
 
         pattern_df = pd.DataFrame(columns = ['pid', 'occurance', 'label'])
@@ -53,9 +35,9 @@ class ActionData:
         return pattern_df
 
     def get_pattern_statistics(self, train_pid):
-        self.get_yes_patterns(train_pid)
+        pattern_set = load_obj("pattern_set", self.root_dir+"Datasets/data", "game_labels_" + str(415))
         significant_patterns = []
-        for pattern in self.pattern_set:
+        for pattern in pattern_set:
             pattern_df = self.__get_pattern_df(pattern, train_pid)
             test = Test(pattern_df)
 
@@ -68,7 +50,7 @@ class ActionData:
         return significant_patterns
 
 
-    def get_xy(self,train_pid, test_pid):
+    def get_x_y_train_test(self,train_pid, test_pid):
         significant_patterns = self.get_pattern_statistics(train_pid)
         num_patterns = len(significant_patterns)
 
@@ -100,7 +82,7 @@ class ActionData:
 
 
 
-        return x,y
+
 
 
 

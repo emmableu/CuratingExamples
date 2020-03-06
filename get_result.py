@@ -1,5 +1,5 @@
 import sys
-sys.path.append('/home/wwang33/IJAIED20/CuratingExamples/Datasets')
+sys.path.append('/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets')
 from Dataset import *
 
 if __name__=='__main__':
@@ -7,5 +7,6 @@ if __name__=='__main__':
     allow_gap = True
     dataset = Dataset(total = 415, code_shape_p_q_list = code_shape_p_q_list, allow_gap = allow_gap)
     dataset.create_code_state()
+    # dataset.get_all_pattern_keys()
     # dataset.get_result()
     # print(dataset.action['keymove'])

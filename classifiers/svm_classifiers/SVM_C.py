@@ -27,7 +27,7 @@ def get_tuned_parameters():
 class SVMCModel(Model):
     def __init__(self):
         self.name = "C-Support SVC"
-        self.model = SVC(gamma="scale")
+        self.model = SVC(gamma="scale" , probability=True)
 
 
 class TunedSVMCModel(Model):

@@ -1,10 +1,6 @@
-import os
-import pandas as pd
-import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, roc_curve, auc
-from sklearn.model_selection import cross_val_predict
 import sys
-sys.path.append("/home/wwang33/IJAIED20/CuratingExamples/my_module")
+sys.path.append("/Users/wwang33/Documents/IJAIED20/CuratingExamples/my_module")
 from save_load_pickle import *
 
 class Model:
@@ -72,3 +68,5 @@ class Model:
             self.performance = perf
             self.save_performance( save_dir, test_size)
             return perf
+
+

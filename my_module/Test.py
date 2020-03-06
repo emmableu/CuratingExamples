@@ -14,8 +14,9 @@ class Test:
                     [dfdfdvc, 0, no]]
         '''
         self.data = data
-        self.yes = self.data[self.data.label == 'yes']
-        self.no = self.data[self.data.label == 'no']
+        # print("Train data: ", data)
+        self.yes = self.data[self.data.code == 'yes']
+        self.no = self.data[self.data.code == 'no']
         self.yes_occurance_list = self.yes['occurance'].to_list()
         self.no_occurance_list = self.no['occurance'].to_list()
         self.yes_total = len(self.yes_occurance_list)
@@ -26,6 +27,9 @@ class Test:
         self.pattern_non_exist_no = len([i for i in self.no_occurance_list if i == 0])
 
     def get_freq(self, label):
+
+
+
         if label == "yes":
             return self.pattern_exist_yes/self.yes_total
         else:
