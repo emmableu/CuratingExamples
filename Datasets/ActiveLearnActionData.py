@@ -105,12 +105,6 @@ class ActiveLearnActionData(object):
         body["fixed"] = [0] * n
         return body
 
-    def __get_code_shape_from_pid(self, pid, code_state):
-        for i in code_state.index:
-            if code_state.at[i, 'pid'] == pid:
-                return code_state.at[i, 'codeshape_count_dict']
-
-
     def __get_pattern_df(self, pattern, train_pid):
         pool = self.body[self.body.pid.isin(train_pid)].reset_index(drop=True)
 

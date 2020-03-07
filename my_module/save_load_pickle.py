@@ -2,7 +2,10 @@ import pickle
 import pandas as pd
 import os
 import numpy as np
+import time
+import inspect
 
+root_dir = "/Users/wwang33/Documents/IJAIED20/CuratingExamples/"
 def save_pickle(obj, name, dir, sub_dir):
     if sub_dir:
         csv_dir = dir +"/"+ sub_dir
@@ -84,7 +87,7 @@ def df2list(df,body):
 
 def get_json(pid):
     import json
-    file_path = "/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets/data/game_raw_jsons/"
+    file_path = root_dir + "Datasets/data/game_raw_jsons/"
     file_list = os.listdir(file_path)
     for file_name in file_list:
         with open(file_path + '/' + file_name, 'r') as project:  ##  "with" is Python's crash resistant file open
@@ -97,6 +100,38 @@ def get_json(pid):
                     return
 
 
+
 def atom_mkdir(dir):
     if not os.path.exists(dir):
         os.makedirs(dir)
+
+
+# file = ("/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets/data/game_labels_415/pickle_files/code_state[[3, 0]].pkl")
+# with open(file, 'rb') as f:
+#     pickle_load = pickle.load(f)
+#     d = (pickle_load)
+#
+# d=d.set_index("pid")
+# d = d['codeshape_count_dict']
+# print(len(d))
+# save_pickle(d,  "code_state|" + str(0) + "|" + str(414), "/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets/data/game_labels_415/code_state[[3, 0]]", "")
+#
+
+
+
+
+def get_code_shape_from_pid():
+    start = time.time()
+    file = "/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets/data/game_labels_415/code_state[[3, 0]]/pickle_files/code_state|0|414.pkl"
+    with open(file, 'rb') as f:
+        pickle_load = pickle.load(f)
+        d = (pickle_load)
+
+    print(type(d))
+    print(d.loc[331929186])
+
+    end = time.time()
+    print("Time elapsed for: " + inspect.stack()[0][3]+ " is: ", end-start,  " seconds" )
+
+
+get_code_shape_from_pid()
