@@ -28,20 +28,20 @@ class Model:
     def get_performance(self):
         return self.performance
 
-    def save_performance(self, save_dir, test_size):
-        if is_obj( "results_ysize"+str(test_size), save_dir, ""):
-            evaluation_metrics = load_obj("results_ysize"+str(test_size), save_dir, "")
+    def save_performance(self, save_dir, test_size, cv):
+        if is_obj( "cv" + str(cv), save_dir,  "results_test_size"+str(test_size)):
+            evaluation_metrics = load_obj("results_test_size"+str(test_size), save_dir, "")
             new_row = self.performance
             self.performance = new_row
             evaluation_metrics.loc[self.name] = new_row
-            save_obj(evaluation_metrics,  "results_ysize"+str(test_size), save_dir, "")
+            save_obj(evaluation_metrics,  "results_test_size"+str(test_size), save_dir, "")
         else:
             new_row = self.performance
             self.performance = new_row
             df = pd.DataFrame.from_dict({self.name: self.performance}, orient="index")
             save_obj(df, "results_ysize"+str(test_size), save_dir, "")
 
-    def get_and_save_performance(self,X_train, X_test, y_train, y_test, save_dir, test_size):
+    def get_and_save_performance(self,X_train, X_test, y_train, y_test, save_dir, test_size, cv):
 
             self.model.fit(X_train,y_train)
             y_pred = self.model.predict(X_test)
@@ -66,7 +66,7 @@ class Model:
             perf = {"tp": tp, "tn": tn, "fp": fp, "fn": fn, "accuracy": accuracy, "precision": precision, "recall": recall,
                     "f1": f1, "auc": roc_auc}
             self.performance = perf
-            self.save_performance( save_dir, test_size)
+            self.save_performance( save_dir, test_size, cv)
             return perf
 
 

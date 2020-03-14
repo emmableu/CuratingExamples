@@ -159,6 +159,7 @@ def combination(data, num_list):
     res = {}
     root = json_data2tree(data, 'targets')
     paths = get_all_path([], [], root)
+    # print(paths)
     for n in num_list:
         n = n[0]
         for p in paths:

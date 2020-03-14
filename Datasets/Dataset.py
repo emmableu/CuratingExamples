@@ -108,32 +108,32 @@ class Dataset:
         :return: pd DataFrame, columns = ['pid', 'codeshape_count_dict']
         example row: ['2312424', {'sprite|repeat': 3, 'sprite|repeat|else': 1}]
         '''
+        # all_pid_s = get_all_pid_s()
         code_state_count_dict = {}
-        count = 0
-        start = 0
+        start = 132
         code_state_10 = pd.Series()
-        for i in tqdm(self.data.index):
+        for i in tqdm(range(133, 415)):
             pid = self.data.at[i, 'pid']
             json_code = get_json(pid)
             a = self.get_code_shape_from_code(json_code, self.code_shape_p_q_list)
             code_state_count_dict[pid] = a
-            if count%10 == 0 and count//10 >= 1:
+            if i%2 == 0 and i//2 >= 1:
                 code_state_10 = pd.Series(code_state_count_dict)
-                code_state_count_dict = {}
-                save_pickle(code_state_10, "code_state|" +  str(start) + "|" + str(count), self.root_dir + "Datasets/data",
+                save_pickle(code_state_10, "code_state|" +  str(start) + "|" + str(i), self.root_dir + "Datasets/data",
                             "game_labels_" + str(self.total) + "/code_state" + str(self.code_shape_p_q_list))
-                print("saved code_state" + str(self.code_shape_p_q_list) + "|" + str(start) + "|" + str(count))
-                start = count
-            count+=1
+                print("saved code_state" + str(self.code_shape_p_q_list) + "|" + str(start) + "|" + str(i))
+                code_state_count_dict = {}
+                code_state_10 = pd.Series()
+                start = i
 
-        save_pickle(code_state_10, "code_state|" + str(start) + "|" + str(count), self.root_dir + "Datasets/data",
+        save_pickle(code_state_10, "code_state|" + str(start) + "|" + str(i), self.root_dir + "Datasets/data",
                     "game_labels_" + str(self.total) + "/code_state" + str(self.code_shape_p_q_list))
 
 
-    def get_train_test_pid(self, test_size, action_name):
+    def get_train_test_pid(self, test_size, action_name, cv):
         pid = self.data['pid'].to_list()
         train_pid, test_pid = train_test_split(
-            pid, test_size=test_size, random_state=0)
+            pid, test_size=test_size, random_state=cv*1200)
         y_train = self.data[self.data.pid.isin(train_pid)][action_name].to_list()
         r = 0
         while len(set(y_train)) == 1:
@@ -145,7 +145,7 @@ class Dataset:
         return train_pid, test_pid
 
     def get_all_pattern_keys(self):
-        code_state = load_obj( "code_state" + str(self.code_shape_p_q_list), self.root_dir+"Datasets/data", "game_labels_" + str(415))
+        code_state = load_obj( "code_state_all", self.root_dir+"Datasets/data", "game_labels_" + str(415) + "/code_state" + str(self.code_shape_p_q_list) )
         pool = self.data
         pattern_set = set()
         for i in (pool.index):
@@ -154,25 +154,26 @@ class Dataset:
             code_shape = self.__get_code_shape_from_pid(pid, code_state)
             new_pattern_s = code_shape.keys()
             self.__atomic_add(new_pattern_s, pattern_set)
-        save_obj(pattern_set, "pattern_set", self.root_dir+"Datasets/data", "game_labels_" + str(415))
+        save_obj(pattern_set, "pattern_set", self.root_dir+"Datasets/data", "game_labels_" + str(415) + "/code_state" + str(self.code_shape_p_q_list))
 
     def __atomic_add(self, new_pattern_s, old_pattern_set):
         for pattern in new_pattern_s:
             old_pattern_set.add(pattern)
 
     def __get_code_shape_from_pid(self, pid, code_state):
-        for i in code_state.index:
-            if code_state.at[i, 'pid'] == pid:
-                return code_state.at[i, 'codeshape_count_dict']
+        return code_state[pid]
 
     def get_result(self):
 
         code_state = load_obj( "code_state" + str(self.code_shape_p_q_list), self.root_dir+"Datasets/data", "game_labels_" + str(415))
         action_name_s = ['keymove', 'jump', 'costopall', 'wrap', 'cochangescore', 'movetomouse', 'moveanimate']
-        # action_name_s = ['cochangescore']
 
         def get_cv(test_size):
             return max(1/(1-test_size), 1/test_size)
+        def add_by_ele(orig_list, add_list):
+            for i in range(len(orig_list)):
+                orig_list[i] += add_list[i]
+            return orig_list
 
 
         for action_name in tqdm(action_name_s):
@@ -180,21 +181,20 @@ class Dataset:
             self.action_data = ActionData(code_state = code_state, game_label = self.data , action_name = action_name)
 
             save_dir = self.root_dir + "Datasets/data/" + "game_labels_" \
-                       + str(self.total) + str(self.code_shape_p_q_list) + "/" + action_name
+                       + str(self.total) + "/code_state" + str(self.code_shape_p_q_list) + "/" + action_name
 
             for model in tqdm(no_tuning_models):
                 for test_size in [3/4, 2/3, 1/2, 1/3]:
-                    for cv in get_cv(test_size):
-                        train_pid, test_pid = self.get_train_test_pid(test_size, action_name, cv)
-                        # self.action_data.get_yes_patterns(train_pid)
-                        # self.action_data.get_pattern_statistics(train_pid)
+                    tp, tn, fp, fn, accuracy, precision, recall, f1, auc = 0, 0, 0, 0, 0, 0, 0, 0
+                    performance_temp = [tp,tn,fp,fn,accuracy,precision,recall,f1,auc]
+                    cv_list, cv_total = get_cv(test_size)
+                    for cv in cv_list:
+                        train_pid, test_pid = self.get_train_test_pid(cv)
                         X_train, X_test, y_train, y_test = self.action_data.get_x_y_train_test(train_pid, test_pid)
-                        model.get_performance(X_train, X_test, y_train, y_test, test_size)
-                    model.save_performance(save_dir, test_size)
-                    print("--------------"+  action_name + model.get_name()  +  str(test_size)+ "--------------")
-                    print(model.get_confusion_matrix())
-                    print(model.get_performance())
+                        performance_temp = add_by_ele(performance_temp, model.get_performance(X_train, X_test, y_train, y_test, save_dir, test_size, cv))
 
+                    performance = [number/cv_total for number in performance_temp]
+                    model.save_performance(performance)
 
 
 

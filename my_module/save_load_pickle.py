@@ -106,10 +106,7 @@ def atom_mkdir(dir):
         os.makedirs(dir)
 
 
-# file = ("/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets/data/game_labels_415/pickle_files/code_state[[3, 0]].pkl")
-# with open(file, 'rb') as f:
-#     pickle_load = pickle.load(f)
-#     d = (pickle_load)
+
 #
 # d=d.set_index("pid")
 # d = d['codeshape_count_dict']
@@ -120,18 +117,106 @@ def atom_mkdir(dir):
 
 
 
-def get_code_shape_from_pid():
-    start = time.time()
-    file = "/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets/data/game_labels_415/code_state[[3, 0]]/pickle_files/code_state|0|414.pkl"
+def get_code_shape_from_pid(pid):
+    # start = time.time()
+    code_shape = {}
+    for i in range(1,4):
+        folder =  "/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets/data/game_labels_415/code_state[[" + str(i) + ", 0]]/pickle_files/"
+        file = folder +  "code_state|0|414.pkl"
+        with open(file, 'rb') as f:
+            pickle_load = pickle.load(f)
+            d = (pickle_load)
+        code_shape.update(d.loc[pid])
+
+    # folder4 =  "/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets/data/game_labels_415/code_state[[4, 0]]/pickle_files/"
+    # series = pd.Series()
+    # for file in os.listdir(folder4):
+    #     if file == ".DS_Store":
+    #         continue
+    #     f_cont = folder4 + file
+    #
+    #     with open(f_cont, 'rb') as f:
+    #         d = pickle.load(f)
+    #         series = series.append(d)
+    # # print(series)
+    # code_shape.update(series[(pid)])
+    # end = time.time()
+    # print("Time elapsed for: " + inspect.stack()[0][3]+ " is: ", end-start,  " seconds" )
+    # print(code_shape)
+    return code_shape
+
+def get_all_pid_s():
+    # start = time.time()
+    folder =  "/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets/data/game_labels_415/code_state[[1, 0]]/pickle_files/"
+    file = folder +  "code_state|0|414.pkl"
     with open(file, 'rb') as f:
         pickle_load = pickle.load(f)
         d = (pickle_load)
+    all_pid_s = d.keys()
+    # print(all_pid_s)
+    # end = time.time()
+    # print("Time elapsed for: " + inspect.stack()[0][3] + " is: ", end - start, " seconds")
+    return all_pid_s
 
-    print(type(d))
-    print(d.loc[331929186])
-
-    end = time.time()
-    print("Time elapsed for: " + inspect.stack()[0][3]+ " is: ", end-start,  " seconds" )
 
 
-get_code_shape_from_pid()
+
+
+import os
+import pandas as pd
+import pickle
+
+
+def generate_cv():
+    all_pid_s = get_all_pid_s()
+    for test_size in [3/4, 2/3, 1/2, 1/3]:
+        save_obj(train_pid, "train_pid", root_dir, "Datasets/data/cv/test_size" + str(test_size))
+        save_obj(test_pid, "test_pid", root_dir, "Datasets/data/cv/test_size" + str(test_size))
+
+    filename = 'generated-data/cvkeys/problem_sp.pkl'
+    with open(filename, 'rb') as handle:
+        problem_sp = pickle.load(handle)
+    for problem in problem_sp.keys():
+        sp = problem_sp[problem]
+        cv = pd.DataFrame(columns=['Train', 'Test'])
+        len_problem = len(sp)
+        len_test = len_problem // 10
+        for i in range(10):
+            test_start = i * len_test
+            test_end = test_start + len_test
+            test = sp[test_start:test_end]
+            train = sp[:test_start] + sp[test_end:]
+            # train = pd.concat([Predict[:test_start], Predict[(test_end):]])
+            cv.loc[0] = ({'Train': train, 'Test': test})
+        cvfilename = 'generated-data/cvkeys/problem_cv/problem' + str(problem) +  '.pkl'
+        cv.to_pickle(cvfilename)
+
+
+def runme():
+    generate_cv()
+
+
+#
+# start = time.time()
+#
+# all_pid_s = get_all_pid_s()
+# pid_code_shape = {}
+# for pid in all_pid_s:
+#     code_shape = get_code_shape_from_pid(pid)
+#     pid_code_shape[pid] = code_shape
+# code_state = pd.Series(pid_code_shape)
+# save_pickle(code_state, "code_state_all", root_dir, "Datasets/data/game_labels_415/code_state[[1, 0], [2, 0], [3, 0]]")
+# end = time.time()
+# print("Time elapsed for: " + inspect.stack()[0][3] + " is: ", end - start, " seconds")
+
+#
+# code_state = load_obj("code_state_all", root_dir, "Datasets/data/game_labels_415/code_state[[1, 0], [2, 0], [3, 0]]")
+# # print(code_state[104765718])
+
+
+# code_shape_p_q_list = [[1, 0], [2, 0], [3, 0]]
+# pattern_set = load_obj( "pattern_set", root_dir + "Datasets/data",
+#          "game_labels_" + str(415) + "/code_state" + str(code_shape_p_q_list))
+# for i in pattern_set:
+#     if len(i.split("|")) == 1:
+#         print(i)
