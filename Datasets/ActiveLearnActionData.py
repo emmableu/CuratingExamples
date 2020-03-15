@@ -22,6 +22,7 @@ import pandas as pd
 import sys
 sys.path.append("/Users/wwang33/Documents/IJAIED20/CuratingExamples/my_module")
 from save_load_pickle import *
+from alms_helper import *
 import pandas as pd
 from CodeShape import *
 from Test import *
@@ -72,11 +73,12 @@ mlp = MLPModel()
 no_tuning_models = [baseline, knn, lr, svm_c, svm_nu, svm_linear, dt, adaboost, bagging, rf, gaussian_nb,
                     bernoulli_nb, multi_nb, complement_nb, mlp]
 
+root_dir = "/Users/wwang33/Documents/IJAIED20/CuratingExamples/"
 
 
 class ActiveLearnActionData(object):
 
-    def __init__(self, code_state, game_label, action_name):
+    def __init__(self, code_state, game_label, action_name, code_shape_p_q_list):
         self.code_state = code_state
         self.action_name = action_name
         self.enough = 10
@@ -87,6 +89,8 @@ class ActiveLearnActionData(object):
         self.record = {"x": [], "pos": []}
         self.est = []
         self.atleast = 3
+        self.code_shape_p_q_list = code_shape_p_q_list
+        self.baseline = True
 
 
 
@@ -129,8 +133,10 @@ class ActiveLearnActionData(object):
         return pattern_df
 
     def get_pattern_statistics(self, train_pid):
-        root_dir = "/Users/wwang33/Documents/IJAIED20/CuratingExamples/"
-        pattern_set = load_obj("pattern_set", root_dir+"Datasets/data", "game_labels_" + str(415))
+        pattern_set = load_obj("pattern_set", root_dir + "Datasets/data",
+                               "game_labels_" + str(415) + "/code_state" + str(self.code_shape_p_q_list))
+        if self.baseline:
+            return pattern_set
         significant_patterns = []
         for pattern in pattern_set:
             pattern_df = self.__get_pattern_df(pattern, train_pid)
@@ -231,6 +237,25 @@ class ActiveLearnActionData(object):
         certain_id, certain_prob = self.certain(model, step, all_X)
 
         return uncertain_id, uncertain_prob, certain_id, certain_prob
+
+
+
+
+
+    def alms_train(self, step, model):
+        '''
+        get X_train, y_train,
+        train all models on tau_t, compute P_t(M)
+        for all x, y that belong to P:
+            compute x's estimated label y
+            E(VOI) = computeVOI(t,v)
+            E(VOI)model = computeVOI(T,V,x)
+        '''
+            model.fit(X_train, y_train)
+
+        uncertain_id, uncertain_prob = self.uncertain(model, step, all_X)
+        certain_id, certain_prob = self.certain(model, step, all_X)
+
 
 
 

@@ -50,6 +50,10 @@ no_tuning_models = [baseline, knn, lr, svm_c, svm_linear, dt, adaboost, bagging,
                     bernoulli_nb, multi_nb, complement_nb, mlp]
 
 
+#
+# def alms_simulate():
+#
+
 def simulate_5_times_to_get_all(action_name,total, thres = 0, model = bernoulli_nb):
     # data_path='game_labels_'+ str(total) + '/' + label_name + '.csv'
     # target_recall = 0.7

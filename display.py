@@ -18,7 +18,7 @@ type_list = ['Baseline','KNN','LR','C-Support SVC','Linear-Support SVC','DT','Ad
 
 plot_list  = [ 'code_state[[1, 0]]baseline', 'code_state[[1, 0]]','code_state[[1, 0], [2, 0], [3, 0]]baseline']
 # plot_list  = ['code_state[[1, 0]]baseline']
-test_size_list = [3 / 4, 2 / 3, 1 / 2, 1 / 3]
+test_size_list = [0.9, 3 / 4, 2 / 3, 1 / 2, 1 / 3]
 
 
 def get_all_df(action_name, plot, test_size_list):
@@ -69,7 +69,7 @@ plt.savefig("/Users/wwang33/Desktop/" + 'figAabccf.png')
 
 
 
-plot('cochangescore')
+# plot('cochangescore')
 
 
 
