@@ -251,7 +251,7 @@ class ActiveLearnActionData(object):
             E(VOI) = computeVOI(t,v)
             E(VOI)model = computeVOI(T,V,x)
         '''
-            model.fit(X_train, y_train)
+        model.fit(X_train, y_train)
 
         uncertain_id, uncertain_prob = self.uncertain(model, step, all_X)
         certain_id, certain_prob = self.certain(model, step, all_X)
