@@ -141,12 +141,10 @@ class Dataset:
             pid = pool.at[i, 'pid']
             code_shape = self.__get_code_shape_from_pid(pid, code_state)
             new_pattern_s = code_shape.keys()
-            self.__atomic_add(new_pattern_s, pattern_set)
+            pattern_set = atomic_add(new_pattern_s, pattern_set)
         save_obj(pattern_set, "pattern_set", self.root_dir+"Datasets/data", "game_labels_" + str(415) + "/code_state" + str(self.code_shape_p_q_list))
 
-    def __atomic_add(self, new_pattern_s, old_pattern_set):
-        for pattern in new_pattern_s:
-            old_pattern_set.add(pattern)
+
 
     def __get_code_shape_from_pid(self, pid, code_state):
         return code_state[pid]
@@ -156,12 +154,17 @@ class Dataset:
                               "/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets/data/game_labels_" + str(
                                   self.total) + "/code_state" +
                               str(self.code_shape_p_q_list), "")
-        action_name_s = ['keymove', 'jump', 'costopall', 'wrap', 'cochangescore', 'movetomouse', 'moveanimate']
+        # action_name_s = ['keymove']
+        # action_name_s = ['jump']
+        # action_name_s = ['costopall']
+        action_name_s = ['cochangescore']
+        # action_name_s = ['keymove', 'jump', 'costopall', 'wrap', 'cochangescore', 'movetomouse', 'moveanimate']
 
         for action_name in tqdm(action_name_s):
             print("action_name: ", action_name)
             self.action_data = ActionData(code_state=code_state, game_label=self.data, action_name=action_name, code_shape_p_q_list=self.code_shape_p_q_list)
-            for test_size in tqdm([3 / 4, 2 / 3, 1 / 2, 1 / 3]):
+            for test_size in tqdm([0.9, 3 / 4, 2 / 3, 1 / 2, 1 / 3]):
+            # for test_size in tqdm([0.9]):
                 cv_total = int(max(1 / (1 - test_size), 1 / test_size))
                 for fold in tqdm(range(cv_total)):
                     if baseline:
@@ -188,7 +191,8 @@ class Dataset:
                            + str(self.total) + "/code_state" + str(self.code_shape_p_q_list) + "/" + action_name
 
             for model in tqdm(no_tuning_models):
-                for test_size in tqdm([3/4, 2/3, 1/2, 1/3]):
+                # for test_size in tqdm([0.9]):
+                for test_size in tqdm([0.9, 3/4, 2/3, 1/2, 1/3]):
                     tp, tn, fp, fn, accuracy, precision, recall, f1, roc_auc = 0, 0, 0, 0, 0, 0, 0, 0, 0
                     performance_temp = {"tp": tp, "tn": tn, "fp": fp, "fn": fn, "accuracy": accuracy, "precision": precision,
                             "recall": recall,

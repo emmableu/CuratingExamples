@@ -170,7 +170,8 @@ import pickle
 
 def generate_cv():
     all_pid_s = get_all_pid_s()
-    for test_size in [3/4, 2/3, 1/2, 1/3]:
+    for test_size in [0.9, 3/4, 2/3, 1/2, 1/3]:
+    # for test_size in [0.9]:
         cv_total = int(max(1/(1-test_size), 1/test_size))
         for fold in range(cv_total):
             if test_size <= 0.5:
@@ -191,6 +192,7 @@ def generate_cv():
                 save_obj(test_pid, "test_pid", root_dir, "Datasets/data/cv/test_size" + str(test_size) + "/fold" + str(fold))
 
 
+
 def get_train_test_pid(test_size, fold):
     train_pid = load_obj("train_pid", root_dir, "Datasets/data/cv/test_size" + str(test_size)+ "/fold" + str(fold))
     test_pid = load_obj("test_pid", root_dir, "Datasets/data/cv/test_size" + str(test_size)+ "/fold" + str(fold))
@@ -208,6 +210,10 @@ def get_dict_average(dict_name, cv_total):
         dict_name[i] = dict_name[i] / cv_total
     return dict_name
 
+def atomic_add(new_pattern_s, old_pattern_set):
+    for pattern in new_pattern_s:
+        old_pattern_set.add(pattern)
+    return old_pattern_set
 
 def get_x_y_train_test(get_dir):
     X_train = load_obj("X_train", get_dir, "")
@@ -218,7 +224,7 @@ def get_x_y_train_test(get_dir):
 
 
 
-generate_cv()
+# generate_cv()
 
 
 #

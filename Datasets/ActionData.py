@@ -4,6 +4,7 @@ from Test import *
 import pandas as pd
 from save_load_pickle import *
 root_dir = "/Users/wwang33/Documents/IJAIED20/CuratingExamples/"
+from tqdm import tqdm
 class ActionData:
     def __init__(self, code_state, game_label , action_name, code_shape_p_q_list):
         self.code_state = code_state
@@ -37,13 +38,30 @@ class ActionData:
             pattern_df.loc[len(pattern_df)] = new_row
         return pattern_df
 
+
+    def get_pattern_key_from_pid(self, train_pid):
+        # code_state = load_obj( "code_state|0|414", self.root_dir+"Datasets/data", "game_labels_" + str(415) + "/code_state" + str(self.code_shape_p_q_list) )
+        # pool = self.data
+        pattern_set = set()
+        for i in (train_pid):
+            code_shape = self.code_state[i]
+            new_pattern_s = code_shape.keys()
+            pattern_set = atomic_add(new_pattern_s, pattern_set)
+        return pattern_set
+
+
+
     def get_pattern_statistics(self, train_pid, baseline):
 
-        pattern_set = load_obj("pattern_set", root_dir+"Datasets/data", "game_labels_" + str(415) + "/code_state" + str(self.code_shape_p_q_list))
         if baseline:
+            pattern_set = load_obj("pattern_set", root_dir + "Datasets/data",
+                                   "game_labels_" + str(415) + "/code_state" + str(self.code_shape_p_q_list))
             return pattern_set
+        else:
+            pattern_set = self.get_pattern_key_from_pid(train_pid)
         significant_patterns = []
-        for pattern in pattern_set:
+        for pattern in tqdm(pattern_set):
+            # print(pattern)
             pattern_df = self.__get_pattern_df(pattern, train_pid)
             test = Test(pattern_df)
 

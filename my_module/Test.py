@@ -4,7 +4,7 @@ from scipy import stats
 
 
 class Test:
-    def __init__(self, data):
+    def __init__(self, data, al = False):
         '''
         input data format:
         pd.DataFrame
@@ -14,9 +14,13 @@ class Test:
                     [dfdfdvc, 0, no]]
         '''
         self.data = data
+        if al == True:
+            self.yes = self.data[self.data.code == 'yes']
+            self.no = self.data[self.data.code == 'no']
+        else:
         # print("Train data: ", data)
-        self.yes = self.data[self.data.label == 'yes']
-        self.no = self.data[self.data.label == 'no']
+            self.yes = self.data[self.data.label == 'yes']
+            self.no = self.data[self.data.label == 'no']
         self.yes_occurance_list = self.yes['occurance'].to_list()
         self.no_occurance_list = self.no['occurance'].to_list()
         self.yes_total = len(self.yes_occurance_list)
