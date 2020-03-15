@@ -3,12 +3,17 @@ sys.path.append("/Users/wwang33/Documents/IJAIED20/CuratingExamples/my_module")
 from Test import *
 import pandas as pd
 from save_load_pickle import *
-
+root_dir = "/Users/wwang33/Documents/IJAIED20/CuratingExamples/"
 class ActionData:
-    def __init__(self, code_state, game_label , action_name):
+    def __init__(self, code_state, game_label , action_name, code_shape_p_q_list):
         self.code_state = code_state
         self.game_label = game_label
         self.action_name = action_name
+        self.code_shape_p_q_list = code_shape_p_q_list
+
+    def memory_get_code_shape_from_pid(self,pid):
+        # start = time.time()
+        return self.code_state[pid]
 
 
     def __get_pattern_df(self, pattern, train_pid):
@@ -18,7 +23,7 @@ class ActionData:
         pattern_df = pd.DataFrame(columns = ['pid', 'occurance', 'label'])
         for i in pool.index:
             pid = pool.at[i, 'pid']
-            code_shape = self.__get_code_shape_from_pid(pid)
+            code_shape = self.memory_get_code_shape_from_pid(pid)
             try:
                 occurance = code_shape[pattern]
             except KeyError:
@@ -29,13 +34,14 @@ class ActionData:
             else:
                 label = 'no'
             new_row = {'pid': pid, 'occurance': occurance, 'label': label}
-            # print("new_row" , new_row)
-            # print("pattern_df",pattern_df)
             pattern_df.loc[len(pattern_df)] = new_row
         return pattern_df
 
-    def get_pattern_statistics(self, train_pid):
-        pattern_set = load_obj("pattern_set", self.root_dir+"Datasets/data", "game_labels_" + str(415))
+    def get_pattern_statistics(self, train_pid, baseline):
+
+        pattern_set = load_obj("pattern_set", root_dir+"Datasets/data", "game_labels_" + str(415) + "/code_state" + str(self.code_shape_p_q_list))
+        if baseline:
+            return pattern_set
         significant_patterns = []
         for pattern in pattern_set:
             pattern_df = self.__get_pattern_df(pattern, train_pid)
@@ -50,10 +56,10 @@ class ActionData:
         return significant_patterns
 
 
-    def get_x_y_train_test(self,train_pid, test_pid):
-        significant_patterns = self.get_pattern_statistics(train_pid)
+    def save_x_y_train_test(self,train_pid, test_pid, save_dir,baseline = False):
+        significant_patterns = self.get_pattern_statistics(train_pid, baseline)
+        save_obj(significant_patterns, "significant_patterns", save_dir, "")
         num_patterns = len(significant_patterns)
-
         train_df = self.game_label[self.game_label.pid.isin(train_pid)].reset_index(drop = True)
         test_df = self.game_label[self.game_label.pid.isin(test_pid)].reset_index(drop = True)
 
@@ -62,7 +68,7 @@ class ActionData:
             y = np.zeros(len(df.index))
             for game_index, i in enumerate(df.index):
                 pid = self.game_label.at[i, 'pid']
-                code_shape = self.__get_code_shape_from_pid(pid)
+                code_shape = self.memory_get_code_shape_from_pid(pid)
                 for pattern_index, p in enumerate(significant_patterns):
                     try:
                         occurance = code_shape[p]
@@ -78,7 +84,11 @@ class ActionData:
         X_train, y_train = get_xy(train_df)
         X_test, y_test = get_xy(test_df)
 
-        return X_train, X_test, y_train, y_test
+        save_obj(X_train, "X_train", save_dir, "")
+        save_obj(y_train, "y_train", save_dir, "")
+        save_obj(X_test, "X_test", save_dir, "")
+        save_obj(y_test, "y_test", save_dir, "")
+
 
 
 

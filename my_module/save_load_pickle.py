@@ -117,10 +117,11 @@ def atom_mkdir(dir):
 
 
 
-def get_code_shape_from_pid(pid):
+def hard_drive_get_code_shape_from_pid(pid, code_shape_p_q_list):
     # start = time.time()
     code_shape = {}
-    for i in range(1,4):
+    loop_total = [i[0] for i in code_shape_p_q_list]
+    for i in loop_total:
         folder =  "/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets/data/game_labels_415/code_state[[" + str(i) + ", 0]]/pickle_files/"
         file = folder +  "code_state|0|414.pkl"
         with open(file, 'rb') as f:
@@ -170,30 +171,54 @@ import pickle
 def generate_cv():
     all_pid_s = get_all_pid_s()
     for test_size in [3/4, 2/3, 1/2, 1/3]:
-        save_obj(train_pid, "train_pid", root_dir, "Datasets/data/cv/test_size" + str(test_size))
-        save_obj(test_pid, "test_pid", root_dir, "Datasets/data/cv/test_size" + str(test_size))
-
-    filename = 'generated-data/cvkeys/problem_sp.pkl'
-    with open(filename, 'rb') as handle:
-        problem_sp = pickle.load(handle)
-    for problem in problem_sp.keys():
-        sp = problem_sp[problem]
-        cv = pd.DataFrame(columns=['Train', 'Test'])
-        len_problem = len(sp)
-        len_test = len_problem // 10
-        for i in range(10):
-            test_start = i * len_test
-            test_end = test_start + len_test
-            test = sp[test_start:test_end]
-            train = sp[:test_start] + sp[test_end:]
-            # train = pd.concat([Predict[:test_start], Predict[(test_end):]])
-            cv.loc[0] = ({'Train': train, 'Test': test})
-        cvfilename = 'generated-data/cvkeys/problem_cv/problem' + str(problem) +  '.pkl'
-        cv.to_pickle(cvfilename)
+        cv_total = int(max(1/(1-test_size), 1/test_size))
+        for fold in range(cv_total):
+            if test_size <= 0.5:
+                len_test = int(test_size*415)
+                test_start = fold * len_test
+                test_end = test_start + len_test
+                test_pid = all_pid_s[test_start:test_end].to_list()
+                train_pid = all_pid_s[:test_start].to_list() + all_pid_s[test_end:].to_list()
+                save_obj(train_pid, "train_pid", root_dir, "Datasets/data/cv/test_size" + str(test_size) + "/fold" + str(fold))
+                save_obj(test_pid, "test_pid", root_dir, "Datasets/data/cv/test_size" + str(test_size) + "/fold" + str(fold))
+            elif test_size > 0.5:
+                len_train = int((1-test_size)*415)
+                train_start = fold * len_train
+                train_end = train_start + len_train
+                train_pid = all_pid_s[train_start:train_end].to_list()
+                test_pid = all_pid_s[:train_start].to_list() + all_pid_s[train_end:].to_list()
+                save_obj(train_pid, "train_pid", root_dir, "Datasets/data/cv/test_size" + str(test_size) + "/fold" + str(fold))
+                save_obj(test_pid, "test_pid", root_dir, "Datasets/data/cv/test_size" + str(test_size) + "/fold" + str(fold))
 
 
-def runme():
-    generate_cv()
+def get_train_test_pid(test_size, fold):
+    train_pid = load_obj("train_pid", root_dir, "Datasets/data/cv/test_size" + str(test_size)+ "/fold" + str(fold))
+    test_pid = load_obj("test_pid", root_dir, "Datasets/data/cv/test_size" + str(test_size)+ "/fold" + str(fold))
+    return train_pid, test_pid
+
+
+def add_by_ele(orig_dict, add_dict):
+    for i in orig_dict.keys():
+        orig_dict[i] += add_dict[i]
+    return orig_dict
+
+
+def get_dict_average(dict_name, cv_total):
+    for i in dict_name.keys():
+        dict_name[i] = dict_name[i] / cv_total
+    return dict_name
+
+
+def get_x_y_train_test(get_dir):
+    X_train = load_obj("X_train", get_dir, "")
+    y_train = load_obj("y_train", get_dir, "")
+    X_test = load_obj("X_test", get_dir, "")
+    y_test = load_obj("y_test", get_dir, "")
+    return X_train, X_test, y_train, y_test
+
+
+
+generate_cv()
 
 
 #

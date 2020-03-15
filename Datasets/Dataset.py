@@ -130,22 +130,10 @@ class Dataset:
                     "game_labels_" + str(self.total) + "/code_state" + str(self.code_shape_p_q_list))
 
 
-    def get_train_test_pid(self, test_size, action_name, cv):
-        pid = self.data['pid'].to_list()
-        train_pid, test_pid = train_test_split(
-            pid, test_size=test_size, random_state=cv*1200)
-        y_train = self.data[self.data.pid.isin(train_pid)][action_name].to_list()
-        r = 0
-        while len(set(y_train)) == 1:
-            r += 1
-            train_pid, test_pid = train_test_split(
-                pid, test_size=test_size, random_state=r)
-            y_train = self.data[self.data.pid.isin(train_pid)][action_name].to_list()
 
-        return train_pid, test_pid
 
     def get_all_pattern_keys(self):
-        code_state = load_obj( "code_state_all", self.root_dir+"Datasets/data", "game_labels_" + str(415) + "/code_state" + str(self.code_shape_p_q_list) )
+        code_state = load_obj( "code_state|0|414", self.root_dir+"Datasets/data", "game_labels_" + str(415) + "/code_state" + str(self.code_shape_p_q_list) )
         pool = self.data
         pattern_set = set()
         for i in (pool.index):
@@ -163,38 +151,63 @@ class Dataset:
     def __get_code_shape_from_pid(self, pid, code_state):
         return code_state[pid]
 
-    def get_result(self):
-
-        code_state = load_obj( "code_state" + str(self.code_shape_p_q_list), self.root_dir+"Datasets/data", "game_labels_" + str(415))
+    def save_x_y_to_hard_drive(self, baseline = False):
+        code_state = load_obj("code_state|0|414",
+                              "/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets/data/game_labels_" + str(
+                                  self.total) + "/code_state" +
+                              str(self.code_shape_p_q_list), "")
         action_name_s = ['keymove', 'jump', 'costopall', 'wrap', 'cochangescore', 'movetomouse', 'moveanimate']
-
-        def get_cv(test_size):
-            return max(1/(1-test_size), 1/test_size)
-        def add_by_ele(orig_list, add_list):
-            for i in range(len(orig_list)):
-                orig_list[i] += add_list[i]
-            return orig_list
-
 
         for action_name in tqdm(action_name_s):
             print("action_name: ", action_name)
-            self.action_data = ActionData(code_state = code_state, game_label = self.data , action_name = action_name)
+            self.action_data = ActionData(code_state=code_state, game_label=self.data, action_name=action_name, code_shape_p_q_list=self.code_shape_p_q_list)
+            for test_size in tqdm([3 / 4, 2 / 3, 1 / 2, 1 / 3]):
+                cv_total = int(max(1 / (1 - test_size), 1 / test_size))
+                for fold in tqdm(range(cv_total)):
+                    if baseline:
+                        save_dir = root_dir + "Datasets/data/cv/test_size" + str(test_size) + "/fold" + str(
+                            fold) + "/code_state" + str(self.code_shape_p_q_list) + "baseline"  + "/" + action_name
+                    else:
+                        save_dir = root_dir + "Datasets/data/cv/test_size" + str(test_size)+ "/fold" + str(fold) + "/code_state" + str(self.code_shape_p_q_list) + "/" + action_name
+                    train_pid, test_pid = get_train_test_pid(test_size, fold)
+                    self.action_data.save_x_y_train_test(train_pid, test_pid, save_dir, baseline)
 
-            save_dir = self.root_dir + "Datasets/data/" + "game_labels_" \
-                       + str(self.total) + "/code_state" + str(self.code_shape_p_q_list) + "/" + action_name
+
+
+
+    def get_result(self, baseline):
+        action_name_s = ['keymove', 'jump', 'costopall', 'wrap', 'cochangescore', 'movetomouse', 'moveanimate']
+
+        for action_name in tqdm(action_name_s):
+            print("action_name: ", action_name)
+            if baseline:
+                save_dir = self.root_dir + "Datasets/data/" + "game_labels_" \
+                           + str(self.total) + "/code_state" + str(self.code_shape_p_q_list) + "baseline" + "/" + action_name
+            else:
+                save_dir = self.root_dir + "Datasets/data/" + "game_labels_" \
+                           + str(self.total) + "/code_state" + str(self.code_shape_p_q_list) + "/" + action_name
 
             for model in tqdm(no_tuning_models):
-                for test_size in [3/4, 2/3, 1/2, 1/3]:
-                    tp, tn, fp, fn, accuracy, precision, recall, f1, auc = 0, 0, 0, 0, 0, 0, 0, 0
-                    performance_temp = [tp,tn,fp,fn,accuracy,precision,recall,f1,auc]
-                    cv_list, cv_total = get_cv(test_size)
-                    for cv in cv_list:
-                        train_pid, test_pid = self.get_train_test_pid(cv)
-                        X_train, X_test, y_train, y_test = self.action_data.get_x_y_train_test(train_pid, test_pid)
-                        performance_temp = add_by_ele(performance_temp, model.get_performance(X_train, X_test, y_train, y_test, save_dir, test_size, cv))
+                for test_size in tqdm([3/4, 2/3, 1/2, 1/3]):
+                    tp, tn, fp, fn, accuracy, precision, recall, f1, roc_auc = 0, 0, 0, 0, 0, 0, 0, 0, 0
+                    performance_temp = {"tp": tp, "tn": tn, "fp": fp, "fn": fn, "accuracy": accuracy, "precision": precision,
+                            "recall": recall,
+                            "f1": f1, "auc": roc_auc}
+                    cv_total = int(max(1 / (1 - test_size), 1 / test_size))
+                    for fold in range(cv_total):
+                        if baseline:
+                            get_dir = root_dir + "Datasets/data/cv/test_size" + str(test_size) + "/fold" + str(
+                                fold) + "/code_state" + str(self.code_shape_p_q_list) + "baseline" + "/" + action_name
+                        else:
+                            get_dir = root_dir + "Datasets/data/cv/test_size" + str(test_size) + "/fold" + str(
+                                fold) + "/code_state" + str(self.code_shape_p_q_list) + "/" + action_name
 
-                    performance = [number/cv_total for number in performance_temp]
-                    model.save_performance(performance)
+                        X_train, X_test, y_train, y_test = get_x_y_train_test(get_dir)
+                        add_performance = model.get_performance(X_train, X_test, y_train, y_test)
+                        performance_temp = add_by_ele(performance_temp, add_performance)
+
+                    performance = get_dict_average(performance_temp, cv_total)
+                    model.save_performance(save_dir, test_size, performance)
 
 
 

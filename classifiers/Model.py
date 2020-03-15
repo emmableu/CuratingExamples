@@ -25,21 +25,42 @@ class Model:
     def get_confusion_matrix(self):
         return self.confusion_matrix
 
-    def get_performance(self):
-        return self.performance
-
-    def save_performance(self, save_dir, test_size, cv):
-        if is_obj( "cv" + str(cv), save_dir,  "results_test_size"+str(test_size)):
-            evaluation_metrics = load_obj("results_test_size"+str(test_size), save_dir, "")
-            new_row = self.performance
-            self.performance = new_row
+    def save_performance(self, save_dir, test_size, performance):
+        if is_obj("results_test_size" + str(test_size), save_dir, ""):
+            evaluation_metrics = load_obj("results_test_size" + str(test_size), save_dir, "")
+            new_row = performance
             evaluation_metrics.loc[self.name] = new_row
-            save_obj(evaluation_metrics,  "results_test_size"+str(test_size), save_dir, "")
+            save_obj(evaluation_metrics, "results_test_size" + str(test_size), save_dir, "")
         else:
-            new_row = self.performance
-            self.performance = new_row
-            df = pd.DataFrame.from_dict({self.name: self.performance}, orient="index")
-            save_obj(df, "results_ysize"+str(test_size), save_dir, "")
+            df = pd.DataFrame.from_dict({self.name: performance}, orient="index")
+            save_obj(df, "results_test_size" + str(test_size), save_dir, "")
+
+
+
+    def get_performance(self,X_train, X_test, y_train, y_test):
+        self.model.fit(X_train, y_train)
+        y_pred = self.model.predict(X_test)
+        self.confusion_matrix = confusion_matrix(y_test, y_pred)
+        fpr, tpr, threshold = roc_curve(y_test, y_pred)
+        roc_auc = auc(fpr, tpr)
+
+        tn, fp, fn, tp = self.confusion_matrix.ravel()
+        accuracy = (tp + tn) / (tp + tn + fp + fn)
+        if tp == 0 and fp == 0 and fn == 0:
+            precision = 1
+            recall = 1
+            f1 = 1
+        elif tp == 0 and (fp > 0 or fn > 0):
+            precision = 0
+            recall = 0
+            f1 = 0
+        else:
+            precision = tp / (tp + fp)
+            recall = tp / (tp + fn)
+            f1 = 2 * (precision) * (recall) / (precision + recall)
+        perf = {"tp": tp, "tn": tn, "fp": fp, "fn": fn, "accuracy": accuracy, "precision": precision, "recall": recall,
+                "f1": f1, "auc": roc_auc}
+        return perf
 
     def get_and_save_performance(self,X_train, X_test, y_train, y_test, save_dir, test_size, cv):
 

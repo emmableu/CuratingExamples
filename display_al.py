@@ -9,20 +9,31 @@ label_name_dict =  {'keymove': "Keyboard-Triggered Move", 'jump': "Jump", 'costo
 import numpy as np
 import matplotlib.pyplot as plt
 
-total = 415
+from scipy import stats
+total = 186
+target_recall = 0.7
+thres = 0
 label_name_s = [ 'cochangescore']
+count_s_all = {}
 
-type = ['Baseline','KNN','LR','C-Support SVC','Nu-Support SVC','Linear-Support SVC','DT','AdaBoost',
-        'BaggingClassifier','RandomForest','Gaussian NB','Bernoulli NB','Multinomial NB','Complement NB', 'MLP']
+def get_summary(label_name, total, thres, target_recall):
+    all_simulation = load_obj('all_simulation_'+label_name,'/Users/wwang33/Documents/IJAIED20/src/workspace/data/game_labels_'+str(total), 'simulation_'+ str(thres) +"_"+ str(target_recall))
+    count_s = []
+    for simulation in all_simulation:
+        count_s.append(simulation.count)
+    median_index = np.argsort(count_s)[len(count_s) // 2]
+    all_simulation[median_index].plot("/Users/wwang33/Documents/IJAIED20/src/workspace/data/game_labels_186/simulation_10_" + str(target_recall) + "/plots/", show = True)
+    # plot_real(all_simulation[median_index],"/Users/wwang33/Documents/IJAIED20/src/workspace/data/game_labels_186/simulation_10_0.7/plots/")
+    print(all_simulation[median_index].count)
+    count_s_all[label_name] = (count_s)
 
-grid_list  = ['']
 
 
 def plot_all(total, thres,training_method = "", specified_info = ""):
     print("total = "+  str(total)  +  ", thres = " + str(thres) + "  " + training_method + "  " + specified_info)
     all_repetitions = 5
     fig = plt.figure(figsize=(24, 24))
-    gs = fig.add_gridspec(2, 2)
+    gs = fig.add_gridspec(3, 3)
 
     for label_index, label_name in enumerate(label_name_s):
         all_simulation = load_obj( '/all_simulation_' + label_name,
@@ -71,7 +82,7 @@ def plot_all(total, thres,training_method = "", specified_info = ""):
 
         plt.rcParams.update(paras)
         ax = fig.add_subplot(gs[label_index//3, label_index%3])
-        for i in (all_types):
+        for i in range(all_repetitions):
             plt.plot(x_axis, get_x_y_for_plot(all_simulation[i])[1], marker='o', markerfacecolor='blue', markersize=1,
                      color=color_s[i], linewidth=1)
         plt.plot(x_axis, baseline_y, marker='o', markerfacecolor='red', markersize=1,
