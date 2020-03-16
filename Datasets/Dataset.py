@@ -126,23 +126,23 @@ class Dataset:
     # def __get_code_shape_from_pid(self, pid, code_state):
     #     return code_state[pid]
 
-    def save_x_y_to_hard_drive(self, baseline = True):
+    def save_x_y_to_hard_drive(self, selected_p_q_list, baseline = True):
         code_state = load_obj("code_state", base_dir, "code_state" + str(self.code_shape_p_q_list))
         action_name_s = ['keymove', 'jump', 'costopall', 'wrap', 'cochangescore', 'movetomouse', 'moveanimate']
-
+        game_label = pd.read_csv(base_dir + "/game_label_415.csv")
         for action_name in tqdm(action_name_s):
             print("action_name: ", action_name)
-            self.action_data = ActionData(code_state=code_state, game_label=self.data, action_name=action_name, code_shape_p_q_list=self.code_shape_p_q_list)
+            action_data = ActionData(code_state=code_state, game_label=game_label, action_name=action_name, selected_p_q_list=selected_p_q_list)
             for test_size in tqdm(test_size_list):
                 cv_total = int(max(1 / (1 - test_size), 1 / test_size))
                 for fold in tqdm(range(cv_total)):
                     if baseline:
-                        save_dir = root_dir + "Datasets/data/SnapASTData/cv/test_size" + str(test_size) + "/fold" + str(
-                            fold) + "/code_state" + str(self.code_shape_p_q_list) + "baseline"  + "/" + action_name
+                        save_dir = base_dir + "/cv/test_size" + str(test_size) + "/fold" + str(
+                            fold) + "/code_state" + str(selected_p_q_list) + "baseline"  + "/" + action_name
                     else:
-                        save_dir = root_dir + "Datasets/data/SnapASTData/cv/test_size" + str(test_size)+ "/fold" + str(fold) + "/code_state" + str(self.code_shape_p_q_list) + "/" + action_name
+                        save_dir = base_dir + "/cv/test_size" + str(test_size)+ "/fold" + str(fold) + "/code_state" + str(self.code_shape_p_q_list) + "/" + action_name
                     train_pid, test_pid = get_train_test_pid(test_size, fold)
-                    self.action_data.save_x_y_train_test(train_pid, test_pid, save_dir, baseline)
+                    action_data.save_x_y_train_test(train_pid, test_pid, save_dir, baseline)
 
 
 

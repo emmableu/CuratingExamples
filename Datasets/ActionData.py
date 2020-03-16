@@ -6,23 +6,24 @@ from save_load_pickle import *
 root_dir = "/Users/wwang33/Documents/IJAIED20/CuratingExamples/"
 from tqdm import tqdm
 class ActionData:
-    def __init__(self, code_state, game_label , action_name, code_shape_p_q_list):
+    def __init__(self, code_state, game_label , action_name, selected_p_q_list):
         self.code_state = code_state
         self.game_label = game_label
         self.action_name = action_name
-        self.code_shape_p_q_list = code_shape_p_q_list
+        self.selected_p_q_list = selected_p_q_list
 
-    def memory_get_code_shape_from_pid(self,pid, code_shape_selected):
-        return self.code_state[pid]
-
+    def memory_get_code_shape_from_pid(self,pid):
+        code_shape_dict = {}
+        for p_q in self.selected_p_q_list:
+            code_shape_dict.update(self.code_state.at[pid, 'code_state'+ str(p_q)])
+        return code_shape_dict
 
     def __get_pattern_df(self, pattern, train_pid):
 
         pool = self.game_label[self.game_label.pid.isin(train_pid)].reset_index(drop = True)
-
         pattern_df = pd.DataFrame(columns = ['pid', 'occurance', 'label'])
         for i in pool.index:
-            pid = pool.at[i, 'pid']
+            pid = str(pool.at[i, 'pid'])
             code_shape = self.memory_get_code_shape_from_pid(pid)
             try:
                 occurance = code_shape[pattern]

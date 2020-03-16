@@ -91,7 +91,7 @@ class CodeGraph:
                 pqgram_string = str(pqgram.count) + "|" + pqgram.grams
                 self.pqgram_set.pqgram_string_set.add(pqgram_string)
             code_shape = {}
-            for pqgram in tqdm(self.pqgram_set.pqgram_set):
+            for pqgram in (self.pqgram_set.pqgram_set):
                 code_shape[pqgram.grams] = (pqgram.count)
             data["code_state" + str(p_q_list)] = code_shape
         return (data)
