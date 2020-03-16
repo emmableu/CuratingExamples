@@ -68,7 +68,7 @@ def get_all_patterns(all_data, pattern_type):
             all_patterns[key] = accu_code_map
             n = n+1
             accu_code_map = combine_codemap(n, codemap, accu_code_map)
-        save_pickle(all_patterns, "AllPatternsStudents", "Datasets/data", "")
+        save_pickle(all_patterns, "AllPatternsStudents", "Datasets/data/SnapASTData", "")
         end = time.time()
         print('time for get_all_patterns(): ', (end - start) / 60)
 

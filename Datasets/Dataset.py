@@ -83,95 +83,64 @@ class LabelData(object):
 
 class Dataset:
 
-    def __init__(self, total, code_shape_p_q_list, embedding_param = None, allow_gap = True):
-        self.root_dir = "/Users/wwang33/Documents/IJAIED20/CuratingExamples/"
-        self.total = total
+    def __init__(self, code_shape_p_q_list, embedding_param = None, allow_gap = False):
         self.code_shape_p_q_list = code_shape_p_q_list
         self.embedding_param = embedding_param
-        self.file_path = self.root_dir + "Datasets/data/game_label_" + str(total) + ".csv"
-        self.data = pd.read_csv(self.file_path)
-        self.data = self.data[self.data.good == True].reset_index(drop = True)
-        print(self.data)
+        # self.file_path = self.root_dir + "Datasets/data/SnapASTData/game_label_" + str(total) + ".csv"
+        # self.data = pd.read_csv(self.file_path)
+        # self.data = self.data[self.data.good == True].reset_index(drop = True)
+        # print(self.data)
         self.allow_gap = allow_gap
 
 
-    def get_code_shape_from_code(self, json_code, code_shape_p_q_list, allow_gap=True):
-        if allow_gap:
-            test_shape = combination(json_code, code_shape_p_q_list)
-        else:
-            test_shape = get_code_shape(json_code, 'targets', code_shape_p_q_list)
-        return test_shape
-
-
     def create_code_state(self):
-        '''
-        :return: pd DataFrame, columns = ['pid', 'codeshape_count_dict']
-        example row: ['2312424', {'sprite|repeat': 3, 'sprite|repeat|else': 1}]
-        '''
-        # all_pid_s = get_all_pid_s()
-        code_state_count_dict = {}
-        start = 132
-        code_state_10 = pd.Series()
-        for i in tqdm(range(133, 415)):
-            pid = self.data.at[i, 'pid']
-            json_code = get_json(pid)
-            a = self.get_code_shape_from_code(json_code, self.code_shape_p_q_list)
-            code_state_count_dict[pid] = a
-            if i%2 == 0 and i//2 >= 1:
-                code_state_10 = pd.Series(code_state_count_dict)
-                save_pickle(code_state_10, "code_state|" +  str(start) + "|" + str(i), self.root_dir + "Datasets/data",
-                            "game_labels_" + str(self.total) + "/code_state" + str(self.code_shape_p_q_list))
-                print("saved code_state" + str(self.code_shape_p_q_list) + "|" + str(start) + "|" + str(i))
-                code_state_count_dict = {}
-                code_state_10 = pd.Series()
-                start = i
+        pid = load_obj('pid', base_dir, "")
+        json_folder = root_dir+ "/Datasets/data/SnapJSON_413/"
+        code_state_df = pd.DataFrame(index = pid, columns = ["code_state" + str(i) for i in self.code_shape_p_q_list])
 
-        save_pickle(code_state_10, "code_state|" + str(start) + "|" + str(i), self.root_dir + "Datasets/data",
-                    "game_labels_" + str(self.total) + "/code_state" + str(self.code_shape_p_q_list))
+        for p in tqdm(pid):
+            file = json_folder + p + ".xml.json"
+            codegraph =  CodeGraph(file, self.code_shape_p_q_list)
+            data = codegraph.collect_all_pqgrams(self.code_shape_p_q_list)
+            code_state_df.loc[p] = data
 
-
+        # print(code_state_df)
+        save_pickle(code_state_df, "code_state",  base_dir, "code_state" + str(self.code_shape_p_q_list))
 
 
     def get_all_pattern_keys(self):
-        code_state = load_obj( "code_state|0|414", self.root_dir+"Datasets/data", "game_labels_" + str(415) + "/code_state" + str(self.code_shape_p_q_list) )
-        pool = self.data
-        pattern_set = set()
-        for i in (pool.index):
-            # print(i)
-            pid = pool.at[i, 'pid']
-            code_shape = self.__get_code_shape_from_pid(pid, code_state)
+        code_state = load_obj( "code_state",  base_dir, "code_state" + str(self.code_shape_p_q_list))
+        pid_list = load_obj('pid', base_dir, "")
+        all_pattern_keys = {}
+        for code_shape_p_q in self.code_shape_p_q_list:
+            pattern_set = set()
             new_pattern_s = code_shape.keys()
-            pattern_set = atomic_add(new_pattern_s, pattern_set)
-        save_obj(pattern_set, "pattern_set", self.root_dir+"Datasets/data", "game_labels_" + str(415) + "/code_state" + str(self.code_shape_p_q_list))
+            for pid in pid_list:
+                code_shape = code_state.at[pid, "code_state" + str(code_shape_p_q)]
+                pattern_set = atomic_add(new_pattern_s, pattern_set)
+            all_pattern_keys["code_state" + str(code_shape_p_q)] = pattern_set
+        save_obj(all_pattern_keys, "pattern_set",  base_dir, "code_state" + str(self.code_shape_p_q_list))
 
 
+    #
+    # def __get_code_shape_from_pid(self, pid, code_state):
+    #     return code_state[pid]
 
-    def __get_code_shape_from_pid(self, pid, code_state):
-        return code_state[pid]
-
-    def save_x_y_to_hard_drive(self, baseline = False):
-        code_state = load_obj("code_state|0|414",
-                              "/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets/data/game_labels_" + str(
-                                  self.total) + "/code_state" +
-                              str(self.code_shape_p_q_list), "")
-        # action_name_s = ['keymove']
-        # action_name_s = ['jump']
-        # action_name_s = ['costopall']
-        action_name_s = ['cochangescore']
-        # action_name_s = ['keymove', 'jump', 'costopall', 'wrap', 'cochangescore', 'movetomouse', 'moveanimate']
+    def save_x_y_to_hard_drive(self, baseline = True):
+        code_state = load_obj("code_state", base_dir, "code_state" + str(self.code_shape_p_q_list))
+        action_name_s = ['keymove', 'jump', 'costopall', 'wrap', 'cochangescore', 'movetomouse', 'moveanimate']
 
         for action_name in tqdm(action_name_s):
             print("action_name: ", action_name)
             self.action_data = ActionData(code_state=code_state, game_label=self.data, action_name=action_name, code_shape_p_q_list=self.code_shape_p_q_list)
-            for test_size in tqdm([0.9, 3 / 4, 2 / 3, 1 / 2, 1 / 3]):
-            # for test_size in tqdm([0.9]):
+            for test_size in tqdm(test_size_list):
                 cv_total = int(max(1 / (1 - test_size), 1 / test_size))
                 for fold in tqdm(range(cv_total)):
                     if baseline:
-                        save_dir = root_dir + "Datasets/data/cv/test_size" + str(test_size) + "/fold" + str(
+                        save_dir = root_dir + "Datasets/data/SnapASTData/cv/test_size" + str(test_size) + "/fold" + str(
                             fold) + "/code_state" + str(self.code_shape_p_q_list) + "baseline"  + "/" + action_name
                     else:
-                        save_dir = root_dir + "Datasets/data/cv/test_size" + str(test_size)+ "/fold" + str(fold) + "/code_state" + str(self.code_shape_p_q_list) + "/" + action_name
+                        save_dir = root_dir + "Datasets/data/SnapASTData/cv/test_size" + str(test_size)+ "/fold" + str(fold) + "/code_state" + str(self.code_shape_p_q_list) + "/" + action_name
                     train_pid, test_pid = get_train_test_pid(test_size, fold)
                     self.action_data.save_x_y_train_test(train_pid, test_pid, save_dir, baseline)
 
@@ -184,10 +153,10 @@ class Dataset:
         for action_name in tqdm(action_name_s):
             print("action_name: ", action_name)
             if baseline:
-                save_dir = self.root_dir + "Datasets/data/" + "game_labels_" \
+                save_dir = self.root_dir + "Datasets/data/SnapASTData/" + "game_labels_" \
                            + str(self.total) + "/code_state" + str(self.code_shape_p_q_list) + "baseline" + "/" + action_name
             else:
-                save_dir = self.root_dir + "Datasets/data/" + "game_labels_" \
+                save_dir = self.root_dir + "Datasets/data/SnapASTData/" + "game_labels_" \
                            + str(self.total) + "/code_state" + str(self.code_shape_p_q_list) + "/" + action_name
 
             for model in tqdm(no_tuning_models):
@@ -200,10 +169,10 @@ class Dataset:
                     cv_total = int(max(1 / (1 - test_size), 1 / test_size))
                     for fold in range(cv_total):
                         if baseline:
-                            get_dir = root_dir + "Datasets/data/cv/test_size" + str(test_size) + "/fold" + str(
+                            get_dir = root_dir + "Datasets/data/SnapASTData/cv/test_size" + str(test_size) + "/fold" + str(
                                 fold) + "/code_state" + str(self.code_shape_p_q_list) + "baseline" + "/" + action_name
                         else:
-                            get_dir = root_dir + "Datasets/data/cv/test_size" + str(test_size) + "/fold" + str(
+                            get_dir = root_dir + "Datasets/data/SnapASTData/cv/test_size" + str(test_size) + "/fold" + str(
                                 fold) + "/code_state" + str(self.code_shape_p_q_list) + "/" + action_name
 
                         X_train, X_test, y_train, y_test = get_x_y_train_test(get_dir)

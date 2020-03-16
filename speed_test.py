@@ -14,8 +14,8 @@ root_dir = "/Users/wwang33/Documents/IJAIED20/CuratingExamples/"
 # for ... in ...:
 #
 #
-# pd1 = load_obj("/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets/data/game_labels_415/pickle_files/code_state[[1, 0]].pkl", "", "")
-# pd2 = load_obj("/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets/data/game_labels_415/pickle_files/code_state[[2, 0]].pkl","","")
-# pd3 = load_obj("/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets/data/game_labels_415/pickle_files/code_state[[3, 0]].pkl", "", "")
+# pd1 = load_obj("/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets/data/SnapASTData/game_labels_415/pickle_files/code_state[[1, 0]].pkl", "", "")
+# pd2 = load_obj("/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets/data/SnapASTData/game_labels_415/pickle_files/code_state[[2, 0]].pkl","","")
+# pd3 = load_obj("/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets/data/SnapASTData/game_labels_415/pickle_files/code_state[[3, 0]].pkl", "", "")
 #
 # pd1.set_index("pid")

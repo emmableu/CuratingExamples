@@ -6,6 +6,10 @@ import time
 import inspect
 
 root_dir = "/Users/wwang33/Documents/IJAIED20/CuratingExamples/"
+base_dir = root_dir + "Datasets/data/SnapASTData/Data_413/"
+test_size_list = [0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1]
+
+
 def save_pickle(obj, name, dir, sub_dir):
     if sub_dir:
         csv_dir = dir +"/"+ sub_dir
@@ -85,19 +89,6 @@ def df2list(df,body):
         body[column] = np.array(content)
     return body
 
-def get_json(pid):
-    import json
-    file_path = root_dir + "Datasets/data/game_raw_jsons/"
-    file_list = os.listdir(file_path)
-    for file_name in file_list:
-        with open(file_path + '/' + file_name, 'r') as project:  ##  "with" is Python's crash resistant file open
-            if file_name == str(pid) + ".json":
-                try:
-                    json_obj = json.load(project)
-                    return json_obj
-                except:
-                    print("could not find the json file to load!")
-                    return
 
 
 
@@ -106,30 +97,19 @@ def atom_mkdir(dir):
         os.makedirs(dir)
 
 
-
-#
-# d=d.set_index("pid")
-# d = d['codeshape_count_dict']
-# print(len(d))
-# save_pickle(d,  "code_state|" + str(0) + "|" + str(414), "/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets/data/game_labels_415/code_state[[3, 0]]", "")
-#
-
-
-
-
 def hard_drive_get_code_shape_from_pid(pid, code_shape_p_q_list):
     # start = time.time()
     code_shape = {}
     loop_total = [i[0] for i in code_shape_p_q_list]
     for i in loop_total:
-        folder =  "/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets/data/game_labels_415/code_state[[" + str(i) + ", 0]]/pickle_files/"
+        folder =  "/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets/data/SnapASTData/game_labels_415/code_state[[" + str(i) + ", 0]]/pickle_files/"
         file = folder +  "code_state|0|414.pkl"
         with open(file, 'rb') as f:
             pickle_load = pickle.load(f)
             d = (pickle_load)
         code_shape.update(d.loc[pid])
 
-    # folder4 =  "/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets/data/game_labels_415/code_state[[4, 0]]/pickle_files/"
+    # folder4 =  "/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets/data/SnapASTData/game_labels_415/code_state[[4, 0]]/pickle_files/"
     # series = pd.Series()
     # for file in os.listdir(folder4):
     #     if file == ".DS_Store":
@@ -147,17 +127,17 @@ def hard_drive_get_code_shape_from_pid(pid, code_shape_p_q_list):
     return code_shape
 
 def get_all_pid_s():
-    # start = time.time()
-    folder =  "/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets/data/game_labels_415/code_state[[1, 0]]/pickle_files/"
-    file = folder +  "code_state|0|414.pkl"
-    with open(file, 'rb') as f:
-        pickle_load = pickle.load(f)
-        d = (pickle_load)
-    all_pid_s = d.keys()
-    # print(all_pid_s)
-    # end = time.time()
-    # print("Time elapsed for: " + inspect.stack()[0][3] + " is: ", end - start, " seconds")
-    return all_pid_s
+    pid_s = []
+    file_path = root_dir + "/Datasets/data/SnapJSON_413"
+    file_list = os.listdir(file_path)
+    for file_name in file_list:
+        if file_name.endswith(".json"):
+            pid = file_name.split(".")[0]
+            pid_s.append(pid)
+    # print(len(pid_s))
+    assert len(pid_s) == 413, "pid length is not 413"
+    pid_s.sort()
+    save_obj(pid_s, "pid", base_dir, "")
 
 
 
@@ -168,34 +148,34 @@ import pandas as pd
 import pickle
 
 
-def generate_cv():
-    all_pid_s = get_all_pid_s()
-    for test_size in [0.9, 3/4, 2/3, 1/2, 1/3]:
+def generate_cv(all_pid_s):
+    # all_pid_s = get_all_pid_s()
+    pid_length = len(all_pid_s)
+    for test_size in test_size_list:
     # for test_size in [0.9]:
         cv_total = int(max(1/(1-test_size), 1/test_size))
         for fold in range(cv_total):
             if test_size <= 0.5:
-                len_test = int(test_size*415)
+                len_test = int(test_size*pid_length)
                 test_start = fold * len_test
                 test_end = test_start + len_test
-                test_pid = all_pid_s[test_start:test_end].to_list()
-                train_pid = all_pid_s[:test_start].to_list() + all_pid_s[test_end:].to_list()
-                save_obj(train_pid, "train_pid", root_dir, "Datasets/data/cv/test_size" + str(test_size) + "/fold" + str(fold))
-                save_obj(test_pid, "test_pid", root_dir, "Datasets/data/cv/test_size" + str(test_size) + "/fold" + str(fold))
+                test_pid = all_pid_s[test_start:test_end]
+                train_pid = all_pid_s[:test_start] + all_pid_s[test_end:]
+
             elif test_size > 0.5:
-                len_train = int((1-test_size)*415)
+                len_train = int((1-test_size)*pid_length)
                 train_start = fold * len_train
                 train_end = train_start + len_train
-                train_pid = all_pid_s[train_start:train_end].to_list()
-                test_pid = all_pid_s[:train_start].to_list() + all_pid_s[train_end:].to_list()
-                save_obj(train_pid, "train_pid", root_dir, "Datasets/data/cv/test_size" + str(test_size) + "/fold" + str(fold))
-                save_obj(test_pid, "test_pid", root_dir, "Datasets/data/cv/test_size" + str(test_size) + "/fold" + str(fold))
+                train_pid = all_pid_s[train_start:train_end]
+                test_pid = all_pid_s[:train_start] + all_pid_s[train_end:]
 
+            save_obj(train_pid, "train_pid", base_dir, "cv/test_size" + str(test_size) + "/fold" + str(fold))
+            save_obj(test_pid, "test_pid", base_dir, "cv/test_size" + str(test_size) + "/fold" + str(fold))
 
 
 def get_train_test_pid(test_size, fold):
-    train_pid = load_obj("train_pid", root_dir, "Datasets/data/cv/test_size" + str(test_size)+ "/fold" + str(fold))
-    test_pid = load_obj("test_pid", root_dir, "Datasets/data/cv/test_size" + str(test_size)+ "/fold" + str(fold))
+    train_pid = load_obj("train_pid", root_dir, "Datasets/data/SnapASTData/cv/test_size" + str(test_size)+ "/fold" + str(fold))
+    test_pid = load_obj("test_pid", root_dir, "Datasets/data/SnapASTData/cv/test_size" + str(test_size)+ "/fold" + str(fold))
     return train_pid, test_pid
 
 
@@ -210,10 +190,11 @@ def get_dict_average(dict_name, cv_total):
         dict_name[i] = dict_name[i] / cv_total
     return dict_name
 
-def atomic_add(new_pattern_s, old_pattern_set):
+def atomic_add(old_pattern_set, new_pattern_s):
     for pattern in new_pattern_s:
         old_pattern_set.add(pattern)
     return old_pattern_set
+
 
 def get_x_y_train_test(get_dir):
     X_train = load_obj("X_train", get_dir, "")
@@ -223,8 +204,8 @@ def get_x_y_train_test(get_dir):
     return X_train, X_test, y_train, y_test
 
 
-
-# generate_cv()
+# all_pid_s =     load_obj( "pid", base_dir, "")
+# generate_cv(all_pid_s)
 
 
 #
@@ -236,18 +217,24 @@ def get_x_y_train_test(get_dir):
 #     code_shape = get_code_shape_from_pid(pid)
 #     pid_code_shape[pid] = code_shape
 # code_state = pd.Series(pid_code_shape)
-# save_pickle(code_state, "code_state_all", root_dir, "Datasets/data/game_labels_415/code_state[[1, 0], [2, 0], [3, 0]]")
+# save_pickle(code_state, "code_state_all", root_dir, "Datasets/data/SnapASTData/game_labels_415/code_state[[1, 0], [2, 0], [3, 0]]")
 # end = time.time()
 # print("Time elapsed for: " + inspect.stack()[0][3] + " is: ", end - start, " seconds")
 
 #
-# code_state = load_obj("code_state_all", root_dir, "Datasets/data/game_labels_415/code_state[[1, 0], [2, 0], [3, 0]]")
+# code_state = load_obj("code_state_all", root_dir, "Datasets/data/SnapASTData/game_labels_415/code_state[[1, 0], [2, 0], [3, 0]]")
 # # print(code_state[104765718])
 
 
 # code_shape_p_q_list = [[1, 0], [2, 0], [3, 0]]
-# pattern_set = load_obj( "pattern_set", root_dir + "Datasets/data",
+# pattern_set = load_obj( "pattern_set", root_dir + "Datasets/data/SnapASTData",
 #          "game_labels_" + str(415) + "/code_state" + str(code_shape_p_q_list))
 # for i in pattern_set:
 #     if len(i.split("|")) == 1:
 #         print(i)
+
+# get_json()
+
+# get_all_pid_s()
+# all_pid_s = load_obj( "pid", base_dir, "")
+# generate_cv(all_pid_s)

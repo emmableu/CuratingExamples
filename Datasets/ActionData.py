@@ -12,8 +12,7 @@ class ActionData:
         self.action_name = action_name
         self.code_shape_p_q_list = code_shape_p_q_list
 
-    def memory_get_code_shape_from_pid(self,pid):
-        # start = time.time()
+    def memory_get_code_shape_from_pid(self,pid, code_shape_selected):
         return self.code_state[pid]
 
 
@@ -40,7 +39,7 @@ class ActionData:
 
 
     def get_pattern_key_from_pid(self, train_pid):
-        # code_state = load_obj( "code_state|0|414", self.root_dir+"Datasets/data", "game_labels_" + str(415) + "/code_state" + str(self.code_shape_p_q_list) )
+        # code_state = load_obj( "code_state|0|414", self.root_dir+"Datasets/data/SnapASTData", "game_labels_" + str(415) + "/code_state" + str(self.code_shape_p_q_list) )
         # pool = self.data
         pattern_set = set()
         for i in (train_pid):
@@ -54,7 +53,7 @@ class ActionData:
     def get_pattern_statistics(self, train_pid, baseline):
 
         if baseline:
-            pattern_set = load_obj("pattern_set", root_dir + "Datasets/data",
+            pattern_set = load_obj("pattern_set", root_dir + "Datasets/data/SnapASTData",
                                    "game_labels_" + str(415) + "/code_state" + str(self.code_shape_p_q_list))
             return pattern_set
         else:

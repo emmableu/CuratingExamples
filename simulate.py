@@ -63,7 +63,7 @@ def simulate_5_times_to_get_all(action_name,total, thres = 0, model = bernoulli_
     code_shape_p_q_list = [[1, 0], [2, 0], [3, 0], [4, 0], [5, 0], [6, 0], [7, 0], [8, 0], [9, 0]]
     allow_gap = True
     dataset = Dataset(total = 46, code_shape_p_q_list = code_shape_p_q_list, allow_gap = allow_gap)
-    code_state = load_obj("code_state" + str(dataset.code_shape_p_q_list), dataset.root_dir + "Datasets/data",
+    code_state = load_obj("code_state" + str(dataset.code_shape_p_q_list), dataset.root_dir + "Datasets/data/SnapASTData",
                           "game_labels_" + str(415))
 
 
@@ -100,7 +100,7 @@ def simulate_5_times_to_get_all(action_name,total, thres = 0, model = bernoulli_
                         read.code(id, read.body["label"][id])
         read.count = count
         save_pickle(all_simulation, '/all_simulation_' + label_name,
-                    "/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets/data/game_labels_" + str(415),
+                    "/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets/data/SnapASTData/game_labels_" + str(415),
                     'simulation_' + str(thres) + "_" + "all/no_pole")
 
 

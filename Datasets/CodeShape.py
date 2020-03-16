@@ -1,176 +1,138 @@
-import itertools
+import sys
 
-from anytree import Node, RenderTree
+sys.path.append("/Users/wwang33/Documents/ProgSnap2DataAnalysis/Datasets")
+from Dataset import *
+
+sys.path.append("/Users/wwang33/Documents/ProgSnap2DataAnalysis/Models")
 import json
 import copy
+from anytree import Node, RenderTree
+from tqdm import tqdm
 
-# with open('scratch.json') as j_file:
-#     json_data = json.load(j_file)
+# This class represents a directed graph using corresponding json code
+class CodeGraph:
+
+    # Constructor
+    def __init__(self, json_file, code_shape_p_q_list):
+        # default dictionary to store graph
+
+        def converting_trees(json_code, parent_node, order):
+            """Converting single json code to an AST tree.
+            Input:
+            json_code: tuple. json object. The json object of a snap program.
+            parent_node: Node. Parent node, used as parent in this recursion.
+            order: str. Stroring the current order of this node with other childrens.
+            """
+            # Record current node, children order.
+            node = Node(json_code['type'], parent=parent_node, order=order)
+
+            # If current json part doesn't have a child, return.
+            if not json_code.get('childrenOrder'):
+                return
+
+            # Recursion for every child under current node.
+            for child_order in json_code['childrenOrder']:
+                converting_trees(json_code['children'][child_order], node, child_order)
+
+        try:
+            with open(json_file) as json_file:
+                json_code = (json.load(json_file))
+            self.head = Node(json_code['type'])
+        except:
+            print("json.loads(code) error: ", json_file)
+            self.head = Node("no_code")
+            return
+
+        # Recursively construct AST tree.
+        for child_order in json_code['childrenOrder']:
+            converting_trees(json_code['children'][child_order], self.head, child_order)
+        # data = self.collect_all_pqgrams(code_shape_p_q_list)
+        # r = RenderTree(self.head)
+        # print(r)
+
+    def dfs_visit_node(self, node, p, q):
+        gram_list = ["empty"] * (p + q)
+        if not node:
+            return
+        node_to_parent = copy.deepcopy(node)
+        for parent_level in range(1, p):
+            if node_to_parent.parent:
+                gram_list[p - parent_level - 1] = node_to_parent.parent.name
+                node_to_parent = node_to_parent.parent.name
+        gram_list[p - 1] = node.name
+
+        if not node.children:
+            self.pqgram_set.add_pqgram(PQGram(p, q, gram_list))
+            return
+
+        if q != 0:
+            children_list = [child.name for child in node.children]
+            children_list = ["empty", "empty"] + children_list + ["empty", "empty"]
+            for i in range(len(children_list) - 2):
+                gram_list[-q:] = children_list[i:i + q]
+                pqgram = PQGram(p, q, gram_list)
+                self.pqgram_set.add_pqgram(pqgram)
+                # print("a pqgram is being added: ", pqgram.grams, "gramlist: ", gram_list)
+        elif q == 0:
+            pqgram = PQGram(p, q, gram_list)
+            self.pqgram_set.add_pqgram(pqgram)
+            # print("a pqgram is being added: ", pqgram.grams, "gramlist: ", gram_list)
+
+        for child in node.children:
+            self.dfs_visit_node(child, p, q)
+
+    def collect_all_pqgrams(self, code_shape_p_q_list):
+        data = {}
+        for p_q_list in code_shape_p_q_list:
+            self.pqgram_set = PQGramSet()
+            p, q = p_q_list[0], p_q_list[1]
+            self.dfs_visit_node(self.head, p, q)
+            for pqgram in (self.pqgram_set.pqgram_set):
+                pqgram_string = str(pqgram.count) + "|" + pqgram.grams
+                self.pqgram_set.pqgram_string_set.add(pqgram_string)
+            code_shape = {}
+            for pqgram in tqdm(self.pqgram_set.pqgram_set):
+                code_shape[pqgram.grams] = (pqgram.count)
+            data["code_state" + str(p_q_list)] = code_shape
+        return (data)
 
 
-def json2tree(json_file, root_name):
-    root = Node(root_name, opcode='targets')
-    node_map = {}
-    with open(json_file) as json_file:
-        data = json.load(json_file)
-        targets_obj = data['targets']
-        for target_obj in targets_obj:
-            opcode = 'stage' if target_obj['isStage'] is True else 'sprite'
-            target_node = Node(target_obj['name'], parent=root, opcode=opcode)
-            # node_map[target_obj['name']] = target_node
-            blocks = target_obj['blocks']
-            for key in blocks.keys():
-                block = blocks[key]
-                tmpBlkNode = Node(key, opcode=block['opcode'], childKey=block['next'], parentKey=block['parent'])
-                node_map[key] = tmpBlkNode
-                if block['parent'] is None:
-                    tmpBlkNode.parent = target_node
-            for key in blocks.keys():
-                nd = node_map[key]
-                if nd.childKey in node_map.keys():
-                    nd.children = [node_map[nd.childKey]]
-                if nd.parentKey in node_map.keys():
-                    nd.parent = node_map[nd.parentKey]
-    return root
-
-def json_data2tree(data, root_name):
-    root = Node(root_name, opcode='targets')
-    node_map = {}
-    targets_obj = data['targets']
-    for target_obj in targets_obj:
-        opcode = 'stage' if target_obj['isStage'] is True else 'sprite'
-        target_node = Node(target_obj['name'], parent=root, opcode=opcode)
-        # node_map[target_obj['name']] = target_node
-        blocks = target_obj['blocks']
-        for key in blocks.keys():
-            block = blocks[key]
-            ck = block.get('next')
-            pk = block.get('parent')
-            tmpBlkNode = Node(key, opcode=block['opcode'], childKey=ck, parentKey=pk)
-            node_map[key] = tmpBlkNode
-            if block.get('parent') is None:
-                tmpBlkNode.parent = target_node
-        for key in blocks.keys():
-            nd = node_map[key]
-            if nd.childKey in node_map:
-                nd.children = [node_map[nd.childKey]]
-            if nd.parentKey in node_map:
-                nd.parent = node_map[nd.parentKey]
-    return root
-
-
-class PQGram:
-    def __init__(self, p, q, node_list):
+class PQGram():
+    def __init__(self, p, q, gram_list):
         self.p = p
         self.q = q
-        self.string = "|".join(node_list)
+        self.grams = "|".join(gram_list)
         self.count = 1
 
-
-class PQGramSet:
+class PQGramSet():
     def __init__(self):
-        self.set = set()
-        self.string_set = set()
-
-    def add_pq_gram(self, new_pq_gram):
-        for pg in self.set:
-            if pg.string == new_pq_gram.string:
-                pg.count += 1
+        self.pqgram_set = set()
+        self.pqgram_string_set = set()
+    def add_pqgram(self, next_pqgram):
+        for existing_pqgram in self.pqgram_set:
+            if existing_pqgram.grams == next_pqgram.grams:
+                existing_pqgram.count += 1
                 return
-        self.set.add(new_pq_gram)
+        self.pqgram_set.add(next_pqgram)
 
 
-def dfs_visit_node(pq_gram_set, node, p, q):
-    gram_list = ["empty"] * (p + q)
-    if not node:
-        return
-    node_to_parent = copy.deepcopy(node)
-    for parent_level in range(1, p):
-        if node_to_parent.parent:
-            gram_list[p - parent_level - 1] = node_to_parent.parent.opcode
-            node_to_parent = node_to_parent.parent.opcode
-    gram_list[p - 1] = node.opcode
-
-    if not node.children:
-        pq_gram_set.add_pq_gram(PQGram(p, q, gram_list))
-        return
-    children_list = [child.opcode for child in node.children]
-    children_list = ["empty", "empty"] + children_list + ["empty", "empty"]
-    for i in range(len(children_list) - 2):
-        gram_list[-q:] = children_list[i:i + q]
-        new_pq_gram = PQGram(p, q, gram_list)
-        pq_gram_set.add_pq_gram(new_pq_gram)
-
-    for child in node.children:
-        dfs_visit_node(pq_gram_set, child, p, q)
-    return pq_gram_set
+def get_json():
+    file_path = root_dir + "Datasets/data/SnapJSON_413/"
+    file_list = os.listdir(file_path)
+    for file_name in file_list:
+        if file_name.endswith(".json"):
+            try:
+                CodeGraph(file_path + '/' + file_name, [[2,3], [2,1]])
+            except:
+                print("error: ", file_name)
 
 
-def get_code_shape(json_file, root_name, pair_list):
-    res_list = {}
-    root = json2tree(json_file, root_name)
-    for pair in pair_list:
-        tmp_set = PQGramSet()
-        dfs_visit_node(tmp_set, root, pair[0], pair[1])
-        for pq_gram in tmp_set.set:
-            res_list[pq_gram.string] = pq_gram.count
-    return res_list
+
+# json_file = "170315872.xml.json"
+# codegraph = CodeGraph("/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets/data/SnapJSON_413/104765718.xml.json", [[2,3], [2,1]])
+# for pqgram in (codegraph.pqgram_set.pqgram_set):
+#     print(pqgram.grams)
+#     print(pqgram.count)
 
 
-def get_code_shape_from_data(data, root_name, pair_list):
-    res_list = {}
-    root = json_data2tree(data, root_name)
-    for pair in pair_list:
-        tmp_set = PQGramSet()
-        dfs_visit_node(tmp_set, root, pair[0], pair[1])
-        for pq_gram in tmp_set.set:
-            res_list[pq_gram.string] = pq_gram.count
-    return res_list
-
-
-def get_all_path(res, stack, root):
-    if root is None:
-        return res
-    stack.append(root)
-    if not root.children:
-        res.append(copy.deepcopy(stack))
-    else:
-        for child in root.children:
-            get_all_path(res, stack, child)
-    stack.pop()
-    return res
-
-
-# helper functions for combination
-def backtrack(res, li, pa, n, idx):
-    if len(li) == n:
-        res.append(copy.deepcopy(li))
-        return
-    i = idx
-    while i <= n:
-        li.append(pa[i])
-        backtrack(res, li, pa, n, i+1)
-        li.pop()
-        i += 1
-
- # [[2, 0], [3, 0]]
-def combination(data, num_list):
-    node_res = {}
-    res = {}
-    root = json_data2tree(data, 'targets')
-    paths = get_all_path([], [], root)
-    # print(paths)
-    for n in num_list:
-        n = n[0]
-        for p in paths:
-            for c in itertools.combinations(p, n):
-                node_str = str(c)
-                opcode_str = '|'.join(x.opcode for x in list(c))
-                if node_str in node_res.keys():
-                    node_res[node_str] += 1
-                    res[opcode_str] += 1
-                else:
-                    node_res[node_str] = 1
-                    res[opcode_str] = 1
-    return res
-
+# get_json()

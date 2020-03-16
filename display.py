@@ -22,7 +22,7 @@ test_size_list = [0.9, 3 / 4, 2 / 3, 1 / 2, 1 / 3]
 
 
 def get_all_df(action_name, plot, test_size_list):
-    load_dir = root_dir + "Datasets/data/" + "game_labels_" \
+    load_dir = root_dir + "Datasets/data/SnapASTData/" + "game_labels_" \
                + str(total) + "/" + plot + "/" + action_name
     df = {}
     for i in test_size_list:

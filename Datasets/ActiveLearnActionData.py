@@ -133,7 +133,7 @@ class ActiveLearnActionData(object):
         return pattern_df
 
     def get_pattern_statistics(self, train_pid):
-        pattern_set = load_obj("pattern_set", root_dir + "Datasets/data",
+        pattern_set = load_obj("pattern_set", root_dir + "Datasets/data/SnapASTData",
                                "game_labels_" + str(415) + "/code_state" + str(self.code_shape_p_q_list))
         if self.baseline:
             return pattern_set

@@ -37,7 +37,7 @@ def plot_all(total, thres,training_method = "", specified_info = ""):
 
     for label_index, label_name in enumerate(label_name_s):
         all_simulation = load_obj( '/all_simulation_' + label_name,
-                    "/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets/data/game_labels_" + str(415),
+                    "/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets/data/SnapASTData/game_labels_" + str(415),
                     'simulation_' + str(thres) + "_" + "all/no_pole")
         game = all_simulation[0]
         total_pos = game.est_num
