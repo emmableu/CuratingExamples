@@ -43,8 +43,12 @@ class Model:
         self.confusion_matrix = confusion_matrix(y_test, y_pred)
         fpr, tpr, threshold = roc_curve(y_test, y_pred)
         roc_auc = auc(fpr, tpr)
-
-        tn, fp, fn, tp = self.confusion_matrix.ravel()
+        print(self.confusion_matrix)
+        try:
+            tn, fp, fn, tp = self.confusion_matrix.ravel()
+        except ValueError:
+            return {"tp": 0, "tn": 0, "fp": 0, "fn": 0, "accuracy": 0, "precision": 0, "recall": 0,
+                "f1": 0, "auc": 0}
         accuracy = (tp + tn) / (tp + tn + fp + fn)
         if tp == 0 and fp == 0 and fn == 0:
             precision = 1

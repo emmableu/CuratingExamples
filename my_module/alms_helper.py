@@ -6,10 +6,11 @@ from classifiers.Baseline import BaselineModel
 from classifiers.knn_classifiers.KNN import KNNModel
 from classifiers.lr_classifiers.LogisticRegression import LRModel
 import numpy as np
-from sklearn.model_selection import LeavePOut
+from sklearn.model_selection import LeavePOut, KFold, cross_val_predict, cross_validate
 import pandas as pd
 import math
 from sklearn.metrics import zero_one_loss, log_loss
+from sklearn.metrics import make_scorer, accuracy_score, precision_score, recall_score, f1_score
 
 baseline = BaselineModel()
 knn = KNNModel()
@@ -153,16 +154,32 @@ def get_VOI_tau_m_hat(v, m, y_val_orig, y_pred_series, model_name_list):
 
 
 
+def get_best_model(X, y, model_list):
+    model_p_dict = {}
+    for mdl in model_list:
+        y_pred = cross_val_predict(mdl.model, X, y, cv=3)
+        model_p_dict[mdl] = recall_score(y,y_pred, average='binary')
+    print(model_p_dict)
+    temp = max(model_p_dict.values())
+    best_model = [key for key in model_p_dict if model_p_dict[key] == temp][0]
+    return best_model
+
 
 model_list = [baseline, knn, lr]
 #
 #
 X_train_orig = np.arange(20).reshape(10,2)
-y_train_orig = np.array([0,1,0,1,0,0,1,1,1,0])
+y_train_orig = np.array([0,0,0,0,0,0,1,0,0,1])
 X_val_orig = np.arange(20).reshape(10,2)
-y_val_orig = np.array([0,1,0,1,0,0,1,1,1,0])
-voi = get_VOI(X_train_orig, X_val_orig, y_train_orig, y_val_orig, model_list)
-print(voi)
+y_val_orig = np.array([1,1,1,1,1,1,1,1,1,1])
+# voi = get_VOI(X_train_orig, X_val_orig, y_train_orig, y_val_orig, model_list)
+#
+#
+# best_model = get_best_model(X_train_orig, y_train_orig, model_list)
+# print(best_model)
+# print(voi)
+
+
 
 
 

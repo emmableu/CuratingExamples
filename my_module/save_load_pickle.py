@@ -7,7 +7,7 @@ import inspect
 
 root_dir = "/Users/wwang33/Documents/IJAIED20/CuratingExamples/"
 base_dir = root_dir + "Datasets/data/SnapASTData/Data_413/"
-test_size_list = [0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1]
+test_size_list = [0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0]
 
 
 def save_pickle(obj, name, dir, sub_dir):
@@ -153,7 +153,10 @@ def generate_cv(all_pid_s):
     pid_length = len(all_pid_s)
     for test_size in test_size_list:
     # for test_size in [0.9]:
-        cv_total = int(max(1/(1-test_size), 1/test_size))
+        if test_size == 0:
+            cv_total = 1
+        else:
+            cv_total = int(max(1/(1-test_size), 1/test_size))
         for fold in range(cv_total):
             if test_size <= 0.5:
                 len_test = int(test_size*pid_length)
@@ -174,8 +177,8 @@ def generate_cv(all_pid_s):
 
 
 def get_train_test_pid(test_size, fold):
-    train_pid = load_obj("train_pid", root_dir, "Datasets/data/SnapASTData/cv/test_size" + str(test_size)+ "/fold" + str(fold))
-    test_pid = load_obj("test_pid", root_dir, "Datasets/data/SnapASTData/cv/test_size" + str(test_size)+ "/fold" + str(fold))
+    train_pid = load_obj("train_pid", base_dir, "/cv/test_size" + str(test_size)+ "/fold" + str(fold))
+    test_pid = load_obj("test_pid", base_dir, "/cv/test_size" + str(test_size)+ "/fold" + str(fold))
     return train_pid, test_pid
 
 
@@ -236,5 +239,5 @@ def get_x_y_train_test(get_dir):
 # get_json()
 
 # get_all_pid_s()
-# all_pid_s = load_obj( "pid", base_dir, "")
-# generate_cv(all_pid_s)
+all_pid_s = load_obj( "pid", base_dir, "")
+generate_cv(all_pid_s)

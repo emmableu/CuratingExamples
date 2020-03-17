@@ -11,11 +11,16 @@ class ActionData:
         self.game_label = game_label
         self.action_name = action_name
         self.selected_p_q_list = selected_p_q_list
+        self.pid_list = load_obj('pid', base_dir, "")
 
     def memory_get_code_shape_from_pid(self,pid):
         code_shape_dict = {}
+        # print(self.code_state.loc['329266361'])
         for p_q in self.selected_p_q_list:
-            code_shape_dict.update(self.code_state.at[pid, 'code_state'+ str(p_q)])
+            try:
+                code_shape_dict.update(self.code_state.at[str(pid), 'code_state'+ str(p_q)])
+            except KeyError:
+                print(pid, "keyerror!")
         return code_shape_dict
 
     def __get_pattern_df(self, pattern, train_pid):
@@ -54,9 +59,10 @@ class ActionData:
     def get_pattern_statistics(self, train_pid, baseline):
 
         if baseline:
-            pattern_set = load_obj("pattern_set", root_dir + "Datasets/data/SnapASTData",
-                                   "game_labels_" + str(415) + "/code_state" + str(self.code_shape_p_q_list))
-            return pattern_set
+            pattern_set = load_obj("pattern_set", base_dir,
+                                    "code_state" + str(self.selected_p_q_list))
+            print("pattern_set", pattern_set)
+            return pattern_set['code_state' + str(self.selected_p_q_list[0])]
         else:
             pattern_set = self.get_pattern_key_from_pid(train_pid)
         significant_patterns = []
@@ -74,18 +80,18 @@ class ActionData:
         return significant_patterns
 
 
-    def save_x_y_train_test(self,train_pid, test_pid, save_dir,baseline = False):
+    def save_x_y_train_test(self,train_pid, test_pid, save_dir,baseline = True):
         significant_patterns = self.get_pattern_statistics(train_pid, baseline)
         save_obj(significant_patterns, "significant_patterns", save_dir, "")
         num_patterns = len(significant_patterns)
         train_df = self.game_label[self.game_label.pid.isin(train_pid)].reset_index(drop = True)
         test_df = self.game_label[self.game_label.pid.isin(test_pid)].reset_index(drop = True)
-
+        # print("train_df: ", train_df)
         def get_xy(df):
             x = np.zeros((len(df.index), num_patterns))
             y = np.zeros(len(df.index))
             for game_index, i in enumerate(df.index):
-                pid = self.game_label.at[i, 'pid']
+                pid = df.at[i, 'pid']
                 code_shape = self.memory_get_code_shape_from_pid(pid)
                 for pattern_index, p in enumerate(significant_patterns):
                     try:
@@ -93,7 +99,7 @@ class ActionData:
                     except KeyError:
                         occurance = 0
                     x[game_index][pattern_index] = occurance
-                if self.game_label.at[i, self.action_name]:
+                if df.at[i, self.action_name]:
                     y[game_index] = 1
                 else:
                     y[game_index] = 0

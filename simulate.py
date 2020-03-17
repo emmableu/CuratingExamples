@@ -50,6 +50,11 @@ no_tuning_models = [baseline, knn, lr, svm_c, svm_linear, dt, adaboost, bagging,
                     bernoulli_nb, multi_nb, complement_nb, mlp]
 
 
+
+
+# todo: change to simply: similate(X, y), input X,y and get the ActiveLearnActionData object for 1 iteration
+
+
 #
 # def alms_simulate():
 #

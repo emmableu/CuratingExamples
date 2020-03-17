@@ -3,36 +3,18 @@ try:
     import cPickle as pickle
 except:
     import pickle
-from pdb import set_trace
-import numpy as np
-from sklearn.feature_extraction.text import TfidfVectorizer
-import csv
-from collections import Counter
-from sklearn import svm
-import matplotlib.pyplot as plt
-import time
-import os
-import pandas as pd
-import numpy as np
-from sklearn.manifold import TSNE
 import sys
 sys.path.append("/Users/wwang33/Documents/IJAIED20/CuratingExamples/my_module")
-from Test import *
-import pandas as pd
 import sys
 sys.path.append("/Users/wwang33/Documents/IJAIED20/CuratingExamples/my_module")
-from save_load_pickle import *
 from alms_helper import *
-import pandas as pd
-from CodeShape import *
-from Test import *
 from ActionData import *
 import numpy as np
+from collections import Counter
+
 from sklearn.model_selection import train_test_split
 from tqdm import tqdm
 
-
-import pandas as pd
 import warnings
 import sklearn
 from classifiers.Baseline import BaselineModel
@@ -70,7 +52,7 @@ complement_nb = ComplementNBModel()
 mlp = MLPModel()
 
 # Removed baseline from models in case baseline result changes
-no_tuning_models = [baseline, knn, lr, svm_c, svm_nu, svm_linear, dt, adaboost, bagging, rf, gaussian_nb,
+model_list = [baseline, knn, lr, svm_c, svm_nu, svm_linear, dt, adaboost, bagging, rf, gaussian_nb,
                     bernoulli_nb, multi_nb, complement_nb, mlp]
 
 root_dir = "/Users/wwang33/Documents/IJAIED20/CuratingExamples/"
@@ -91,23 +73,138 @@ class ActiveLearnActionData(object):
         self.atleast = 3
         self.code_shape_p_q_list = code_shape_p_q_list
         self.baseline = True
+        self.selected_p_q_list = [[1, 0]]
 
 
 
     def get_body(self, game_label):
         body = pd.DataFrame(columns=['pid', 'label'])
-        for i in game_label.index:
-            pid = game_label.at[i, 'pid']
+        pid_list = load_obj('pid', base_dir, "")
+        game_label = pd.read_csv(base_dir + "/game_label_415.csv", index_col= ['pid'])
+        for pid in pid_list:
             new_row = {
                 'pid': pid,
-                'label': ('yes' if game_label.at[i, self.action_name] == True else 'no'),
+                'label': (1 if game_label.at[pid, self.action_name] == True else 0),
             }
             body.loc[len(body)] = new_row
-        n = len(game_label)
+        n = len(pid_list)
         body["code"] = ["undetermined"] * n
         body["time"] = [0] * n
         body["fixed"] = [0] * n
         return body
+
+    def get_numbers(self):
+        total = len(self.body["code"]) - self.last_pos - self.last_neg
+        pos = Counter(self.body["code"])["yes"] - self.last_pos
+        neg = Counter(self.body["code"])["no"] - self.last_neg
+        try:
+            tmp=self.record['x'][-1]
+        except:
+            tmp=-1
+        if int(pos+neg)>tmp:
+            self.record['x'].append(int(pos+neg))
+            self.record['pos'].append(int(pos))
+        self.pool = np.where(np.array(self.body['code']) == "undetermined")[0]
+        self.labeled = list(set(range(len(self.body['code']))) - set(self.pool))
+        return pos, neg, total
+
+    def get_opposite(self, l, ind):
+        opposite_list = []
+        for i, e in enumerate(l):
+            if i in ind:
+                continue
+            else:
+                opposite_list.append(e)
+        return opposite_list
+
+    def train(self, step):
+        poses = np.where(np.array(self.body['code']) == "yes")[0]
+        negs = np.where(np.array(self.body['code']) == "no")[0]
+        left = poses
+        decayed = list(left) + list(negs)
+        unlabeled = np.where(np.array(self.body['code']) == "undetermined")[0]
+        try:
+            unlabeled = np.random.choice(unlabeled, size=np.max((len(decayed)//2, len(left), self.atleast)),
+                                     replace=False)
+        except:
+            pass
+
+        sample = list(decayed) + list(unlabeled)
+
+        train_pid = self.body['pid'][sample].to_list()
+        print("train_pid: ", train_pid)
+        test_pid = self.get_opposite(self.body['pid'], sample)
+        print("test_pid:", test_pid)
+
+        all_X, all_y, X_train, X_test, y_train, y_test = self.get_x_y_train_test(train_pid, test_pid)
+        print("y_train: ", y_train)
+        best_model = get_best_model(X,y, model_list)
+        current_model = best_model.model
+        current_model.fit(X_train, y_train)
+
+        uncertain_id, uncertain_prob = self.uncertain(current_model, step, all_X)
+        certain_id, certain_prob = self.certain(current_model, step, all_X)
+        # #
+        # positive_id = self.get_positive_id()
+        # # TODO: finish this get_positive_ID FUNCTION to get the positive id corresponding to X_val, y_val
+        # # TODO: find all the positive_id
+        # # TODO: use VOI calculation to use the one we need
+        # return candidate_id
+
+        return uncertain_id, uncertain_prob, certain_id, certain_prob
+
+    ## Get certain ##
+    def certain(self,clf, step, all_X):
+        if list(clf.classes_) == ['no']:
+            print("attention, all classes are no")
+
+            return self.random(step), [0.001]*step
+        print( list(clf.classes_))
+        pos_at = list(clf.classes_).index("yes")
+
+        if len(self.pool)==0:
+            return [],[]
+        prob = clf.predict_proba(all_X[self.pool])[:,pos_at]
+        order = np.argsort(prob)[::-1][:step]
+
+        return np.array(self.pool)[order],np.array(prob)[order]
+
+    ## Get uncertain ##
+    def uncertain(self,clf, step, all_X):
+        # print( list(clf.classes_))
+        if list(clf.classes_) == ['no']:
+            return self.random(step), [0.001]*step
+        pos_at = list(clf.classes_).index("yes")
+
+        if len(self.pool)==0:
+            return [],[]
+        prob = clf.predict_proba(all_X[self.pool])[:, pos_at]
+        train_dist = clf.decision_function(all_X[self.pool])
+        order = np.argsort(np.abs(train_dist))[:step]  ## uncertainty sampling by distance to decision plane
+        return np.array(self.pool)[order], np.array(prob)[order]
+
+    ## Get random ##
+    def random(self, step):
+        return np.random.choice(self.pool,size=np.min((step,len(self.pool))),replace=False)
+
+
+    def start_as_1_pos(self):
+        r = self.random(10)
+        while True:
+            for ele in r:
+                if self.body.label[ele] == 'yes':
+                    return [ele]
+            r = self.random(step= 10)
+
+
+
+    ## Code candidate studies ##
+    def code(self,id,label):
+        if self.body['code'][id] == label:
+            self.body['fixed'][id] = 1
+        self.body["code"][id] = label
+        self.body["time"][id] = time.time()
+
 
     def __get_pattern_df(self, pattern, train_pid):
         pool = self.body[self.body.pid.isin(train_pid)].reset_index(drop=True)
@@ -132,9 +229,8 @@ class ActiveLearnActionData(object):
             pattern_df.loc[len(pattern_df)] = new_row
         return pattern_df
 
-    def get_pattern_statistics(self, train_pid):
-        pattern_set = load_obj("pattern_set", root_dir + "Datasets/data/SnapASTData",
-                               "game_labels_" + str(415) + "/code_state" + str(self.code_shape_p_q_list))
+    def get_pattern_statistics(self, selected_p_q_list):
+        pattern_set = load_obj("pattern_set", base_dir + "/code_state" + str(self.selected_p_q_list))
         if self.baseline:
             return pattern_set
         significant_patterns = []
@@ -182,137 +278,3 @@ class ActiveLearnActionData(object):
         all_X, all_y = get_xy(self.body)
 
         return all_X, all_y, X_train, X_test, y_train, y_test
-
-
-
-
-    def get_numbers(self):
-        total = len(self.body["code"]) - self.last_pos - self.last_neg
-        pos = Counter(self.body["code"])["yes"] - self.last_pos
-        neg = Counter(self.body["code"])["no"] - self.last_neg
-        try:
-            tmp=self.record['x'][-1]
-        except:
-            tmp=-1
-        if int(pos+neg)>tmp:
-            self.record['x'].append(int(pos+neg))
-            self.record['pos'].append(int(pos))
-        self.pool = np.where(np.array(self.body['code']) == "undetermined")[0]
-        self.labeled = list(set(range(len(self.body['code']))) - set(self.pool))
-        return pos, neg, total
-
-    def get_opposite(self, l, ind):
-        opposite_list = []
-        for i, e in enumerate(l):
-            if i in ind:
-                continue
-            else:
-                opposite_list.append(e)
-        return opposite_list
-
-    def no_pole_train(self, step, model):
-        poses = np.where(np.array(self.body['code']) == "yes")[0]
-        negs = np.where(np.array(self.body['code']) == "no")[0]
-        left = poses
-        decayed = list(left) + list(negs)
-        unlabeled = np.where(np.array(self.body['code']) == "undetermined")[0]
-        try:
-            unlabeled = np.random.choice(unlabeled, size=np.max((len(decayed)//2, len(left), self.atleast)),
-                                     replace=False)
-        except:
-            pass
-
-        sample = list(decayed) + list(unlabeled)
-
-        train_pid = self.body['pid'][sample].to_list()
-        print("train_pid: ", train_pid)
-        test_pid = self.get_opposite(self.body['pid'], sample)
-        print("test_pid:", test_pid)
-
-        all_X, all_y, X_train, X_test, y_train, y_test = self.get_x_y_train_test(train_pid, test_pid)
-        print("y_train: ", y_train)
-        model.fit(X_train, y_train)
-
-        uncertain_id, uncertain_prob = self.uncertain(model, step, all_X)
-        certain_id, certain_prob = self.certain(model, step, all_X)
-
-        return uncertain_id, uncertain_prob, certain_id, certain_prob
-
-
-
-
-
-    def alms_train(self, step, model):
-        '''
-        get X_train, y_train,
-        train all models on tau_t, compute P_t(M)
-        for all x, y that belong to P:
-            compute x's estimated label y
-            E(VOI) = computeVOI(t,v)
-            E(VOI)model = computeVOI(T,V,x)
-        '''
-        model.fit(X_train, y_train)
-
-        uncertain_id, uncertain_prob = self.uncertain(model, step, all_X)
-        certain_id, certain_prob = self.certain(model, step, all_X)
-
-
-
-
-    ## Get certain ##
-    def certain(self,clf, step, all_X):
-        if list(clf.classes_) == ['no']:
-            print("attention, all classes are no")
-
-            return self.random(step), [0.001]*step
-        print( list(clf.classes_))
-        pos_at = list(clf.classes_).index("yes")
-
-        if len(self.pool)==0:
-            return [],[]
-        prob = clf.predict_proba(all_X[self.pool])[:,pos_at]
-        order = np.argsort(prob)[::-1][:step]
-
-        return np.array(self.pool)[order],np.array(prob)[order]
-
-    ## Get uncertain ##
-    def uncertain(self,clf, step, all_X):
-        # print( list(clf.classes_))
-        if list(clf.classes_) == ['no']:
-            return self.random(step), [0.001]*step
-        pos_at = list(clf.classes_).index("yes")
-
-        if len(self.pool)==0:
-            return [],[]
-        prob = clf.predict_proba(all_X[self.pool])[:, pos_at]
-        # print("all_X: ", all_X)
-        # print("all_X[self.pool]: ", all_X[self.pool])
-        # print("clf.predict_proba(all_X[self.pool]): ", clf.predict_proba(all_X[self.pool]))
-        # print(("clf.predict_proba(all_X[self.pool])[:, pos_at] : ", clf.predict_proba(all_X[self.pool])[:, pos_at]))
-        # print(prob)
-        train_dist = clf.decision_function(all_X[self.pool])
-        order = np.argsort(np.abs(train_dist))[:step]  ## uncertainty sampling by distance to decision plane
-        return np.array(self.pool)[order], np.array(prob)[order]
-
-    ## Get random ##
-    def random(self, step):
-        return np.random.choice(self.pool,size=np.min((step,len(self.pool))),replace=False)
-
-
-    def start_as_1_pos(self):
-        r = self.random(10)
-        while True:
-            for ele in r:
-                if self.body.label[ele] == 'yes':
-                    return [ele]
-            r = self.random(step= 10)
-
-
-
-    ## Code candidate studies ##
-    def code(self,id,label):
-        if self.body['code'][id] == label:
-            self.body['fixed'][id] = 1
-        self.body["code"][id] = label
-        self.body["time"][id] = time.time()
-

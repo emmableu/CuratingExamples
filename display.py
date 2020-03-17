@@ -16,16 +16,14 @@ action_name_s = [ 'cochangescore']
 type_list = ['Baseline','KNN','LR','C-Support SVC','Linear-Support SVC','DT','AdaBoost',
         'BaggingClassifier','RandomForest','Gaussian NB','Bernoulli NB','Multinomial NB','Complement NB', 'MLP']
 
-plot_list  = [ 'code_state[[1, 0]]baseline', 'code_state[[1, 0]]','code_state[[1, 0], [2, 0], [3, 0]]baseline']
-# plot_list  = ['code_state[[1, 0]]baseline']
-test_size_list = [0.9, 3 / 4, 2 / 3, 1 / 2, 1 / 3]
+# plot_list  = [ 'code_state[[1, 0]]baseline', 'code_state[[1, 0]]','code_state[[1, 0], [2, 0], [3, 0]]baseline']
+plot_list  = ['code_state[[1, 0]]baseline']
 
 
-def get_all_df(action_name, plot, test_size_list):
-    load_dir = root_dir + "Datasets/data/SnapASTData/" + "game_labels_" \
-               + str(total) + "/" + plot + "/" + action_name
+def get_all_df(action_name, plot):
+    load_dir = base_dir + "/" + plot + "/result/" + action_name
     df = {}
-    for i in test_size_list:
+    for i in test_size_list[:-1]:
         x = 1 - i
         df[x] = load_obj("results_test_size" + str(i), load_dir, "")
     return df
@@ -36,7 +34,7 @@ def get_all_df(action_name, plot, test_size_list):
 
 
 def plot(action_name):
-    x_axis = [1 - i for i in test_size_list]
+    x_axis = [1 - i for i in test_size_list[:-1]]
     color_s = [i for i in mcolors.TABLEAU_COLORS.keys()] + ['blue', 'blueviolet', 'brown', 'burlywood', 'cadetblue',
                                                             'chartreuse', 'chocolate']
     font = {'family': 'normal',
@@ -50,7 +48,7 @@ def plot(action_name):
 
     plt.rcParams.update(paras)
     for column,plot in enumerate(plot_list):
-        all_df = get_all_df(action_name, plot, test_size_list)
+        all_df = get_all_df(action_name, plot)
         for i, type in enumerate(type_list):
             y_axis = []
             for x in x_axis:
