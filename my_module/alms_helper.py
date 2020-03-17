@@ -6,10 +6,11 @@ from classifiers.Baseline import BaselineModel
 from classifiers.knn_classifiers.KNN import KNNModel
 from classifiers.lr_classifiers.LogisticRegression import LRModel
 import numpy as np
-from sklearn.model_selection import LeavePOut, KFold, cross_val_predict, cross_validate
+from sklearn.model_selection import LeavePOut, KFold, cross_val_predict, cross_validate, LeaveOneOut
 import pandas as pd
 import math
 from sklearn.metrics import zero_one_loss, log_loss
+from collections import Counter
 from sklearn.metrics import make_scorer, accuracy_score, precision_score, recall_score, f1_score
 
 baseline = BaselineModel()
@@ -26,8 +27,11 @@ lr = LRModel()
 
 
 
-def get_VOI(X_train_orig, X_val_orig, y_train_orig, y_val_orig, model_list):
-
+def get_VOI(train_ids, validation_ids, X, y, model_list):
+    X_train_orig = X[train_ids]
+    X_val_orig = X[validation_ids]
+    y_train_orig  = y[train_ids]
+    y_val_orig = y[validation_ids]
     v = len(y_val_orig)
     m = len(model_list)
     model_name_list = [model.name for model in model_list]
@@ -84,7 +88,7 @@ def get_error(j, i, y_val_orig, y_pred_series, v, model_name_list):
         compared.append(y_pred_series[(model_name_list[j], p_validation_index, i)])
     assert len(compared) == v-1, "length is not v-1!"
     print("compared: ", compared)
-    error = zero_one_loss([y_val_orig[i]]*(v-1), compared, normalize=True)
+    error = recall_error(compared)
     print("error: ", error)
     return error
 
@@ -99,7 +103,7 @@ def get_all_model_sum_exp_error(i,y_val_orig, y_pred_series, v, model_name_list)
                 continue
             compared.append(y_pred_series[(j, trained_holdout_index, i)])
         print("compared: ", compared)
-        error = zero_one_loss([y_val_orig[i]]*(v-1), compared, normalize=True)
+        error = recall_error(compared)
         sum_exp_error += math.exp(error)
     return sum_exp_error
 
@@ -154,15 +158,29 @@ def get_VOI_tau_m_hat(v, m, y_val_orig, y_pred_series, model_name_list):
 
 
 
-def get_best_model(X, y, model_list):
-    model_p_dict = {}
-    for mdl in model_list:
-        y_pred = cross_val_predict(mdl.model, X, y, cv=3)
-        model_p_dict[mdl] = recall_score(y,y_pred, average='binary')
-    print(model_p_dict)
-    temp = max(model_p_dict.values())
-    best_model = [key for key in model_p_dict if model_p_dict[key] == temp][0]
-    return best_model
+def get_model_recall(train_ids, validation_ids, X, y, model_list):
+    X_train_orig = X[train_ids]
+    X_val_orig = X[validation_ids]
+    y_train_orig  = y[train_ids]
+    y_val_orig = y[validation_ids]
+    l1o = LeaveOneOut()
+    l1o.get_n_splits(X_val_orig)
+    actual_pos = Counter(y_val_orig)[1]
+    recall_dict = {}
+    for mod in model_list:
+        tp = 0
+        for train_index, val_index in l1o.split(X_val_orig):
+            X_train, X_val = np.append(X_train_orig, X_val_orig[train_index], axis=0), X_val_orig[val_index]
+            y_train, y_val = np.append(y_train_orig, y_val_orig[train_index], axis=0), y_val_orig[val_index]
+            print(X_train)
+            print(y_train)
+            mod.model.fit(X_train, y_train)
+            y_pred = mod.model.predict(X_val)
+            if y_pred == y_val == 1:
+                tp += 1
+        recall_dict[mod] = tp/actual_pos
+
+    return recall_dict
 
 
 model_list = [baseline, knn, lr]
@@ -185,10 +203,19 @@ y_val_orig = np.array([1,1,1,1,1,1,1,1,1,1])
 
 
 
-
-
-
-
+# from sklearn.model_selection import StratifiedKFold
+# X = np.array([[1, 2], [3, 4], [1, 2], [3, 4], [1, 2], [3, 4]])
+# y = np.array([0, 0, 1, 1, 0, 0])
+# skf = StratifiedKFold(n_splits=3)
+# skf.get_n_splits(X, y)
+#
+# print(skf)
+#
+# for train_index, test_index in skf.split(X, y):
+#     print("TRAIN:", train_index, "TEST:", test_index)
+#     X_train, X_test = X[train_index], X[test_index]
+#     y_train, y_test = y[train_index], y[test_index]
+#
 
 
 
@@ -201,3 +228,7 @@ y_val_orig = np.array([1,1,1,1,1,1,1,1,1,1])
 #         self.y_pred = [(-1)]*len(y)
 #         self.pred_time = [-1]*len(y)
 #         self.model_list = model_list
+
+
+def recall_error(compared):
+    return(Counter(compared)[0]/len(compared))

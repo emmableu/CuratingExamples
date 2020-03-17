@@ -40,8 +40,8 @@ def plot(action_name):
     font = {'family': 'normal',
             'weight': 'bold',
             'size': 14}
-    fig = plt.figure(figsize=(36, 18))
-    gs = fig.add_gridspec(1, 3)
+    fig = plt.figure(figsize=(12, 12))
+    gs = fig.add_gridspec(1, 1)
     plt.rc('font', **font)
     paras = {'lines.linewidth': 5, 'legend.fontsize': 20, 'axes.labelsize': 30, 'legend.frameon': False,
              'figure.autolayout': True, 'figure.figsize': (16, 8)}
@@ -52,7 +52,7 @@ def plot(action_name):
         for i, type in enumerate(type_list):
             y_axis = []
             for x in x_axis:
-                y_axis.append(all_df[x].recall[type])
+                y_axis.append(all_df[x].auc[type])
             ax = fig.add_subplot(gs[0, column])
             plt.plot(x_axis, y_axis, marker='o', markerfacecolor=color_s[i],
                      markersize=9,

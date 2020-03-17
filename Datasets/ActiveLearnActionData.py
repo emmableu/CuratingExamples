@@ -11,7 +11,7 @@ from alms_helper import *
 from ActionData import *
 import numpy as np
 from collections import Counter
-
+import operator
 from sklearn.model_selection import train_test_split
 from tqdm import tqdm
 
@@ -75,7 +75,7 @@ class ActiveLearnActionData(object):
     def get_body(self):
         body = pd.DataFrame(columns=['X', 'label'])
         for i in range(len(self.y)):
-            body.loc[i] = {"X": self.X[i], 'label': "yes" if int(self.y[i]) == 1 else "no"}
+            body.loc[i] = {"X": self.X[i], 'label': int(self.y[i])}
         n = len(self.y)
         body["code"] = ["undetermined"] * n
         body["time"] = [0] * n
@@ -84,8 +84,8 @@ class ActiveLearnActionData(object):
 
     def get_numbers(self):
         total = len(self.body["code"]) - self.last_pos - self.last_neg
-        pos = Counter(self.body["code"])["yes"] - self.last_pos
-        neg = Counter(self.body["code"])["no"] - self.last_neg
+        pos = Counter(self.body["code"])[1] - self.last_pos
+        neg = Counter(self.body["code"])[0] - self.last_neg
         try:
             tmp=self.record['x'][-1]
         except:
@@ -97,43 +97,48 @@ class ActiveLearnActionData(object):
         self.labeled = list(set(range(len(self.body['code']))) - set(self.pool))
         return pos, neg, total
 
-    def get_opposite(self, l, ind):
-        opposite_list = []
-        for i, e in enumerate(l):
-            if i in ind:
-                continue
-            else:
-                opposite_list.append(e)
-        return opposite_list
+
 
     def train(self, step):
         print("--------------train session---------")
-        poses = np.where(np.array(self.body['code']) == "yes")[0]
-        negs = np.where(np.array(self.body['code']) == "no")[0]
-        left = poses
-        decayed = list(left) + list(negs)
+        poses = np.where(np.array(self.body['code']) == 1)[0]
+        negs = np.where(np.array(self.body['code']) == 0)[0]
+        validation_ids = list(poses) + list(negs)
+
         unlabeled = np.where(np.array(self.body['code']) == "undetermined")[0]
+        print("poses: ", poses)
+
         try:
-            unlabeled = np.random.choice(unlabeled, size=np.max((len(decayed)//2, len(left), self.atleast)),
-                                     replace=False)
+            unlabeled_train = np.random.choice(unlabeled, size=len(poses))
+            train_ids1 = list(poses) + list(negs) + list(unlabeled_train)
+
         except:
-            pass
+            train_ids1 = list(poses) + list(negs)
 
-        sample = list(decayed) + list(unlabeled)
+        if len(poses)==1:
+            best_model = bernoulli_nb
+        else:
+            model_recall = get_model_recall(train_ids1, validation_ids, self.X, self.y, model_list)
+            print(model_recall)
+            best_model = max(model_recall.items(), key=operator.itemgetter(1))[0]
 
-        train_pid = self.body['X'][sample].to_list()
-        # print("train_pid: ", train_pid)
-        test_pid = self.get_opposite(self.body['X'], sample)
-        # print("test_pid:", test_pid)
-
-        # all_X, all_y, X_train, X_test, y_train, y_test = self.get_x_y_train_test(train_pid, test_pid)
-        # print("y_train: ", y_train)
-        best_model = get_best_model(self.X, self.y, model_list)
         current_model = best_model.model
-        current_model.fit(self.X, self.y)
+        current_model.fit(self.X[validation_ids], self.y[validation_ids])
+        rest_data_ids = self.get_opposite(range(len(self.y)), validation_ids)
+        # pos_at = list(current_model.classes_).index(1)
+        # prob = current_model.predict_proba(self.X[rest_data_ids])[:, pos_at]
+        # prediction = current_model.predict(self.X[rest_data_ids])
+        # print('prediction', prediction)
+        candidate_id_voi_dict = {}
+        for candidate_id  in rest_data_ids:
+            train_ids2 = list([candidate_id]) + list(train_ids1)
+            validation_ids2 = list(poses)
+            voi = get_VOI(train_ids2, validation_ids2, self.X, self.y, model_list)
+            candidate_id_voi_dict[candidate_id] = voi
+        print("candidate_id_voi_dict: ", candidate_id_voi_dict)
 
-        uncertain_id, uncertain_prob = self.uncertain(current_model, step, self.X)
-        certain_id, certain_prob = self.certain(current_model, step, self.X)
+        # uncertain_id, uncertain_prob = self.uncertain(current_model, step, self.X)
+        # certain_id, certain_prob = self.certain(current_model, step, self.X)
         # #
         # positive_id = self.get_positive_id()
         # # TODO: finish this get_positive_ID FUNCTION to get the positive id corresponding to X_val, y_val
@@ -145,7 +150,7 @@ class ActiveLearnActionData(object):
 
     ## Get certain ##
     def certain(self,clf, step, all_X):
-        if list(clf.classes_) == ['no']:
+        if list(clf.classes_) == [0]:
             print("attention, all classes are no")
 
             return self.random(step), [0.001]*step
@@ -184,11 +189,17 @@ class ActiveLearnActionData(object):
         r = self.random(10)
         while True:
             for ele in r:
-                if self.body.label[ele] == "yes":
+                if self.body.label[ele] == 1:
                     return [ele]
             r = self.random(step= 10)
 
-
+    def start_as_1_neg(self):
+        r = self.random(10)
+        while True:
+            for ele in r:
+                if self.body.label[ele] == 0:
+                    return [ele]
+            r = self.random(step= 10)
 
     ## Code candidate studies ##
     def code(self,id,label):

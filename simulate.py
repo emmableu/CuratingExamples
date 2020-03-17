@@ -147,13 +147,17 @@ step = 1
 for j in range(total//step + 1):
     pos, neg, total_real = read.get_numbers()
     print(pos, neg, total_real)
-    # if total_real != total:
-    #     print("wrong! total_real != total")
-    #     break
+
     if pos + neg < total:
         count += 1
-    if pos < 1:
+    if pos <= 3:
         for id in read.start_as_1_pos():
+            read.code(id, read.body["label"][id])
+        for id in read.start_as_1_pos():
+            read.code(id, read.body["label"][id])
+        for id in read.start_as_1_pos():
+            read.code(id, read.body["label"][id])
+        for id in read.start_as_1_neg():
             read.code(id, read.body["label"][id])
     else:
         print("body: ", read.body)
@@ -161,6 +165,7 @@ for j in range(total//step + 1):
             uncertain, uncertain_proba, certain, certain_proba = read.train(total%step)
         else:
             uncertain, uncertain_proba, certain, certain_proba_ = read.train(step)
+            break
 
         if pos <= 0:
             for id in uncertain:

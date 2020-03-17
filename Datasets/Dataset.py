@@ -140,7 +140,7 @@ class Dataset:
                 if test_size == 0:
                     cv_total = 1
                 else:
-                    cv_total = int(max(1 / (1 - test_size), 1 / test_size))
+                    cv_total = 10
                 for fold in tqdm(range(cv_total)):
                     if baseline:
                         save_dir = base_dir + "/cv/test_size" + str(test_size) + "/fold" + str(
@@ -174,7 +174,7 @@ class Dataset:
                     performance_temp = {"tp": tp, "tn": tn, "fp": fp, "fn": fn, "accuracy": accuracy, "precision": precision,
                             "recall": recall,
                             "f1": f1, "auc": roc_auc}
-                    cv_total = int(max(1 / (1 - test_size), 1 / test_size))
+                    cv_total = 10
                     for fold in range(cv_total):
                         if baseline:
                             get_dir = base_dir + "/cv/test_size" + str(test_size) + "/fold" + str(

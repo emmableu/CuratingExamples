@@ -148,33 +148,60 @@ import pandas as pd
 import pickle
 
 
+def get_opposite(l, ind):
+    opposite_list = []
+    for i, e in enumerate(l):
+        if i in ind:
+            continue
+        else:
+            opposite_list.append(e)
+    return opposite_list
+
+
+def rotation(test_size):
+    start = list(range(int(test_size*10)))
+    rotation_list = []
+    for i in range(10):
+        new = [0]*len(start)
+        rotation_list += [start]
+        for j in range(len(start)):
+            new[j] = start[j] + 1
+            if new[j] >=10:
+                new[j] = new[j]%10
+        start = new
+    return rotation_list
 def generate_cv(all_pid_s):
     # all_pid_s = get_all_pid_s()
     pid_length = len(all_pid_s)
+
+    len_test = int(0.1 * pid_length)
+    base_data = []
+    for i in range(10):
+        test_start = i * len_test
+        test_end = test_start + len_test
+        test_pid = all_pid_s[test_start:test_end]
+        base_data.append( test_pid)
+
+
     for test_size in test_size_list:
     # for test_size in [0.9]:
         if test_size == 0:
             cv_total = 1
         else:
-            cv_total = int(max(1/(1-test_size), 1/test_size))
-        for fold in range(cv_total):
-            if test_size <= 0.5:
-                len_test = int(test_size*pid_length)
-                test_start = fold * len_test
-                test_end = test_start + len_test
-                test_pid = all_pid_s[test_start:test_end]
-                train_pid = all_pid_s[:test_start] + all_pid_s[test_end:]
-
-            elif test_size > 0.5:
-                len_train = int((1-test_size)*pid_length)
-                train_start = fold * len_train
-                train_end = train_start + len_train
-                train_pid = all_pid_s[train_start:train_end]
-                test_pid = all_pid_s[:train_start] + all_pid_s[train_end:]
-
-            save_obj(train_pid, "train_pid", base_dir, "cv/test_size" + str(test_size) + "/fold" + str(fold))
-            save_obj(test_pid, "test_pid", base_dir, "cv/test_size" + str(test_size) + "/fold" + str(fold))
-
+            cv_total = 10
+            rotation_list = rotation(test_size)
+            for rotn in rotation_list:
+                test_pid = []
+                for i in rotn:
+                    test_pid = test_pid+ base_data[i]
+                compliment_rotn = get_opposite(list(range(10)),rotn)
+                train_pid = []
+                for j in compliment_rotn:
+                    train_pid = train_pid + base_data[j]
+                assert_train_test_mutual_exclusive(train_pid, test_pid)
+                save_obj(train_pid, "train_pid", base_dir, "cv/test_size" + str(test_size) + "/fold" + str(i))
+                save_obj(test_pid, "test_pid", base_dir, "cv/test_size" + str(test_size) + "/fold" + str(i))
+    # #
 
 def get_train_test_pid(test_size, fold):
     train_pid = load_obj("train_pid", base_dir, "/cv/test_size" + str(test_size)+ "/fold" + str(fold))
@@ -239,5 +266,19 @@ def get_x_y_train_test(get_dir):
 # get_json()
 
 # get_all_pid_s()
+
+# r = rotation(0.4)
+# print(r)
+# generate_cv()
+
+
+
+def assert_train_test_mutual_exclusive(train_pid, test_pid):
+    a = set(train_pid)
+    b = set(test_pid)
+    assert bool(a&b) == False,  "there're items that are both in train and test!"
+    return
+
+
 all_pid_s = load_obj( "pid", base_dir, "")
 generate_cv(all_pid_s)
