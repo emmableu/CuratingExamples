@@ -3,6 +3,8 @@ import sys, os
 root = os.getcwd().split("src")[0] + "src/src/util"
 sys.path.append(root)
 from ActiveLearnActionData import *
+import warnings
+warnings.filterwarnings('ignore')
 import pickle
 import os
 sys.path.append('/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets')
@@ -112,17 +114,17 @@ def simulate_5_times_to_get_all(action_name,total, thres = 0, model = bernoulli_
 
 
 
-if __name__ == "__main__":
-    total = 46
-    thres = 0
-
-    label_name_s = ['keymove', 'jump', 'costopall', 'wrap', 'cochangescore', 'movetomouse','moveanimate']
-    # label_name_s = ['cochangescore']
-    for label_name in label_name_s:
-        # label_name = "cochangescore"
-        model = svm_c.model
-        simulate_5_times_to_get_all(label_name,total, thres, model)
-        # simulate_10_times_using_weighted_train(label_name,total, thres)
+# if __name__ == "__main__":
+#     total = 46
+#     thres = 0
+#
+#     label_name_s = ['keymove', 'jump', 'costopall', 'wrap', 'cochangescore', 'movetomouse','moveanimate']
+#     # label_name_s = ['cochangescore']
+#     for label_name in label_name_s:
+#         # label_name = "cochangescore"
+#         model = svm_c.model
+#         simulate_5_times_to_get_all(label_name,total, thres, model)
+#         # simulate_10_times_using_weighted_train(label_name,total, thres)
 
 
 
@@ -135,5 +137,35 @@ if __name__ == "__main__":
     # print(all_simulation_wrap[median_index].count)
 
 
+X = np.arange(20).reshape(10,2)
+y = np.array([0,0,0,0,0,0,1,0,0,1])
 
+read = ActiveLearnActionData(X, y)
+count = 0
+total = 10
+step = 1
+for j in range(total//step + 1):
+    pos, neg, total_real = read.get_numbers()
+    print(pos, neg, total_real)
+    # if total_real != total:
+    #     print("wrong! total_real != total")
+    #     break
+    if pos + neg < total:
+        count += 1
+    if pos < 1:
+        for id in read.start_as_1_pos():
+            read.code(id, read.body["label"][id])
+    else:
+        print("body: ", read.body)
+        if j == total//step:
+            uncertain, uncertain_proba, certain, certain_proba = read.train(total%step)
+        else:
+            uncertain, uncertain_proba, certain, certain_proba_ = read.train(step)
 
+        if pos <= 0:
+            for id in uncertain:
+                read.code(id, read.body["label"][id])
+        else:
+            for id in certain:
+                read.code(id, read.body["label"][id])
+read.count = count
