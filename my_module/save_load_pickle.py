@@ -214,6 +214,18 @@ def add_by_ele(orig_dict, add_dict):
         orig_dict[i] += add_dict[i]
     return orig_dict
 
+def assert_list_equals(l1, l2):
+    assert len(l1) == len(l2), "x_axis should be the same as list(range(total-start_data))!"
+    for i in range(len(l1)):
+        assert l1[i] == l2[i], "x_axis should be the same as list(range(total-start_data))!"
+
+
+
+def yes_no_convert(i):
+    if i == 1 or i == "1":
+        return "yes"
+    else:
+        return 'no'
 
 def get_dict_average(dict_name, cv_total):
     for i in dict_name.keys():

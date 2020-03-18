@@ -55,7 +55,7 @@ mlp = MLPModel()
 model_list = [baseline, knn, lr, svm_c, svm_nu, svm_linear, dt, adaboost, bagging, rf, gaussian_nb,
                     bernoulli_nb, multi_nb, complement_nb, mlp]
 
-model_list = [baseline, knn, lr]
+model_list = [bernoulli_nb, knn, lr]
 root_dir = "/Users/wwang33/Documents/IJAIED20/CuratingExamples/"
 
 
@@ -68,6 +68,7 @@ class ActiveLearnActionData(object):
         self.last_pos = 0
         self.last_neg = 0
         self.record = {"x": [], "pos": []}
+        self.session = 0
 
 
 
@@ -78,8 +79,7 @@ class ActiveLearnActionData(object):
             body.loc[i] = {"X": self.X[i], 'label': int(self.y[i])}
         n = len(self.y)
         body["code"] = ["undetermined"] * n
-        body["time"] = [0] * n
-        body["fixed"] = [0] * n
+        body["session"] = [-1] * n
         return body
 
     def get_numbers(self):
@@ -99,8 +99,11 @@ class ActiveLearnActionData(object):
 
 
 
-    def train(self, step):
-        print("--------------train session---------")
+    def train(self):
+        self.session += 1
+        print("--------------train session ", self.session, "-----------------")
+        print("body: ")
+        print(self.body)
         poses = np.where(np.array(self.body['code']) == 1)[0]
         negs = np.where(np.array(self.body['code']) == 0)[0]
         validation_ids = list(poses) + list(negs)
@@ -111,6 +114,10 @@ class ActiveLearnActionData(object):
         try:
             unlabeled_train = np.random.choice(unlabeled, size=len(poses))
             train_ids1 = list(poses) + list(negs) + list(unlabeled_train)
+            code_array = np.array(self.body.code.to_list())
+            code_array[unlabeled_train] = '0'
+            assert bool(
+                set(code_array[validation_ids]) & set(['undetermined'])) == False, "train set includes un-coded data!"
 
         except:
             train_ids1 = list(poses) + list(negs)
@@ -118,67 +125,43 @@ class ActiveLearnActionData(object):
         if len(poses)==1:
             best_model = bernoulli_nb
         else:
-            model_recall = get_model_recall(train_ids1, validation_ids, self.X, self.y, model_list)
-            print(model_recall)
-            best_model = max(model_recall.items(), key=operator.itemgetter(1))[0]
+            model_f1 = get_model_f1(train_ids1, validation_ids, self.X, self.y, model_list)
+            print(model_f1)
+            best_model = max(model_f1.items(), key=operator.itemgetter(1))[0]
 
         current_model = best_model.model
-        current_model.fit(self.X[validation_ids], self.y[validation_ids])
-        rest_data_ids = self.get_opposite(range(len(self.y)), validation_ids)
-        # pos_at = list(current_model.classes_).index(1)
-        # prob = current_model.predict_proba(self.X[rest_data_ids])[:, pos_at]
-        # prediction = current_model.predict(self.X[rest_data_ids])
-        # print('prediction', prediction)
+        code_array = np.array(self.body.code.to_list())
+        assert bool(set(code_array[validation_ids]) & set(['undetermined'])) == False, "validation set includes un-coded data!"
+        current_model.fit(self.X[validation_ids], code_array[validation_ids])
+        rest_data_ids = get_opposite(range(len(self.y)), validation_ids)
+        # print(list(current_model.classes_))
+        try:
+            pos_at = list(current_model.classes_).index('1')
+        except:
+            pos_at = list(current_model.classes_).index(1)
+
+        prob = current_model.predict_proba(self.X)[:, pos_at]
+
+        if len(rest_data_ids) == 1:
+            return rest_data_ids[0]
+
         candidate_id_voi_dict = {}
-        for candidate_id  in rest_data_ids:
-            train_ids2 = list([candidate_id]) + list(train_ids1)
-            validation_ids2 = list(poses)
-            voi = get_VOI(train_ids2, validation_ids2, self.X, self.y, model_list)
+        for candidate_id in tqdm(rest_data_ids):
+            code_array = np.array(self.body.code.to_list())
+            train_ids2 = list([candidate_id]) + list(validation_ids)
+            code_array[candidate_id] = '1'
+            assert bool(set(code_array[validation_ids]) & set(['undetermined'])) == False, "train set includes un-coded data!"
+            voi = get_VOI(train_ids2, validation_ids, self.X, code_array, model_list)
             candidate_id_voi_dict[candidate_id] = voi
+        determine_dict = candidate_id_voi_dict
+        if not determine_dict:
+            return -1
+        for i in determine_dict:
+            determine_dict[i]  = determine_dict[i] + (prob[i])
         print("candidate_id_voi_dict: ", candidate_id_voi_dict)
-
-        # uncertain_id, uncertain_prob = self.uncertain(current_model, step, self.X)
-        # certain_id, certain_prob = self.certain(current_model, step, self.X)
-        # #
-        # positive_id = self.get_positive_id()
-        # # TODO: finish this get_positive_ID FUNCTION to get the positive id corresponding to X_val, y_val
-        # # TODO: find all the positive_id
-        # # TODO: use VOI calculation to use the one we need
-        # return candidate_id
-
-        return uncertain_id, uncertain_prob, certain_id, certain_prob
-
-    ## Get certain ##
-    def certain(self,clf, step, all_X):
-        if list(clf.classes_) == [0]:
-            print("attention, all classes are no")
-
-            return self.random(step), [0.001]*step
-        print( list(clf.classes_))
-        pos_at = list(clf.classes_).index(1)
-
-        if len(self.pool)==0:
-            return [],[]
-        prob = clf.predict_proba(all_X[self.pool])[:,pos_at]
-        order = np.argsort(prob)[::-1][:step]
-
-        return np.array(self.pool)[order],np.array(prob)[order]
-
-    ## Get uncertain ##
-    def uncertain(self, clf, step, all_X):
-        print( list(clf.classes_))
-        print(len(np.unique(list(clf.classes_))))
-        if len(np.unique(list(clf.classes_))) == 1:
-            return self.random(step), [0.001]*step
-        pos_at = list(clf.classes_).index(1)
-
-        if len(self.pool)==0:
-            return [],[]
-        prob = clf.predict_proba(all_X[self.pool])[:, pos_at]
-        print(prob)
-        # train_dist = clf.decision_function(all_X[self.pool])
-        order = np.argsort(np.abs(prob))[:step]  ## uncertainty sampling by distance to decision plane
-        return np.array(self.pool)[order], np.array(prob)[order]
+        print("determine_dict: ", determine_dict)
+        best_candidate = max(determine_dict.items(), key=operator.itemgetter(1))[0]
+        return best_candidate
 
     ## Get random ##
     def random(self, step):
@@ -193,6 +176,19 @@ class ActiveLearnActionData(object):
                     return [ele]
             r = self.random(step= 10)
 
+    def start_as_3_pos(self):
+        r = self.random(10)
+        while True:
+            ele_list = []
+            for ele in r:
+                if self.body.label[ele] == 1:
+                    ele_list.append(ele)
+                if len(ele_list) == 3:
+                    return ele_list
+            r = self.random(step= 10)
+
+
+
     def start_as_1_neg(self):
         r = self.random(10)
         while True:
@@ -202,9 +198,7 @@ class ActiveLearnActionData(object):
             r = self.random(step= 10)
 
     ## Code candidate studies ##
-    def code(self,id,label):
-        if self.body['code'][id] == label:
-            self.body['fixed'][id] = 1
-        self.body["code"][id] = label
-        self.body["time"][id] = time.time()
+    def code(self,id):
+        self.body['code'][id] = self.body['label'][id]
+        self.body["session"][id] = self.session
 

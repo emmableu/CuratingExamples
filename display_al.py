@@ -1,6 +1,7 @@
-
+import sys
+sys.path.append("/Users/wwang33/Documents/IJAIED20/CuratingExamples/my_module")
+from save_load_pickle import *
 from simulate import *
-# from simulate_game_all import *
 import matplotlib.colors as mcolors
 label_name_dict =  {'keymove': "Keyboard-Triggered Move", 'jump': "Jump", 'costopall': "Collision-Triggered-Stop-All",
                     'wrap': "Wrap On Screen", 'cochangescore': "Collision-Triggered Change Score",
@@ -9,55 +10,42 @@ label_name_dict =  {'keymove': "Keyboard-Triggered Move", 'jump': "Jump", 'costo
 import numpy as np
 import matplotlib.pyplot as plt
 
-from scipy import stats
-total = 186
-target_recall = 0.7
-thres = 0
-label_name_s = [ 'cochangescore']
-count_s_all = {}
-
-def get_summary(label_name, total, thres, target_recall):
-    all_simulation = load_obj('all_simulation_'+label_name,'/Users/wwang33/Documents/IJAIED20/src/workspace/data/game_labels_'+str(total), 'simulation_'+ str(thres) +"_"+ str(target_recall))
-    count_s = []
-    for simulation in all_simulation:
-        count_s.append(simulation.count)
-    median_index = np.argsort(count_s)[len(count_s) // 2]
-    all_simulation[median_index].plot("/Users/wwang33/Documents/IJAIED20/src/workspace/data/game_labels_186/simulation_10_" + str(target_recall) + "/plots/", show = True)
-    # plot_real(all_simulation[median_index],"/Users/wwang33/Documents/IJAIED20/src/workspace/data/game_labels_186/simulation_10_0.7/plots/")
-    print(all_simulation[median_index].count)
-    count_s_all[label_name] = (count_s)
-
-
-
-def plot_all(total, thres,training_method = "", specified_info = ""):
-    print("total = "+  str(total)  +  ", thres = " + str(thres) + "  " + training_method + "  " + specified_info)
-    all_repetitions = 5
+label_name_s = ['keymove', 'jump', 'costopall', 'wrap', 'cochangescore', 'movetomouse', 'moveanimate']
+label_name_s = ['keymove']
+def plot_all():
+    # print("total = "+  str(total)  +  ", thres = " + str(thres) + "  " + training_method + "  " + specified_info)
+    all_repetitions = 3
     fig = plt.figure(figsize=(24, 24))
     gs = fig.add_gridspec(3, 3)
 
     for label_index, label_name in enumerate(label_name_s):
-        all_simulation = load_obj( '/all_simulation_' + label_name,
-                    "/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets/data/SnapASTData/game_labels_" + str(415),
-                    'simulation_' + str(thres) + "_" + "all/no_pole")
-        game = all_simulation[0]
-        total_pos = game.est_num
-        def get_x_y_for_plot(game_instance):
-            order = np.argsort(np.array(game_instance.body['time'])[game_instance.labeled])
-            seq = np.array(game_instance.body['code'])[np.array(game_instance.labeled)[order]]
-            counter = 0
-            rec = [0]
-            for s in seq:
-                if s == 'yes':
-                    counter += 1
-                rec.append(counter)
-            return range(len(rec)), rec
-        x_axis = get_x_y_for_plot(all_simulation[0])[0]
-        baseline_y = []
-        average_y = []
-        best_y = []
+        all_simulation = load_obj( 'all_simulation_' + label_name,
+                    base_dir, 'simulation')
+        game_y = all_simulation["y"]
+        total_pos = Counter(game_y)[1]
+        total = len(game_y)
+        def get_x_y_for_plot(session):
+            # order = np.array(game_instance.body['session'])
+            unique_order = np.unique(session)
+            start = start_data
+            counter = [3]
+            for o in unique_order[1:]:
+                ind = np.where(session == o)
+                next = start + game_y[ind]
+                counter.append(next)
+                start = next
 
-        for number in x_axis:
-            baseline_y.append(number * total_pos/total)
+            return unique_order, counter
+        x_axis = get_x_y_for_plot(all_simulation[0])[0]
+        # print("x_axis: ", x_axis)
+        # print(list(range(total-start_data)))
+        assert_list_equals(x_axis, list(range(total-start_data)))
+        baseline_y = [start_data]
+        average_y = [start_data]
+        best_y = [start_data]
+
+        for number in x_axis[1:]:
+            baseline_y.append((number) * (total_pos- start_data)/(total-start_data-1) +start_data)
             this_sum = 0
             for iteration_item in range(all_repetitions):
                 try:
@@ -66,10 +54,12 @@ def plot_all(total, thres,training_method = "", specified_info = ""):
                     print("error:  this_sum += get_x_y_for_plot(all_simulation[iteration_item])[1][number]")
                     this_sum+= 1
             average_y.append(this_sum/all_repetitions)
-            if number <= total_pos:
-                best_y.append(number)
+            if number+start_data <= total_pos:
+                best_y.append(number+start_data)
             else:
                 best_y.append(total_pos)
+
+        print("average_y: ", average_y)
 
         color_s = [i for i in mcolors.CSS4_COLORS.keys()]
         font = {'family': 'normal',
@@ -92,14 +82,14 @@ def plot_all(total, thres,training_method = "", specified_info = ""):
         plt.plot(x_axis, average_y, marker='o', markerfacecolor='black', markersize=1,
                  color='black', linewidth=2)
         plt.gca().set_yticklabels(['{:.0f}%'.format(x * 100/total_pos) for x in plt.gca().get_yticks()])
-        plt.gca().set_xticklabels(['{:.0f}%'.format(x * 100/total) for x in plt.gca().get_xticks()])
+        plt.gca().set_xticklabels(['{:.0f}%'.format((x+start_data+1) * 100/total) for x in plt.gca().get_xticks()])
         ax.set_title(label_name_dict[label_name] + " #Positive=" + str(total_pos))
         plt.axis('tight')
         plt.savefig("/Users/wwang33/Desktop/" + 'fig.png')
     plt.savefig("/Users/wwang33/Desktop/" + 'figAll.png')
 
-plot_all(46, 0, "repetition_10_times_no_pole/")
-print("Kernel for this is : RBF")
+# plot_all()
+# print("Kernel for this is : RBF")
 
 
 

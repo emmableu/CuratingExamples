@@ -51,8 +51,8 @@ def get_VOI(train_ids, validation_ids, X, y, model_list):
     for train_index, val_index in l2o.split(X_val_orig):
         X_train, X_val = np.append(X_train_orig, X_val_orig[train_index], axis= 0), X_val_orig[val_index]
         y_train, y_val = np.append(y_train_orig, y_val_orig[train_index], axis= 0), y_val_orig[val_index]
-        print(X_train)
-        print(y_train)
+        # print(X_train)
+        # print(y_train)
         for mod in model_list:
             mod.model.fit(X_train, y_train)
             y_predict_proba = mod.model.predict_proba(X_val)
@@ -87,9 +87,9 @@ def get_error(j, i, y_val_orig, y_pred_series, v, model_name_list):
             continue
         compared.append(y_pred_series[(model_name_list[j], p_validation_index, i)])
     assert len(compared) == v-1, "length is not v-1!"
-    print("compared: ", compared)
-    error = recall_error(compared)
-    print("error: ", error)
+    # print("compared: ", compared)
+    error = zero_one_loss([y_val_orig[i]]*(v-1), compared, normalize=True)
+    # print("error: ", error)
     return error
 
 def get_all_model_sum_exp_error(i,y_val_orig, y_pred_series, v, model_name_list):
@@ -102,8 +102,8 @@ def get_all_model_sum_exp_error(i,y_val_orig, y_pred_series, v, model_name_list)
             if trained_holdout_index == i:
                 continue
             compared.append(y_pred_series[(j, trained_holdout_index, i)])
-        print("compared: ", compared)
-        error = recall_error(compared)
+        # print("compared: ", compared)
+        error = zero_one_loss([y_val_orig[i]]*(v-1), compared, normalize=True)
         sum_exp_error += math.exp(error)
     return sum_exp_error
 
@@ -117,7 +117,7 @@ def get_P(v, m, y_val_orig, y_pred_series, model_name_list):
     P = np.full((v,m), -1.0)
     for i in range(v):
         all_model_sum_exp_error = get_all_model_sum_exp_error(i,y_val_orig, y_pred_series, v, model_name_list)
-        print("all_model_sum_exp_error", all_model_sum_exp_error)
+        # print("all_model_sum_exp_error", all_model_sum_exp_error)
         for j in range(m):
             error = get_error(j, i,y_val_orig, y_pred_series, v, model_name_list)
             P[i,j] = 1 - math.exp(error)/all_model_sum_exp_error
@@ -150,15 +150,15 @@ def get_VOI_tau_m_hat(v, m, y_val_orig, y_pred_series, model_name_list):
     s = get_s(v)
     P = get_P(v, m, y_val_orig, y_pred_series, model_name_list)
     L = get_L(v, m, y_val_orig, y_pred_series, model_name_list)
-    print(P)
-    print("s@P", s.transpose()@P@L@s)
+    # print(P)
+    # print("s@P", s.transpose()@P@L@s)
     # VOI_tau_m_hat = s.transpose() @P@L@s
     return s.transpose()@P@L@s
 
 
 
 
-def get_model_recall(train_ids, validation_ids, X, y, model_list):
+def get_model_f1(train_ids, validation_ids, X, y, model_list):
     X_train_orig = X[train_ids]
     X_val_orig = X[validation_ids]
     y_train_orig  = y[train_ids]
@@ -167,20 +167,33 @@ def get_model_recall(train_ids, validation_ids, X, y, model_list):
     l1o.get_n_splits(X_val_orig)
     actual_pos = Counter(y_val_orig)[1]
     recall_dict = {}
+    precision_dict = {}
+    f1_dict = {}
     for mod in model_list:
         tp = 0
+        predict_pos = 0
         for train_index, val_index in l1o.split(X_val_orig):
             X_train, X_val = np.append(X_train_orig, X_val_orig[train_index], axis=0), X_val_orig[val_index]
             y_train, y_val = np.append(y_train_orig, y_val_orig[train_index], axis=0), y_val_orig[val_index]
-            print(X_train)
-            print(y_train)
             mod.model.fit(X_train, y_train)
             y_pred = mod.model.predict(X_val)
+            if y_val == 1:
+                predict_pos += 1
             if y_pred == y_val == 1:
                 tp += 1
-        recall_dict[mod] = tp/actual_pos
+        recall = tp/actual_pos
+        precision = tp/predict_pos
+        recall_dict[mod] = recall
+        precision_dict[mod] = precision
+        if recall == precision == 0:
+            f1 = 0
+        else:
+            f1 = 2*recall*precision/(recall + precision)
+        f1_dict[mod] = f1
 
-    return recall_dict
+
+
+    return f1_dict
 
 
 model_list = [baseline, knn, lr]
@@ -231,4 +244,4 @@ y_val_orig = np.array([1,1,1,1,1,1,1,1,1,1])
 
 
 def recall_error(compared):
-    return(Counter(compared)[0]/len(compared))
+    return(Counter(compared)[1]/len(compared))

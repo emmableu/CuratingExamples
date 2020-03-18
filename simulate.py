@@ -2,11 +2,11 @@ from __future__ import print_function, division
 import sys, os
 root = os.getcwd().split("src")[0] + "src/src/util"
 sys.path.append(root)
+sys.path.append("/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets")
+
 from ActiveLearnActionData import *
 import warnings
 warnings.filterwarnings('ignore')
-import pickle
-import os
 sys.path.append('/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets')
 from Dataset import *
 
@@ -51,126 +51,51 @@ mlp = MLPModel()
 no_tuning_models = [baseline, knn, lr, svm_c, svm_linear, dt, adaboost, bagging, rf, gaussian_nb,
                     bernoulli_nb, multi_nb, complement_nb, mlp]
 
+label_name = "move_to_mouse"
 
-
-
-# todo: change to simply: similate(X, y), input X,y and get the ActiveLearnActionData object for 1 iteration
-
-
+# X = np.array([[ 2,  2.3],
+#  [ 2.2,  3.1],
+#  [ 2.4,  2.5],
+#  [ 2.5 , 2.5],
+#  [ 1.9 , 2.3],
+#  [0, -1],
+#  [1 , 0],
+#  [-1, -1],
+#  [-1 ,2],
+#  [1 ,0.3]])
 #
-# def alms_simulate():
-#
+# y = np.array([1,1,1,1,1,0,0,0,0,0])
 
-def simulate_5_times_to_get_all(action_name,total, thres = 0, model = bernoulli_nb):
-    # data_path='game_labels_'+ str(total) + '/' + label_name + '.csv'
-    # target_recall = 0.7
-    all_repetitions = 1
-    all_simulation = []
-    step = 10
-    code_shape_p_q_list = [[1, 0], [2, 0], [3, 0], [4, 0], [5, 0], [6, 0], [7, 0], [8, 0], [9, 0]]
-    allow_gap = True
-    dataset = Dataset(total = 46, code_shape_p_q_list = code_shape_p_q_list, allow_gap = allow_gap)
-    code_state = load_obj("code_state" + str(dataset.code_shape_p_q_list), dataset.root_dir + "Datasets/data/SnapASTData",
-                          "game_labels_" + str(415))
+start_data = 3
+total_data = 413
+# the amount of positive data to start with
+# the total amount of data to start with is start_data +1, because it also starts with a negative data
 
-
-    for i in range(all_repetitions):
-        read = ActiveLearnActionData(code_state, dataset.data, action_name)
-        if thres == -1:
-            real_thres = read.est_num//2
-        else:
-            real_thres = thres
-        all_simulation.append(read)
-        count = 0
-        for j in range(total//step + 1):
+X = load_obj("X_train",base_dir + "/cv/test_size0/fold0/code_state[[1, 0]]baseline/movetomouse/","")
+y = load_obj("y_train",base_dir + "/cv/test_size0/fold0/code_state[[1, 0]]baseline/movetomouse/","")
+def simulate(X,y,label_name):
+    all_simulation = {}
+    all_simulation["y"] = y
+    for i in range(2):
+        read = ActiveLearnActionData(X, y)
+        total = total_data
+        for j in tqdm(range(total-start_data)):
             pos, neg, total_real = read.get_numbers()
-            if total_real != total:
-                print("wrong! total_real != total")
-                break
-            if pos + neg < total:
-                count += 1
-            if pos < 1:
-                for id in read.start_as_1_pos():
-                    read.code(id, read.body["label"][id])
+            print(pos, neg, total_real)
+            if pos <= 1:
+                if start_data == 3:
+                    for id in read.start_as_3_pos():
+                        read.code(id)
+                for id in read.start_as_1_neg():
+                    read.code(id)
             else:
-                print("body: ", read.body)
-                if j == total//step:
-                    uncertain, uncertain_proba, certain, certain_proba = read.no_pole_train(total%step, model)
-                else:
-                    uncertain, uncertain_proba, certain, certain_proba_ = read.no_pole_train(step, model)
-
-                if pos <= real_thres:
-                    for id in uncertain:
-                        read.code(id, read.body["label"][id])
-                else:
-                    for id in certain:
-                        read.code(id, read.body["label"][id])
-        read.count = count
-        save_pickle(all_simulation, '/all_simulation_' + label_name,
-                    "/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets/data/SnapASTData/game_labels_" + str(415),
-                    'simulation_' + str(thres) + "_" + "all/no_pole")
+                candidate = read.train()
+                if candidate == -1:
+                    print("no candidate for next round")
+                    break
+                read.code(candidate)
+        all_simulation[i] = (read.body['session'])
+    save_pickle(all_simulation,'all_simulation_' + label_name, base_dir, "simulation")
 
 
-
-
-
-# if __name__ == "__main__":
-#     total = 46
-#     thres = 0
-#
-#     label_name_s = ['keymove', 'jump', 'costopall', 'wrap', 'cochangescore', 'movetomouse','moveanimate']
-#     # label_name_s = ['cochangescore']
-#     for label_name in label_name_s:
-#         # label_name = "cochangescore"
-#         model = svm_c.model
-#         simulate_5_times_to_get_all(label_name,total, thres, model)
-#         # simulate_10_times_using_weighted_train(label_name,total, thres)
-
-
-
-    # all_simulation_wrap = load_obj('all_simulation_'+behavior,'/Users/wwang33/Documents/IJAIED20/src/workspace/data/game_labels_'+str(total), 'simulation_'+ str(thres) +"_"+ str(target_recall))
-    # count_s = []
-    # for simulation in all_simulation_wrap:
-    #     count_s.append(simulation.count)
-    # median_index = np.argsort(count_s)[len(count_s) // 2]
-    # all_simulation_wrap[median_index].plot()
-    # print(all_simulation_wrap[median_index].count)
-
-
-X = np.arange(20).reshape(10,2)
-y = np.array([0,0,0,0,0,0,1,0,0,1])
-
-read = ActiveLearnActionData(X, y)
-count = 0
-total = 10
-step = 1
-for j in range(total//step + 1):
-    pos, neg, total_real = read.get_numbers()
-    print(pos, neg, total_real)
-
-    if pos + neg < total:
-        count += 1
-    if pos <= 3:
-        for id in read.start_as_1_pos():
-            read.code(id, read.body["label"][id])
-        for id in read.start_as_1_pos():
-            read.code(id, read.body["label"][id])
-        for id in read.start_as_1_pos():
-            read.code(id, read.body["label"][id])
-        for id in read.start_as_1_neg():
-            read.code(id, read.body["label"][id])
-    else:
-        print("body: ", read.body)
-        if j == total//step:
-            uncertain, uncertain_proba, certain, certain_proba = read.train(total%step)
-        else:
-            uncertain, uncertain_proba, certain, certain_proba_ = read.train(step)
-            break
-
-        if pos <= 0:
-            for id in uncertain:
-                read.code(id, read.body["label"][id])
-        else:
-            for id in certain:
-                read.code(id, read.body["label"][id])
-read.count = count
+simulate(X, y, 'movetomouse')
