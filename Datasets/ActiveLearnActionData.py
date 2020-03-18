@@ -55,7 +55,7 @@ mlp = MLPModel()
 model_list = [baseline, knn, lr, svm_c, svm_nu, svm_linear, dt, adaboost, bagging, rf, gaussian_nb,
                     bernoulli_nb, multi_nb, complement_nb, mlp]
 
-model_list = [bernoulli_nb, knn, lr]
+model_list = [bernoulli_nb, multi_nb, complement_nb,gaussian_nb, adaboost, svm_linear, lr ]
 root_dir = "/Users/wwang33/Documents/IJAIED20/CuratingExamples/"
 
 
@@ -102,15 +102,15 @@ class ActiveLearnActionData(object):
     def train(self):
         self.session += 1
         print("--------------train session ", self.session, "-----------------")
-        print("body: ")
-        print(self.body)
         poses = np.where(np.array(self.body['code']) == 1)[0]
         negs = np.where(np.array(self.body['code']) == 0)[0]
         validation_ids = list(poses) + list(negs)
 
         unlabeled = np.where(np.array(self.body['code']) == "undetermined")[0]
         print("poses: ", poses)
-
+        print("number of poses: ", len(poses))
+        print("total poses: ", Counter(self.y)[1])
+        # print("coded correctly: ", len(poses)-start_data)
         try:
             unlabeled_train = np.random.choice(unlabeled, size=len(poses))
             train_ids1 = list(poses) + list(negs) + list(unlabeled_train)
@@ -127,8 +127,14 @@ class ActiveLearnActionData(object):
         else:
             model_f1 = get_model_f1(train_ids1, validation_ids, self.X, self.y, model_list)
             print(model_f1)
-            best_model = max(model_f1.items(), key=operator.itemgetter(1))[0]
-
+            itemMaxValue = max(model_f1.items(), key=lambda x: x[1])
+            listOfKeys = list()
+            # Iterate over all the items in dictionary to find keys with max value
+            for key, value in model_f1.items():
+                if value == itemMaxValue[1]:
+                    listOfKeys.append(key)
+            best_model = np.random.choice(listOfKeys[:4], 1)[0]
+        print("best model for this session is: ", best_model.name)
         current_model = best_model.model
         code_array = np.array(self.body.code.to_list())
         assert bool(set(code_array[validation_ids]) & set(['undetermined'])) == False, "validation set includes un-coded data!"
@@ -146,22 +152,30 @@ class ActiveLearnActionData(object):
             return rest_data_ids[0]
 
         candidate_id_voi_dict = {}
-        for candidate_id in tqdm(rest_data_ids):
+
+        if len(rest_data_ids) > 8:
+            rest_data_ids = np.random.choice(rest_data_ids, 8)
+            # prob = best_model.model.predict_proba(self.X[rest_data_ids])[:, pos_at]
+            # order = np.argsort(prob)[::-1][:20]
+            # rest_data_ids = order
+            # print(rest_data_ids)
+        for candidate_id in (rest_data_ids):
             code_array = np.array(self.body.code.to_list())
             train_ids2 = list([candidate_id]) + list(validation_ids)
             code_array[candidate_id] = '1'
             assert bool(set(code_array[validation_ids]) & set(['undetermined'])) == False, "train set includes un-coded data!"
             voi = get_VOI(train_ids2, validation_ids, self.X, code_array, model_list)
             candidate_id_voi_dict[candidate_id] = voi
-        determine_dict = candidate_id_voi_dict
+        determine_dict = candidate_id_voi_dict.copy()
+        print("candidate_id_voi_dict: ", candidate_id_voi_dict)
         if not determine_dict:
             return -1
         for i in determine_dict:
             determine_dict[i]  = determine_dict[i] + (prob[i])
-        print("candidate_id_voi_dict: ", candidate_id_voi_dict)
         print("determine_dict: ", determine_dict)
         best_candidate = max(determine_dict.items(), key=operator.itemgetter(1))[0]
         return best_candidate
+
 
     ## Get random ##
     def random(self, step):
@@ -199,6 +213,7 @@ class ActiveLearnActionData(object):
 
     ## Code candidate studies ##
     def code(self,id):
+        print("in session: ", self.session, "coded:  ", self.body['label'][id])
         self.body['code'][id] = self.body['label'][id]
         self.body["session"][id] = self.session
 

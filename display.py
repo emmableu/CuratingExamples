@@ -11,13 +11,13 @@ import matplotlib.pyplot as plt
 root_dir = "/Users/wwang33/Documents/IJAIED20/CuratingExamples/"
 total = 415
 action_name_s = ['keymove', 'jump', 'costopall', 'wrap', 'cochangescore', 'movetomouse', 'moveanimate']
-action_name_s = [ 'cochangescore']
+# action_name_s = [ 'cochangescore']
 
 type_list = ['Baseline','KNN','LR','C-Support SVC','Linear-Support SVC','DT','AdaBoost',
         'BaggingClassifier','RandomForest','Gaussian NB','Bernoulli NB','Multinomial NB','Complement NB', 'MLP']
 
 # plot_list  = [ 'code_state[[1, 0]]baseline', 'code_state[[1, 0]]','code_state[[1, 0], [2, 0], [3, 0]]baseline']
-plot_list  = ['code_state[[1, 0]]baseline','code_state[[1, 0]]baseline','code_state[[1, 0]]baseline']
+plot_list  = ['code_state[[1, 0], [1, 1], [1, 2], [1, 3]]baseline','code_state[[1, 0], [1, 1], [1, 2], [1, 3]]baseline','code_state[[1, 0], [1, 1], [1, 2], [1, 3]]baseline']
 
 
 def get_all_df(action_name, plot):

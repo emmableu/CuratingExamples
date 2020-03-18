@@ -11,7 +11,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 label_name_s = ['keymove', 'jump', 'costopall', 'wrap', 'cochangescore', 'movetomouse', 'moveanimate']
-label_name_s = ['keymove']
+label_name_s = ['test']
 def plot_all():
     # print("total = "+  str(total)  +  ", thres = " + str(thres) + "  " + training_method + "  " + specified_info)
     all_repetitions = 3
@@ -27,6 +27,10 @@ def plot_all():
         def get_x_y_for_plot(session):
             # order = np.array(game_instance.body['session'])
             unique_order = np.unique(session)
+            unique_order.sort()
+            unique_order = list(filter((-1).__ne__, unique_order))
+            if unique_order[0] == -1:
+                unique_order
             start = start_data
             counter = [3]
             for o in unique_order[1:]:
@@ -39,7 +43,7 @@ def plot_all():
         x_axis = get_x_y_for_plot(all_simulation[0])[0]
         # print("x_axis: ", x_axis)
         # print(list(range(total-start_data)))
-        assert_list_equals(x_axis, list(range(total-start_data)))
+        # assert_list_equals(x_axis, list(range(total-start_data)))
         baseline_y = [start_data]
         average_y = [start_data]
         best_y = [start_data]

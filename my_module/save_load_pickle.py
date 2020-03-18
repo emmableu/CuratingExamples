@@ -219,6 +219,10 @@ def assert_list_equals(l1, l2):
     for i in range(len(l1)):
         assert l1[i] == l2[i], "x_axis should be the same as list(range(total-start_data))!"
 
+def add_dict_to_set(orig_set, add_dict):
+    for i in add_dict.keys():
+        orig_set.add(i)
+    return orig_set
 
 
 def yes_no_convert(i):

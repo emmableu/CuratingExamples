@@ -2,7 +2,7 @@ import os
 import pandas as pd
 from sklearn_pandas import DataFrameMapper
 from sklearn.preprocessing import StandardScaler, LabelEncoder
-from sklearn.svm import LinearSVC
+from sklearn.svm import SVC, LinearSVC
 from sklearn.model_selection import train_test_split
 from sklearn.svm import NuSVC
 from sklearn.model_selection import GridSearchCV
@@ -25,7 +25,7 @@ def get_tuned_parameters():
 class SVMLinearModel(Model):
     def __init__(self):
         self.name = "Linear-Support SVC"
-        self.model = LinearSVC()
+        self.model =  (SVC(kernel='linear',probability=True))
 
 
 class TunedSVMLinearModel(Model):

@@ -51,7 +51,7 @@ class ActionData:
         for i in (train_pid):
             code_shape = self.code_state[i]
             new_pattern_s = code_shape.keys()
-            pattern_set = atomic_add(new_pattern_s, pattern_set)
+            pattern_set = add_by_ele(new_pattern_s, pattern_set)
         return pattern_set
 
 
@@ -61,8 +61,13 @@ class ActionData:
         if baseline:
             pattern_set = load_obj("pattern_set", base_dir,
                                     "code_state" + str(self.selected_p_q_list))
-            print("pattern_set", pattern_set)
-            return pattern_set['code_state' + str(self.selected_p_q_list[0])]
+            print("pattern_set", pattern_set.keys())
+
+            full_pattern_set = set()
+            for p in (self.selected_p_q_list):
+                atomic_add(full_pattern_set, pattern_set['code_state' + str(p)])
+            return full_pattern_set
+
         else:
             pattern_set = self.get_pattern_key_from_pid(train_pid)
         significant_patterns = []
