@@ -58,6 +58,7 @@ model_list = [baseline, knn, lr, svm_c, svm_nu, svm_linear, dt, adaboost, baggin
 model_list = [bernoulli_nb, multi_nb, complement_nb,gaussian_nb, adaboost, svm_linear, lr ]
 root_dir = "/Users/wwang33/Documents/IJAIED20/CuratingExamples/"
 
+step = 10
 
 class ActiveLearnActionData(object):
 
@@ -146,35 +147,12 @@ class ActiveLearnActionData(object):
         except:
             pos_at = list(current_model.classes_).index(1)
 
-        prob = current_model.predict_proba(self.X)[:, pos_at]
+        prob = current_model.predict_proba(self.X[rest_data_ids])[:, pos_at]
+        order = np.argsort(np.abs(prob))[::-1]  ## uncertainty sampling by distance to decision plane
 
-        if len(rest_data_ids) == 1:
-            return rest_data_ids[0]
+        most_certain = order[:step]
 
-        candidate_id_voi_dict = {}
-
-        if len(rest_data_ids) > 8:
-            rest_data_ids = np.random.choice(rest_data_ids, 8)
-            # prob = best_model.model.predict_proba(self.X[rest_data_ids])[:, pos_at]
-            # order = np.argsort(prob)[::-1][:20]
-            # rest_data_ids = order
-            # print(rest_data_ids)
-        for candidate_id in (rest_data_ids):
-            code_array = np.array(self.body.code.to_list())
-            train_ids2 = list([candidate_id]) + list(validation_ids)
-            code_array[candidate_id] = '1'
-            assert bool(set(code_array[validation_ids]) & set(['undetermined'])) == False, "train set includes un-coded data!"
-            voi = get_VOI(train_ids2, validation_ids, self.X, code_array, model_list)
-            candidate_id_voi_dict[candidate_id] = voi
-        determine_dict = candidate_id_voi_dict.copy()
-        print("candidate_id_voi_dict: ", candidate_id_voi_dict)
-        if not determine_dict:
-            return -1
-        for i in determine_dict:
-            determine_dict[i]  = determine_dict[i] + (prob[i])
-        print("determine_dict: ", determine_dict)
-        best_candidate = max(determine_dict.items(), key=operator.itemgetter(1))[0]
-        return best_candidate
+        return np.array(rest_data_ids)[most_certain]
 
 
     ## Get random ##

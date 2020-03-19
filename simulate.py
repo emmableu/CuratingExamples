@@ -53,26 +53,18 @@ no_tuning_models = [baseline, knn, lr, svm_c, svm_linear, dt, adaboost, bagging,
 
 label_name = "move_to_mouse"
 
-X = np.array([[ 2,  2.3],
- [ 2.2,  3.1],
- [ 2.4,  2.5],
- [ 2.5 , 2.5],
- [ 1.9 , 2.3],
- [0, 1],
- [1 , 0],
- [1, 1],
- [1 ,2],
- [1 ,0.3]])
+X = np.arange(0, 500).reshape(250, 2)
 
-y = np.array([1,1,1,1,1,1,0,0,0,0])
+y = np.random.randint(2, size=250)
+# array([1, 0, 0, 0, 1, 1, 0, 0, 1, 0])
 
 start_data = 3
 total_data = len(y)
 # the amount of positive data to start with
 # the total amount of data to start with is start_data +1, because it also starts with a negative data
 
-# X = load_obj("X_train",base_dir + "/cv/test_size0/fold0/code_state[[1, 0]]baseline/keymove/","")
-# y = load_obj("y_train",base_dir + "/cv/test_size0/fold0/code_state[[1, 0]]baseline/keymove/","")
+X = load_obj("X_train",base_dir + "/cv/test_size0/fold0/code_state[[1, 0]]baseline/keymove/","")
+y = load_obj("y_train",base_dir + "/cv/test_size0/fold0/code_state[[1, 0]]baseline/keymove/","")
 #
 # X = X[:50]
 # y = y[:50]
@@ -90,7 +82,7 @@ def simulate(X,y,label_name):
             pos, neg, total_real = read.get_numbers()
             print(pos, neg, total_real)
             real_true = Counter(y)[1]
-            if pos >= real_true*0.8:
+            if pos >= real_true:
                 break
             if pos <= 1:
                 if start_data == 3:
@@ -100,12 +92,9 @@ def simulate(X,y,label_name):
                     read.code(id)
             else:
                 candidate = read.train()
-                if candidate == -1:
-                    print("no candidate for next round")
-                    break
                 read.code(candidate)
         all_simulation[i] = (read.body['session'])
     save_pickle(all_simulation,'all_simulation_' + label_name, base_dir, "simulation")
 
 
-# simulate(X, y, 'test')
+simulate(X, y, 'test')

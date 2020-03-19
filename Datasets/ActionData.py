@@ -49,9 +49,12 @@ class ActionData:
         # pool = self.data
         pattern_set = set()
         for i in (train_pid):
-            code_shape = self.code_state[i]
-            new_pattern_s = code_shape.keys()
-            pattern_set = add_by_ele(new_pattern_s, pattern_set)
+            code_shape = {}
+            for pqlist in self.selected_p_q_list:
+                code_shape.update(self.code_state.at[i, "code_state" + str(pqlist)])
+            print("len(code_shape.keys()): ", len(code_shape.keys()))
+            new_pattern_s = code_shape
+            pattern_set = atomic_add(pattern_set, new_pattern_s)
         return pattern_set
 
 
@@ -60,7 +63,7 @@ class ActionData:
 
         if baseline:
             pattern_set = load_obj("pattern_set", base_dir,
-                                    "code_state" + str(self.selected_p_q_list))
+                                    "code_state" + str([[1, 0], [1, 1], [1, 2], [1, 3]]))
             print("pattern_set", pattern_set.keys())
 
             full_pattern_set = set()

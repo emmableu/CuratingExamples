@@ -198,6 +198,28 @@ class Dataset:
 
 
 
+    def save_x_y_to_hard_drive_temp(self, selected_p_q_list, baseline = True):
+        code_state = load_obj("code_state", base_dir, "code_state" + str(self.code_shape_p_q_list))
+        action_name_s = ['keymove', 'jump', 'costopall', 'wrap', 'cochangescore', 'movetomouse', 'moveanimate']
+        game_label = pd.read_csv(base_dir + "/game_label_415.csv")
+        for action_name in tqdm(action_name_s):
+            print("action_name: ", action_name)
+            action_data = ActionData(code_state=code_state, game_label=game_label, action_name=action_name, selected_p_q_list=selected_p_q_list)
+            test_size = 0.3
+            cv_selection = [0, 3, 6]
+            for fold in tqdm(cv_selection):
+                if baseline:
+                    save_dir = base_dir + "/cv/test_size" + str(test_size) + "/fold" + str(
+                        fold) + "/code_state" + str(selected_p_q_list) + "baseline"  + "/" + action_name
+                else:
+                    save_dir = base_dir + "/cv/test_size" + str(test_size)+ "/fold" + str(fold) + "/code_state" + str(self.code_shape_p_q_list) + "/" + action_name
+                train_pid, test_pid = get_train_test_pid(test_size, fold)
+                for p in train_pid:
+                    if p not in self.pid_list:
+                        print("pid not in pid_list!", p)
+                action_data.save_x_y_train_test(train_pid[:100], test_pid[:30], save_dir, baseline)
+
+
 
 
 

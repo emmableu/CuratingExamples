@@ -157,7 +157,6 @@ def get_opposite(l, ind):
             opposite_list.append(e)
     return opposite_list
 
-
 def rotation(test_size):
     start = list(range(int(test_size*10)))
     rotation_list = []
@@ -170,6 +169,7 @@ def rotation(test_size):
                 new[j] = new[j]%10
         start = new
     return rotation_list
+
 def generate_cv(all_pid_s):
     # all_pid_s = get_all_pid_s()
     pid_length = len(all_pid_s)
@@ -207,7 +207,6 @@ def get_train_test_pid(test_size, fold):
     train_pid = load_obj("train_pid", base_dir, "/cv/test_size" + str(test_size)+ "/fold" + str(fold))
     test_pid = load_obj("test_pid", base_dir, "/cv/test_size" + str(test_size)+ "/fold" + str(fold))
     return train_pid, test_pid
-
 
 def add_by_ele(orig_dict, add_dict):
     for i in orig_dict.keys():
@@ -253,8 +252,6 @@ def get_x_y_train_test(get_dir):
 # all_pid_s =     load_obj( "pid", base_dir, "")
 # generate_cv(all_pid_s)
 
-
-#
 # start = time.time()
 #
 # all_pid_s = get_all_pid_s()
@@ -270,7 +267,6 @@ def get_x_y_train_test(get_dir):
 #
 # code_state = load_obj("code_state_all", root_dir, "Datasets/data/SnapASTData/game_labels_415/code_state[[1, 0], [2, 0], [3, 0]]")
 # # print(code_state[104765718])
-
 
 # code_shape_p_q_list = [[1, 0], [2, 0], [3, 0]]
 # pattern_set = load_obj( "pattern_set", root_dir + "Datasets/data/SnapASTData",

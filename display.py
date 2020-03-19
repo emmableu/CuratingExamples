@@ -17,7 +17,7 @@ type_list = ['Baseline','KNN','LR','C-Support SVC','Linear-Support SVC','DT','Ad
         'BaggingClassifier','RandomForest','Gaussian NB','Bernoulli NB','Multinomial NB','Complement NB', 'MLP']
 
 # plot_list  = [ 'code_state[[1, 0]]baseline', 'code_state[[1, 0]]','code_state[[1, 0], [2, 0], [3, 0]]baseline']
-plot_list  = ['code_state[[1, 0], [1, 1], [1, 2], [1, 3]]baseline','code_state[[1, 0], [1, 1], [1, 2], [1, 3]]baseline','code_state[[1, 0], [1, 1], [1, 2], [1, 3]]baseline']
+plot_list  = ['code_state[[1, 0]]baseline', 'code_state[[1, 0], [1, 1], [1, 2], [1, 3]]baseline', "code_state[[1, 3]]baseline"]
 
 
 def get_all_df(action_name, plot):
@@ -49,42 +49,19 @@ def plot(action_name):
     plt.rcParams.update(paras)
     for column,plot in enumerate(plot_list):
         all_df = get_all_df(action_name, plot)
+        for i, type in enumerate(type_list):
+            y_axis = []
+            for x in x_axis:
+                y_axis.append(all_df[x].f1[type])
+            ax = fig.add_subplot(gs[0, column])
+            plt.plot(x_axis, y_axis, marker='o', markerfacecolor=color_s[i],
+                     markersize=9,
+                     color=color_s[i], linewidth=3, label=type)
+        plt.axis('tight')
+        ax.set_title(label_name_dict[action_name] + " F1 Score " + plot)
         if column == 0:
-            for i, type in enumerate(type_list):
-                y_axis = []
-                for x in x_axis:
-                    y_axis.append(all_df[x].recall[type])
-                ax = fig.add_subplot(gs[0, column])
-                plt.plot(x_axis, y_axis, marker='o', markerfacecolor=color_s[i],
-                         markersize=9,
-                         color=color_s[i], linewidth=3, label=type)
-            plt.axis('tight')
-            ax.set_title(label_name_dict[action_name] + " Recall " + plot)
-            if column == 0:
-                plt.legend()
-        if column == 1:
-            for i, type in enumerate(type_list):
-                y_axis = []
-                for x in x_axis:
-                    y_axis.append(all_df[x].f1[type])
-                ax = fig.add_subplot(gs[0, column])
-                plt.plot(x_axis, y_axis, marker='o', markerfacecolor=color_s[i],
-                         markersize=9,
-                         color=color_s[i], linewidth=3, label=type)
+            plt.legend()
 
-            plt.axis('tight')
-            ax.set_title(label_name_dict[action_name] + " F1 " + plot)
-        if column == 2:
-            for i, type in enumerate(type_list):
-                y_axis = []
-                for x in x_axis:
-                    y_axis.append(all_df[x].auc[type])
-                ax = fig.add_subplot(gs[0, column])
-                plt.plot(x_axis, y_axis, marker='o', markerfacecolor=color_s[i],
-                         markersize=9,
-                         color=color_s[i], linewidth=3, label=type)
-            plt.axis('tight')
-            ax.set_title(label_name_dict[action_name] + " AUC " + plot)
 
 
 plt.savefig("/Users/wwang33/Desktop/" + 'figAabccf.png')
