@@ -224,6 +224,45 @@ class Dataset:
 
 
 
+    def get_result(self, temp):
+        action_name_s = ['keymove', 'jump', 'costopall', 'wrap', 'cochangescore', 'movetomouse', 'moveanimate']
+
+        for action_name in tqdm(action_name_s):
+            print("action_name: ", action_name)
+            if baseline:
+                save_dir = base_dir + "/code_state" + str(self.code_shape_p_q_list) + "baseline" + "/result/" + action_name
+            else:
+                save_dir = base_dir + "/code_state" + str(
+                    self.code_shape_p_q_list) + "" + "/result/" + action_name
+
+            for model in tqdm(no_tuning_models):
+                # for test_size in tqdm([0.9]):
+                for test_size in test_size_list[:-1]:
+                    tp, tn, fp, fn, accuracy, precision, recall, f1, roc_auc = 0, 0, 0, 0, 0, 0, 0, 0, 0
+                    performance_temp = {"tp": tp, "tn": tn, "fp": fp, "fn": fn, "accuracy": accuracy, "precision": precision,
+                            "recall": recall,
+                            "f1": f1, "auc": roc_auc}
+                    cv_total = 10
+                    for fold in range(cv_total):
+                        if baseline:
+                            get_dir = base_dir + "/cv/test_size" + str(test_size) + "/fold" + str(
+                                fold) + "/code_state" + str(self.code_shape_p_q_list) + "baseline" + "/" + action_name
+                        else:
+                            get_dir = base_dir + "/cv/test_size" + str(test_size) + "/fold" + str(
+                                fold) + "/code_state" + str(self.code_shape_p_q_list) + "/" + action_name
+
+                        X_train, X_test, y_train, y_test = get_x_y_train_test(get_dir)
+                        if len(np.unique(y_train)) == 1:
+                            add_performance = {"tp": 0, "tn": 0, "fp": 0, "fn": 0, "accuracy": 0, "precision": 0, "recall": 0,
+                "f1": 0, "auc": 0}
+                        else:
+                            add_performance = model.get_performance(X_train, X_test, y_train, y_test)
+                        performance_temp = add_by_ele(performance_temp, add_performance)
+
+                    performance = get_dict_average(performance_temp, cv_total)
+                    model.save_performance(save_dir, test_size, performance)
+
+
 
 
 
