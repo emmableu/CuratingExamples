@@ -11,59 +11,95 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 label_name_s = ['keymove', 'jump', 'costopall', 'wrap', 'cochangescore', 'movetomouse', 'moveanimate']
-label_name_s = ['test']
+# label_name_s = ['keymove', 'costopall', 'cochangescore', 'movetomouse']
+# label_name_s = ['movetomouse[1, 0]baseline']
+# label_name_s = ['cochangescore[1, 0]baseline']
+# label_name_s = ['keymove[1, 0]baseline']
+
+
 def plot_all():
     # print("total = "+  str(total)  +  ", thres = " + str(thres) + "  " + training_method + "  " + specified_info)
     all_repetitions = 3
     fig = plt.figure(figsize=(24, 24))
     gs = fig.add_gridspec(3, 3)
 
+
     for label_index, label_name in enumerate(label_name_s):
-        all_simulation = load_obj( 'all_simulation_' + label_name,
+        all_simulation = load_obj( 'all_simulation_' + label_name + "[1, 0]baseline",
                     base_dir, 'simulation')
         game_y = all_simulation["y"]
         total_pos = Counter(game_y)[1]
         total = len(game_y)
+        # print(all_simulation.keys())
         def get_x_y_for_plot(session):
             # order = np.array(game_instance.body['session'])
             unique_order = np.unique(session)
             unique_order.sort()
+            x = [start_data]
             unique_order = list(filter((-1).__ne__, unique_order))
-            if unique_order[0] == -1:
-                unique_order
             start = start_data
-            counter = [3]
-            for o in unique_order[1:]:
+            counter = [start_data]
+            # print(unique_order)
+            for o in unique_order[2:]:
+                # print("o: ", o, "ind: ")
                 ind = np.where(session == o)
-                next = start + game_y[ind]
+                # print(game_y[ind])
+                next = start + Counter(game_y[ind])[1]
                 counter.append(next)
                 start = next
+                x.append(start_data + o*step)
+            # print("x: ", x)
+            # print("y: ", counter)
+            return x, counter
+        x = {}
+        y = {}
+        min_len = 300
+        for iteration_item in range(all_repetitions):
+            x[iteration_item] = get_x_y_for_plot(all_simulation[0])[0]
+            y[iteration_item] = get_x_y_for_plot(all_simulation[0])[1]
+            if len(x[iteration_item])< min_len:
+                x_axis =  x[iteration_item]
+                # stopping_y =
 
-            return unique_order, counter
-        x_axis = get_x_y_for_plot(all_simulation[0])[0]
-        # print("x_axis: ", x_axis)
-        # print(list(range(total-start_data)))
-        # assert_list_equals(x_axis, list(range(total-start_data)))
-        baseline_y = [start_data]
-        average_y = [start_data]
-        best_y = [start_data]
 
-        for number in x_axis[1:]:
-            baseline_y.append((number) * (total_pos- start_data)/(total-start_data-1) +start_data)
+
+
+        baseline_y = []
+        average_y = []
+        best_y = []
+
+
+
+        for number_index, number in enumerate(x_axis):
+            # print("number: ", number)
+
+            baseline_y = create_baseline(start_data, total_pos, total, len(x_axis), step, 0.6)
             this_sum = 0
             for iteration_item in range(all_repetitions):
+                x_data, y_data = x[iteration_item], y[iteration_item]
                 try:
-                    this_sum += get_x_y_for_plot(all_simulation[iteration_item])[1][number]
+                    this_sum += y_data[number_index]
                 except:
-                    print("error:  this_sum += get_x_y_for_plot(all_simulation[iteration_item])[1][number]")
-                    this_sum+= 1
+                    print("this axis should not be printed")
+
+                # print(iteration_item)
+                # try:
+                #     x, y = get_x_y_for_plot(all_simulation[iteration_item])
+                # except:
+                #     # print("error:  this_sum += get_x_y_for_plot(all_simulation[iteration_item])[1][number]")
+                #     this_sum+= 1
+
             average_y.append(this_sum/all_repetitions)
-            if number+start_data <= total_pos:
-                best_y.append(number+start_data)
+            if number <= total_pos:
+                best_y.append(number)
             else:
                 best_y.append(total_pos)
 
-        print("average_y: ", average_y)
+        # print("average_y: ", average_y)
+        # print("best_y: ", best_y)
+        # print("baseline_y: ", baseline_y)
+
+        auc = get_auc(baseline_y, average_y, best_y)
 
         color_s = [i for i in mcolors.CSS4_COLORS.keys()]
         font = {'family': 'normal',
@@ -76,9 +112,9 @@ def plot_all():
 
         plt.rcParams.update(paras)
         ax = fig.add_subplot(gs[label_index//3, label_index%3])
-        for i in range(all_repetitions):
-            plt.plot(x_axis, get_x_y_for_plot(all_simulation[i])[1], marker='o', markerfacecolor='blue', markersize=1,
-                     color=color_s[i], linewidth=1)
+        # for i in range(all_repetitions):
+        #     plt.plot(x_axis, get_x_y_for_plot(all_simulation[i])[1], marker='o', markerfacecolor='blue', markersize=1,
+        #              color=color_s[i], linewidth=1)
         plt.plot(x_axis, baseline_y, marker='o', markerfacecolor='red', markersize=1,
                  color='red', linewidth=2)
         plt.plot(x_axis, best_y, marker='o', markerfacecolor='red', markersize=1,
@@ -87,12 +123,14 @@ def plot_all():
                  color='black', linewidth=2)
         plt.gca().set_yticklabels(['{:.0f}%'.format(x * 100/total_pos) for x in plt.gca().get_yticks()])
         plt.gca().set_xticklabels(['{:.0f}%'.format((x+start_data+1) * 100/total) for x in plt.gca().get_xticks()])
-        ax.set_title(label_name_dict[label_name] + " #Positive=" + str(total_pos))
-        plt.axis('tight')
+        ax.set_title(label_name_dict[label_name]  + " #P =" + str(total_pos) + " AUC = " + str(round(auc, 2)))
+        # ax.set_ylim(0, 1)
+
+        # plt.axis('tight')
         plt.savefig("/Users/wwang33/Desktop/" + 'fig.png')
     plt.savefig("/Users/wwang33/Desktop/" + 'figAll.png')
 
-# plot_all()
+plot_all()
 # print("Kernel for this is : RBF")
 
 

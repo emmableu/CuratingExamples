@@ -295,6 +295,23 @@ def assert_train_test_mutual_exclusive(train_pid, test_pid):
     assert bool(a&b) == False,  "there're items that are both in train and test!"
     return
 
+#
+# all_pid_s = load_obj( "pid", base_dir, "")
+# generate_cv(all_pid_s)
 
-all_pid_s = load_obj( "pid", base_dir, "")
-generate_cv(all_pid_s)
+def create_baseline(start_data, total_pos, total, x_axis_length, step, stopping_rule):
+    b = [start_data]
+    total_pos = total_pos * stopping_rule
+    length_of_data = x_axis_length
+    for i in range(1, length_of_data):
+        b.append((total_pos-start_data)/total*(step*(i+1)) + start_data)
+    return b
+
+
+def get_auc(baseline_y, average_y, best_y):
+    fen_mu = 0
+    fen_zi = 0
+    for i in range(1, len(baseline_y)):
+        fen_mu += best_y[i] - baseline_y[i]
+        fen_zi +=  average_y[i] - baseline_y[i]
+    return fen_zi/fen_mu

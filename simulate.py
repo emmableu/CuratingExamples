@@ -61,21 +61,21 @@ label_name = "move_to_mouse"
 start_data = 3
 # # the amount of positive data to start with
 # # the total amount of data to start with is start_data +1, because it also starts with a negative data
-#
-X = load_obj("X_train",base_dir + "/cv/test_size0/fold0/code_state[[1, 0]]baseline/keymove/","")
-y = load_obj("y_train",base_dir + "/cv/test_size0/fold0/code_state[[1, 0]]baseline/keymove/","")
+# #
+# X = load_obj("X_train",base_dir + "/cv/test_size0/fold0/code_state[[1, 0]]baseline/costopall/","")
+# y = load_obj("y_train",base_dir + "/cv/test_size0/fold0/code_state[[1, 0]]baseline/costopall/","")
 # #
 # X = X[:50]
 # y = y[:50]
 # #
 
-total_data = len(y)
 
 
 def simulate(X,y,label_name):
+    total_data = len(y)
     all_simulation = {}
     all_simulation["y"] = y
-    for i in range(1):
+    for i in range(3):
         read = ActiveLearnActionData(X, y)
         total = total_data
         for j in (range((total-start_data)//step)):
@@ -83,8 +83,8 @@ def simulate(X,y,label_name):
             print(pos, neg, total_real)
             real_true = Counter(y)[1]
             # print("actual positive before training: ", real_true)
-            # if pos >= real_true:
-            #     break
+            if pos >= real_true * 0.7:
+                break
             if pos <= 1:
                 if start_data == 3:
                     for id in read.start_as_3_pos():
@@ -98,4 +98,17 @@ def simulate(X,y,label_name):
     save_pickle(all_simulation,'all_simulation_' + label_name, base_dir, "simulation")
 
 
-simulate(X, y, 'keymove')
+# simulate(X, y, 'cochangescore[1, 0]baseline')
+# simulate(X, y, 'costopall[1, 0]baseline')
+
+
+def encapsulated_simulate():
+    label_name_s = ['jump', 'wrap', 'moveanimate']
+    for label_name in label_name_s:
+
+        X = load_obj("X_train",base_dir + "/cv/test_size0/fold0/code_state[[1, 0]]baseline/"+ label_name + "/","")
+        y = load_obj("y_train",base_dir + "/cv/test_size0/fold0/code_state[[1, 0]]baseline/"+ label_name + "/","")
+        simulate(X, y, label_name+"[1, 0]baseline")
+
+
+# encapsulated_simulate()
