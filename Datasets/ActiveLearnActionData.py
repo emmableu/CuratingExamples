@@ -108,9 +108,11 @@ class ActiveLearnActionData(object):
         validation_ids = list(poses) + list(negs)
 
         unlabeled = np.where(np.array(self.body['code']) == "undetermined")[0]
-        print("poses: ", poses)
-        print("number of poses: ", len(poses))
-        print("total poses: ", Counter(self.y)[1])
+        # print("poses: ", poses)
+        print("number of poses: ", len(poses), "/ ", end = "")
+        print("total poses: ", Counter(self.y)[1], "/ ", end = "")
+        print("total coded till now: ", len(validation_ids))
+
         # print("coded correctly: ", len(poses)-start_data)
         try:
             unlabeled_train = np.random.choice(unlabeled, size=len(poses))
@@ -127,7 +129,7 @@ class ActiveLearnActionData(object):
             best_model = bernoulli_nb
         else:
             model_f1 = get_model_f1(train_ids1, validation_ids, self.X, self.y, model_list)
-            print(model_f1)
+            print_model(model_f1)
             itemMaxValue = max(model_f1.items(), key=lambda x: x[1])
             listOfKeys = list()
             # Iterate over all the items in dictionary to find keys with max value
@@ -191,7 +193,13 @@ class ActiveLearnActionData(object):
 
     ## Code candidate studies ##
     def code(self,id):
-        print("in session: ", self.session, "coded:  ", self.body['label'][id])
+        # print("in session: ", self.session, "coded:  ", self.body['label'][id], end = "")
+        # print("self.body['label']: ", self.body['label'][id])
+        print_data = []
+        for bla in np.nditer(id):
+            print_data.append(self.body['label'][bla])
+        # print("bla: ", print_data)
+        print("coded correct: ", Counter(print_data)[1], "among 10")
         self.body['code'][id] = self.body['label'][id]
         self.body["session"][id] = self.session
 

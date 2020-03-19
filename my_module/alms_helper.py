@@ -163,34 +163,61 @@ def get_model_f1(train_ids, validation_ids, X, y, model_list):
     X_val_orig = X[validation_ids]
     y_train_orig  = y[train_ids]
     y_val_orig = y[validation_ids]
-    l1o = LeaveOneOut()
-    l1o.get_n_splits(X_val_orig)
+
+
     actual_pos = Counter(y_val_orig)[1]
     recall_dict = {}
     precision_dict = {}
     f1_dict = {}
-    for mod in model_list:
-        tp = 0
-        predict_pos = 0
-        for train_index, val_index in l1o.split(X_val_orig):
-            X_train, X_val = np.append(X_train_orig, X_val_orig[train_index], axis=0), X_val_orig[val_index]
-            y_train, y_val = np.append(y_train_orig, y_val_orig[train_index], axis=0), y_val_orig[val_index]
-            mod.model.fit(X_train, y_train)
-            y_pred = mod.model.predict(X_val)
-            if y_val == 1:
-                predict_pos += 1
-            if y_pred == y_val == 1:
-                tp += 1
-        recall = tp/actual_pos
-        precision = tp/predict_pos
-        recall_dict[mod] = recall
-        precision_dict[mod] = precision
-        if recall == precision == 0:
-            f1 = 0
-        else:
-            f1 = 2*recall*precision/(recall + precision)
-        f1_dict[mod] = f1
 
+    if len(validation_ids) < 10:
+        split_strategy = LeaveOneOut()
+        for mod in model_list:
+            tp = 0
+            predict_pos = 0
+            for train_index, val_index in split_strategy.split(X_val_orig):
+                X_train, X_val = np.append(X_train_orig, X_val_orig[train_index], axis=0), X_val_orig[val_index]
+                y_train, y_val = np.append(y_train_orig, y_val_orig[train_index], axis=0), y_val_orig[val_index]
+                mod.model.fit(X_train, y_train)
+                y_pred = mod.model.predict(X_val)
+                if y_val == 1:
+                    predict_pos += 1
+                if y_pred == y_val == 1:
+                    tp += 1
+            recall = tp / actual_pos
+            precision = tp / predict_pos
+            recall_dict[mod] = recall
+            precision_dict[mod] = precision
+            if recall == precision == 0:
+                f1 = 0
+            else:
+                f1 = 2 * recall * precision / (recall + precision)
+            f1_dict[mod] = f1
+    else:
+        split_strategy = KFold(n_splits=5)
+        for mod in model_list:
+            tp = 0
+            predict_pos = 0
+            for train_index, val_index in split_strategy.split(X_val_orig):
+                X_train, X_val = np.append(X_train_orig, X_val_orig[train_index], axis=0), X_val_orig[val_index]
+                y_train, y_val = np.append(y_train_orig, y_val_orig[train_index], axis=0), y_val_orig[val_index]
+                mod.model.fit(X_train, y_train)
+                y_pred = mod.model.predict(X_val)
+                for index in range(len(y_pred)):
+                    if y_val[index] == 1:
+                        predict_pos += 1
+                    if y_pred[index] == y_val[index] == 1:
+                        tp += 1
+            recall = tp / actual_pos
+            # print("tp: ", tp, "actual_pos: ", actual_pos, "predict_pos: ", predict_pos)
+            precision = tp / predict_pos
+            recall_dict[mod] = recall
+            precision_dict[mod] = precision
+            if recall == precision == 0:
+                f1 = 0
+            else:
+                f1 = 2 * recall * precision / (recall + precision)
+            f1_dict[mod] = f1
 
 
     return f1_dict

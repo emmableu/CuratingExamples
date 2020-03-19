@@ -52,24 +52,24 @@ no_tuning_models = [baseline, knn, lr, svm_c, svm_linear, dt, adaboost, bagging,
                     bernoulli_nb, multi_nb, complement_nb, mlp]
 
 label_name = "move_to_mouse"
-
-X = np.arange(0, 500).reshape(250, 2)
-
-y = np.random.randint(2, size=250)
-# array([1, 0, 0, 0, 1, 1, 0, 0, 1, 0])
-
+#
+# X = np.arange(0, 500).reshape(250, 2)
+#
+# y = np.random.randint(2, size=250)
+# # array([1, 0, 0, 0, 1, 1, 0, 0, 1, 0])
+#
 start_data = 3
-total_data = len(y)
-# the amount of positive data to start with
-# the total amount of data to start with is start_data +1, because it also starts with a negative data
-
+# # the amount of positive data to start with
+# # the total amount of data to start with is start_data +1, because it also starts with a negative data
+#
 X = load_obj("X_train",base_dir + "/cv/test_size0/fold0/code_state[[1, 0]]baseline/keymove/","")
 y = load_obj("y_train",base_dir + "/cv/test_size0/fold0/code_state[[1, 0]]baseline/keymove/","")
-#
+# #
 # X = X[:50]
 # y = y[:50]
-#
+# #
 
+total_data = len(y)
 
 
 def simulate(X,y,label_name):
@@ -78,12 +78,13 @@ def simulate(X,y,label_name):
     for i in range(1):
         read = ActiveLearnActionData(X, y)
         total = total_data
-        for j in tqdm(range(total-start_data)):
+        for j in (range((total-start_data)//step)):
             pos, neg, total_real = read.get_numbers()
             print(pos, neg, total_real)
             real_true = Counter(y)[1]
-            if pos >= real_true:
-                break
+            # print("actual positive before training: ", real_true)
+            # if pos >= real_true:
+            #     break
             if pos <= 1:
                 if start_data == 3:
                     for id in read.start_as_3_pos():
@@ -97,4 +98,4 @@ def simulate(X,y,label_name):
     save_pickle(all_simulation,'all_simulation_' + label_name, base_dir, "simulation")
 
 
-simulate(X, y, 'test')
+simulate(X, y, 'keymove')
