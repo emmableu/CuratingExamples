@@ -15,13 +15,42 @@ class ActionData:
 
     def memory_get_code_shape_from_pid(self,pid):
         code_shape_dict = {}
-        # print(self.code_state.loc['329266361'])
+        print(self.code_state.loc['329266361'])
         for p_q in self.selected_p_q_list:
             try:
                 code_shape_dict.update(self.code_state.at[str(pid), 'code_state'+ str(p_q)])
             except KeyError:
                 print(pid, "keyerror!")
+        # start = time.time()
+        # code_shape_dict.update(self.code_state.at[str(pid), 'code_state[1, 3]'])
+        # end = time.time()
+        # print("Time elapsed for: " + inspect.stack()[0][3] + " is: ", end - start, " seconds")
+
+
         return code_shape_dict
+
+
+
+    def memory_get_code_shape_from_pid_temp(self,pid):
+        code_shape_dict = {}
+        # print(self.code_state.loc['329266361'])
+        x = np.random.randint(3, size=100*10000).reshape(100, 10000)
+        y = np.random.randint(2, size = 100).reshape(100, 1)
+
+        for p_q in self.selected_p_q_list:
+            try:
+                code_shape_dict.update(self.code_state.at[str(pid), 'code_state'+ str(p_q)])
+            except KeyError:
+                print(pid, "keyerror!")
+        # start = time.time()
+        # code_shape_dict.update(self.code_state.at[str(pid), 'code_state[1, 3]'])
+        # end = time.time()
+        # print("Time elapsed for: " + inspect.stack()[0][3] + " is: ", end - start, " seconds")
+
+
+        return code_shape_dict
+
+
 
     def __get_pattern_df(self, pattern, train_pid):
 
@@ -130,9 +159,61 @@ class ActionData:
 
 
 
+    def save_x_y_train_test_temp(self,train_pid, save_dir,baseline = True):
+        significant_patterns = self.get_pattern_statistics_temp(train_pid, baseline)
+        save_obj(significant_patterns, "significant_patterns", save_dir, "")
 
 
 
 
 
+    def get_pattern_statistics_temp(self, train_pid, baseline):
 
+        if baseline:
+            pattern_set = load_obj("pattern_set", base_dir,
+                                    "code_state" + str([[1, 0], [1, 1], [1, 2], [1, 3]]))
+            print("pattern_set", pattern_set.keys())
+
+            full_pattern_set = set()
+            for p in (self.selected_p_q_list):
+                atomic_add(full_pattern_set, pattern_set['code_state' + str(p)])
+            return full_pattern_set
+
+        else:
+            pattern_set = self.get_pattern_key_from_pid(train_pid)
+        significant_patterns = []
+        start_start = time.time()
+        count = 0
+        for pattern in tqdm(pattern_set):
+            count += 1
+            if count == 30:
+                break
+            # print(pattern)
+            start = time.time()
+            pattern_df = self.__get_pattern_df_temp(pattern, train_pid)
+            end = time.time()
+            print("time it takes for pattern_df = self.__get_pattern_df(pattern, train_pid):  ", end-start)
+        #     test = Test(pattern_df)
+        #
+        #     if test.freq_compare_test() == "discard":
+        #         continue
+        #     elif test.freq_compare_test() or test.chi_square_test() or test.kruskal_wallis_test():
+        #         significant_patterns.append(pattern)
+        # end_end = time.time()
+        # print("for pattern in tqdm(pattern_set[:30]): loop takes time: ", end_end-start_start)
+        # print(len(significant_patterns))
+        # print(significant_patterns)
+        return 0
+
+
+    def __get_pattern_df_temp(self, pattern, train_pid):
+
+        pool = self.game_label[self.game_label.pid.isin(train_pid)].reset_index(drop = True)
+
+        # pattern_df = pd.DataFrame(columns = ['pid', 'occurance', 'label'])
+
+        x = np.random.randint(3, size=100 * 10000).reshape(100, 10000)
+        # y = np.random.randint(2, size=100).reshape(100, 1)
+
+
+        return x[:4]

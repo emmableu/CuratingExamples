@@ -202,22 +202,50 @@ class Dataset:
         code_state = load_obj("code_state", base_dir, "code_state" + str(self.code_shape_p_q_list))
         action_name_s = ['keymove', 'jump', 'costopall', 'wrap', 'cochangescore', 'movetomouse', 'moveanimate']
         game_label = pd.read_csv(base_dir + "/game_label_415.csv")
+        start = time.time()
         for action_name in tqdm(action_name_s):
             print("action_name: ", action_name)
             action_data = ActionData(code_state=code_state, game_label=game_label, action_name=action_name, selected_p_q_list=selected_p_q_list)
-            test_size = 0.3
-            cv_selection = [0, 3, 6]
-            for fold in tqdm(cv_selection):
-                if baseline:
-                    save_dir = base_dir + "/cv/test_size" + str(test_size) + "/fold" + str(
-                        fold) + "/code_state" + str(selected_p_q_list) + "baseline"  + "/" + action_name
-                else:
-                    save_dir = base_dir + "/cv/test_size" + str(test_size)+ "/fold" + str(fold) + "/code_state" + str(self.code_shape_p_q_list) + "/" + action_name
-                train_pid, test_pid = get_train_test_pid(test_size, fold)
-                for p in train_pid:
-                    if p not in self.pid_list:
-                        print("pid not in pid_list!", p)
-                action_data.save_x_y_train_test(train_pid[:100], test_pid[:30], save_dir, baseline)
+            test_size = 0
+            fold = 0
+            save_dir = base_dir + "temp/" + action_name
+            train_pid, test_pid = get_train_test_pid(test_size, fold)
+            for p in train_pid:
+                if p not in self.pid_list:
+                    print("pid not in pid_list!", p)
+            train_df = game_label[game_label.pid.isin(train_pid)].reset_index(drop=True)
+
+            # print("train_df: ", train_df)
+            def get_positive_y_pid(df):
+                positive_y_pid = []
+                for game_index, i in enumerate(df.index):
+                    pid = str(df.at[i, 'pid'])
+                    if df.at[i, action_name] and pid in self.pid_list:
+                        positive_y_pid.append(pid)
+                return positive_y_pid
+
+            positive_y_pid = get_positive_y_pid(train_df)
+            if len(positive_y_pid)>50:
+                positive_y_pid = positive_y_pid[:50]
+
+            def get_negative_y_pid(df):
+                negative_y = []
+                for game_index, i in enumerate(df.index):
+                    pid = str(df.at[i, 'pid'])
+                    if df.at[i, action_name] == False and pid in self.pid_list:
+                        negative_y.append(pid)
+                return negative_y
+
+            negative_y_pid = get_negative_y_pid(train_df)[:len(positive_y_pid)]
+
+            print("has pos and neg samples: ", len(positive_y_pid), len(negative_y_pid))
+
+
+            action_data.save_x_y_train_test_temp(positive_y_pid + negative_y_pid, save_dir, baseline)
+
+
+        end = time.time()
+        print("Time elapsed for: " + inspect.stack()[0][3] + " is: ", end - start, " seconds")
 
 
 
