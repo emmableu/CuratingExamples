@@ -314,4 +314,8 @@ def get_auc(baseline_y, average_y, best_y):
     for i in range(1, len(baseline_y)):
         fen_mu += best_y[i] - baseline_y[i]
         fen_zi +=  average_y[i] - baseline_y[i]
+    if len(baseline_y) == 1:
+        # print(baseline_y)
+        # return  1
+        return 0
     return fen_zi/fen_mu

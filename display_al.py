@@ -10,23 +10,39 @@ label_name_dict =  {'keymove': "Keyboard-Triggered Move", 'jump': "Jump", 'costo
 import numpy as np
 import matplotlib.pyplot as plt
 
-label_name_s = ['keymove', 'jump', 'costopall', 'wrap', 'cochangescore', 'movetomouse', 'moveanimate']
+label_name_s = ['keymove', 'cochangescore', 'jump',   'movetomouse', 'moveanimate', 'costopall', 'wrap']
 # label_name_s = ['keymove', 'costopall', 'cochangescore', 'movetomouse']
 # label_name_s = ['movetomouse[1, 0]baseline']
 # label_name_s = ['cochangescore[1, 0]baseline']
 # label_name_s = ['keymove[1, 0]baseline']
 
+no_model_selection = False
+
+# all_simulation_1 = load_obj('all_simulation_' + label_name + "code_state[[1, 0], [1, 1], [1, 2], [1, 3]]baseline",
+#                             base_dir, 'simulation')
+
+# all_simulation_2 = load_obj('all_simulation_' + label_name + "[1, 0]baseline",
+#                             base_dir, 'simulation')
+
+
+
 
 def plot_all():
     # print("total = "+  str(total)  +  ", thres = " + str(thres) + "  " + training_method + "  " + specified_info)
-    all_repetitions = 3
+    all_repetitions = 10
     fig = plt.figure(figsize=(24, 24))
     gs = fig.add_gridspec(3, 3)
 
 
     for label_index, label_name in enumerate(label_name_s):
-        all_simulation = load_obj( 'all_simulation_' + label_name + "[1, 0]baseline",
-                    base_dir, 'simulation')
+        all_simulation_3 = load_obj('all_simulation_' + label_name + "code_state[[1, 0], [1, 1], [1, 2], [1, 3]]",
+                                    base_dir, 'simulation')
+        all_simulation = all_simulation_3
+
+        print(label_name)
+
+
+
         game_y = all_simulation["y"]
         total_pos = Counter(game_y)[1]
         total = len(game_y)
@@ -127,8 +143,8 @@ def plot_all():
         # ax.set_ylim(0, 1)
 
         # plt.axis('tight')
-        plt.savefig("/Users/wwang33/Desktop/" + 'fig.png')
-    plt.savefig("/Users/wwang33/Desktop/" + 'figAll.png')
+        # plt.savefig("/Users/wwang33/Desktop/" + 'fig.png')
+    # plt.savefig("/Users/wwang33/Desktop/" + 'figAll.png')
 
 plot_all()
 # print("Kernel for this is : RBF")

@@ -75,7 +75,7 @@ def simulate(X,y,label_name):
     total_data = len(y)
     all_simulation = {}
     all_simulation["y"] = y
-    for i in range(3):
+    for i in range(10):
         read = ActiveLearnActionData(X, y)
         total = total_data
         for j in (range((total-start_data)//step)):
@@ -103,12 +103,15 @@ def simulate(X,y,label_name):
 
 
 def encapsulated_simulate():
-    label_name_s = ['jump', 'wrap', 'moveanimate']
+    label_name_s = ['keymove', 'jump', 'costopall', 'wrap', 'cochangescore', 'movetomouse', 'moveanimate']
     for label_name in label_name_s:
 
-        X = load_obj("X_train",base_dir + "/cv/test_size0/fold0/code_state[[1, 0]]baseline/"+ label_name + "/","")
-        y = load_obj("y_train",base_dir + "/cv/test_size0/fold0/code_state[[1, 0]]baseline/"+ label_name + "/","")
-        simulate(X, y, label_name+"[1, 0]baseline")
+        # X = load_obj("X_train",base_dir + "/cv/test_size0/fold0/code_state[[1, 0], [1, 1], [1, 2], [1, 3]]baseline/"+ label_name + "/","")
+        # y = load_obj("y_train",base_dir + "/cv/test_size0/fold0/code_state[[1, 0], [1, 1], [1, 2], [1, 3]]baseline/"+ label_name + "/","")
+        # simulate(X, y, label_name+"code_state[[1, 0], [1, 1], [1, 2], [1, 3]]baseline")
+        X = load_obj("X_train",base_dir + "/cv/test_size0.3/fold0/code_state[[1, 0], [1, 1], [1, 2], [1, 3]]/"+ label_name + "/","")
+        y = load_obj("y_train",base_dir + "/cv/test_size0.3/fold0/code_state[[1, 0], [1, 1], [1, 2], [1, 3]]/"+ label_name + "/","")
+        simulate(X, y, label_name+"code_state[[1, 0], [1, 1], [1, 2], [1, 3]]")
 
 
 # encapsulated_simulate()

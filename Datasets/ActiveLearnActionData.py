@@ -59,6 +59,7 @@ model_list = [bernoulli_nb, multi_nb, complement_nb,gaussian_nb, adaboost, svm_l
 root_dir = "/Users/wwang33/Documents/IJAIED20/CuratingExamples/"
 
 step = 10
+no_model_selection = False
 
 class ActiveLearnActionData(object):
 
@@ -124,20 +125,22 @@ class ActiveLearnActionData(object):
 
         except:
             train_ids1 = list(poses) + list(negs)
-
-        if len(poses)==1:
-            best_model = bernoulli_nb
+        if no_model_selection:
+            best_model = svm_linear
         else:
-            model_f1 = get_model_f1(train_ids1, validation_ids, self.X, self.y, model_list)
-            print_model(model_f1)
-            itemMaxValue = max(model_f1.items(), key=lambda x: x[1])
-            listOfKeys = list()
-            # Iterate over all the items in dictionary to find keys with max value
-            for key, value in model_f1.items():
-                if value == itemMaxValue[1]:
-                    listOfKeys.append(key)
-            best_model = np.random.choice(listOfKeys[:4], 1)[0]
-        print("best model for this session is: ", best_model.name)
+            if len(poses)==1:
+                best_model = bernoulli_nb
+            else:
+                model_f1 = get_model_f1(train_ids1, validation_ids, self.X, self.y, model_list)
+                print_model(model_f1)
+                itemMaxValue = max(model_f1.items(), key=lambda x: x[1])
+                listOfKeys = list()
+                # Iterate over all the items in dictionary to find keys with max value
+                for key, value in model_f1.items():
+                    if value == itemMaxValue[1]:
+                        listOfKeys.append(key)
+                best_model = np.random.choice(listOfKeys[:4], 1)[0]
+            print("best model for this session is: ", best_model.name)
         current_model = best_model.model
         code_array = np.array(self.body.code.to_list())
         assert bool(set(code_array[validation_ids]) & set(['undetermined'])) == False, "validation set includes un-coded data!"
