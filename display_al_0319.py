@@ -10,7 +10,7 @@ label_name_dict =  {'keymove': "Keyboard-Triggered Move", 'jump': "Jump", 'costo
 import numpy as np
 import matplotlib.pyplot as plt
 
-label_name_s = ['keymove', 'cochangescore', 'jump',   'movetomouse', 'moveanimate', 'costopall', 'wrap']
+label_name_s = ['keymove', 'cochangescore', 'jump',   'movetomouse', 'moveanimate', 'costopall']
 # label_name_s = ['keymove', 'costopall', 'cochangescore', 'movetomouse']
 # label_name_s = ['movetomouse[1, 0]baseline']
 # label_name_s = ['cochangescore[1, 0]baseline']
@@ -38,10 +38,13 @@ def get_all_data():
         all_simulation_2 = load_obj('all_simulation_' + label_name + "[1, 0]baseline",
                                     base_dir, 'simulation')
 
+
+        all_simulation_3 = load_obj('all_simulation_' + label_name,
+                                    base_dir, 'simulation/best_train')
         #
         # all_simulation_3 = load_obj('all_simulation_' + label_name + "code_state[[1, 0], [1, 1], [1, 2], [1, 3]]",
         #                             base_dir, 'simulation')
-        for all_simulation in [all_simulation_1, all_simulation_2]:
+        for all_simulation in [all_simulation_1, all_simulation_2, all_simulation_3]:
 
             game_y = all_simulation["y"]
             total_pos = Counter(game_y)[1]
@@ -129,24 +132,25 @@ def plot_all():
         # for i in range(all_repetitions):
         #     plt.plot(x_axis, get_x_y_for_plot(all_simulation[i])[1], marker='o', markerfacecolor='blue', markersize=1,
         #              color=color_s[i], linewidth=1)
-        if (len(all_data[label_name][1][0])) < (len(all_data[label_name][0][2])):
-            plt.plot(all_data[label_name][1][0], all_data[label_name][1][1], marker='o', markerfacecolor='red', markersize=1,
-                     color='red', linewidth=2)
-            plt.plot(all_data[label_name][1][0], all_data[label_name][1][3], marker='o', markerfacecolor='red', markersize=1,
-                     color='red', linewidth=2)
-            plt.plot(all_data[label_name][1][0], all_data[label_name][0][2][:len(all_data[label_name][1][2])], marker='o', markerfacecolor='black', markersize=1,
-                     color='black', linewidth=2, label = 'baseline')
-            plt.plot(all_data[label_name][1][0], all_data[label_name][1][2], marker='o', markerfacecolor='blue', markersize=1,
-                     color='blue', linewidth=2, label ='model selection')
-        else:
-            plt.plot(all_data[label_name][0][0], all_data[label_name][0][1], marker='o', markerfacecolor='red', markersize=1,
-                     color='red', linewidth=2)
-            plt.plot(all_data[label_name][0][0], all_data[label_name][0][3], marker='o', markerfacecolor='red', markersize=1,
-                     color='red', linewidth=2)
-            plt.plot(all_data[label_name][0][0], all_data[label_name][0][2], marker='o', markerfacecolor='black', markersize=1,
-                     color='black', linewidth=2, label = 'baseline')
-            plt.plot(all_data[label_name][0][0], all_data[label_name][1][2][:len(all_data[label_name][0][2])], marker='o', markerfacecolor='blue', markersize=1,
-                     color='blue', linewidth=2, label ='model selection')
+
+        min_index = -1
+        min_len = 100
+        for i in range(3):
+            if len(all_data[label_name][i][0])<min_len:
+                min_len = len(all_data[label_name][i][0])
+                min_index = i
+        # print(all_data['moveanimate'][2])
+
+        plt.plot(all_data[label_name][min_index][0], all_data[label_name][min_index][1], marker='o', markerfacecolor='red', markersize=1,
+                 color='red', linewidth=2)
+        plt.plot(all_data[label_name][min_index][0], all_data[label_name][min_index][3], marker='o', markerfacecolor='red', markersize=1,
+                 color='red', linewidth=2)
+        plt.plot(all_data[label_name][min_index][0], all_data[label_name][0][2][:min_len], marker='o', markerfacecolor='black', markersize=1,
+                 color='black', linewidth=2, label = 'baseline')
+        plt.plot(all_data[label_name][min_index][0], all_data[label_name][1][2][:min_len], marker='o', markerfacecolor='blue', markersize=1,
+                 color='blue', linewidth=2, label ='model selection')
+        plt.plot(all_data[label_name][min_index][0], all_data[label_name][2][2][:min_len], marker='o', markerfacecolor='blue', markersize=1,
+                 color='purple', linewidth=2, label ='best feature & model')
         plt.gca().set_yticklabels(['{:.0f}%'.format(x * 100/ all_data[label_name][0][6]) for x in plt.gca().get_yticks()])
         plt.gca().set_xticklabels(['{:.0f}%'.format((x+start_data+1) * 100/all_data[label_name][0][5]) for x in plt.gca().get_xticks()])
         ax.set_title(label_name_dict[label_name]  + " #P =" + str(all_data[label_name][0][5]) + " AUC = " + str(round(all_data[label_name][1][4], 2)) + "vs" + str(round(all_data[label_name][0][4], 2)))

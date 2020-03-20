@@ -51,7 +51,8 @@ mlp = MLPModel()
 no_tuning_models = [baseline, knn, lr, svm_c, svm_linear, dt, adaboost, bagging, rf, gaussian_nb,
                     bernoulli_nb, multi_nb, complement_nb, mlp]
 
-label_name = "move_to_mouse"
+label_name_s = ['keymove', 'jump', 'costopall', 'wrap', 'cochangescore', 'movetomouse', 'moveanimate']
+
 #
 # X = np.arange(0, 500).reshape(250, 2)
 #
@@ -92,10 +93,10 @@ def simulate(X,y,label_name):
                 for id in read.start_as_1_neg():
                     read.code(id)
             else:
-                candidate = read.train()
+                candidate = read.best_train(label_name)
                 read.code(candidate)
         all_simulation[i] = (read.body['session'])
-    save_pickle(all_simulation,'all_simulation_' + label_name, base_dir, "simulation")
+    save_pickle(all_simulation,'all_simulation_' + label_name, base_dir, "simulation/best_train")
 
 
 # simulate(X, y, 'cochangescore[1, 0]baseline')
@@ -103,15 +104,16 @@ def simulate(X,y,label_name):
 
 
 def encapsulated_simulate():
-    label_name_s = ['keymove', 'jump', 'costopall', 'wrap', 'cochangescore', 'movetomouse', 'moveanimate']
+    label_name_s = ['keymove', 'jump', 'costopall', 'cochangescore', 'movetomouse', 'moveanimate']
+    label_name_s = ['moveanimate']
     for label_name in label_name_s:
 
         # X = load_obj("X_train",base_dir + "/cv/test_size0/fold0/code_state[[1, 0], [1, 1], [1, 2], [1, 3]]baseline/"+ label_name + "/","")
         # y = load_obj("y_train",base_dir + "/cv/test_size0/fold0/code_state[[1, 0], [1, 1], [1, 2], [1, 3]]baseline/"+ label_name + "/","")
         # simulate(X, y, label_name+"code_state[[1, 0], [1, 1], [1, 2], [1, 3]]baseline")
-        X = load_obj("X_train",base_dir + "/cv/test_size0.3/fold0/code_state[[1, 0], [1, 1], [1, 2], [1, 3]]/"+ label_name + "/","")
-        y = load_obj("y_train",base_dir + "/cv/test_size0.3/fold0/code_state[[1, 0], [1, 1], [1, 2], [1, 3]]/"+ label_name + "/","")
-        simulate(X, y, label_name+"code_state[[1, 0], [1, 1], [1, 2], [1, 3]]")
+        X = load_obj("x",base_dir + "/best_train/"+ label_name + "/","")
+        y = load_obj("y",base_dir + "/best_train/"+ label_name + "/","")
+        simulate(X, y, label_name)
 
 
 # encapsulated_simulate()

@@ -1,4 +1,5 @@
 from sklearn.metrics import confusion_matrix, roc_curve, auc
+from sklearn.model_selection import cross_val_predict
 import sys
 sys.path.append("/Users/wwang33/Documents/IJAIED20/CuratingExamples/my_module")
 from save_load_pickle import *
@@ -95,3 +96,29 @@ class Model:
             return perf
 
 
+    def naive_predict(self,X, y):
+        y_pred = cross_val_predict(self.model, X, y, cv=10)
+        y_test = y
+        self.confusion_matrix = confusion_matrix(y_test, y_pred)
+        fpr, tpr, threshold = roc_curve(y_test, y_pred)
+        roc_auc = auc(fpr, tpr)
+
+        tn, fp, fn, tp = self.confusion_matrix.ravel()
+        accuracy = (tp + tn) / (tp + tn + fp + fn)
+        if tp == 0 and fp == 0 and fn == 0:
+            precision = 1
+            recall = 1
+            f1 = 1
+        elif tp == 0 and (fp > 0 or fn > 0):
+            precision = 0
+            recall = 0
+            f1 = 0
+        else:
+            precision = tp / (tp + fp)
+            recall = tp / (tp + fn)
+            f1 = 2 * (precision) * (recall) / (precision + recall)
+        perf = {"tp": tp, "tn": tn, "fp": fp, "fn": fn, "accuracy": accuracy, "precision": precision, "recall": recall,
+                "f1": f1, "auc": roc_auc}
+        self.performance = perf
+        print(perf)
+        return perf

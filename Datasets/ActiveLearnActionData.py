@@ -160,6 +160,73 @@ class ActiveLearnActionData(object):
         return np.array(rest_data_ids)[most_certain]
 
 
+
+
+    def best_train(self, label_name):
+        self.session += 1
+        print("--------------train session ", self.session, "-----------------")
+        poses = np.where(np.array(self.body['code']) == 1)[0]
+        negs = np.where(np.array(self.body['code']) == 0)[0]
+        validation_ids = list(poses) + list(negs)
+
+        unlabeled = np.where(np.array(self.body['code']) == "undetermined")[0]
+        # print("poses: ", poses)
+        print("number of poses: ", len(poses), "/ ", end = "")
+        print("total poses: ", Counter(self.y)[1], "/ ", end = "")
+        print("total coded till now: ", len(validation_ids))
+
+        # print("coded correctly: ", len(poses)-start_data)
+        try:
+            unlabeled_train = np.random.choice(unlabeled, size=len(poses))
+            train_ids1 = list(poses) + list(negs) + list(unlabeled_train)
+            code_array = np.array(self.body.code.to_list())
+            code_array[unlabeled_train] = '0'
+            assert bool(
+                set(code_array[validation_ids]) & set(['undetermined'])) == False, "train set includes un-coded data!"
+
+        except:
+            train_ids1 = list(poses) + list(negs)
+        if label_name == "jump":
+            best_model = bernoulli_nb
+
+        if label_name == 'costopall':
+            best_model = multi_nb
+
+        if label_name == 'keymove':
+            best_model = bernoulli_nb
+
+        if label_name == 'moveanimate':
+            best_model = multi_nb
+
+        if label_name == 'cochangescore':
+            best_model = bernoulli_nb
+
+
+        if label_name == 'movetomouse':
+            best_model = bernoulli_nb
+
+
+        current_model = best_model.model
+        code_array = np.array(self.body.code.to_list())
+        assert bool(set(code_array[validation_ids]) & set(['undetermined'])) == False, "validation set includes un-coded data!"
+        current_model.fit(self.X[validation_ids], code_array[validation_ids])
+        rest_data_ids = get_opposite(range(len(self.y)), validation_ids)
+        # print(list(current_model.classes_))
+        try:
+            pos_at = list(current_model.classes_).index('1')
+        except:
+            pos_at = list(current_model.classes_).index(1)
+
+        prob = current_model.predict_proba(self.X[rest_data_ids])[:, pos_at]
+        order = np.argsort(np.abs(prob))[::-1]  ## uncertainty sampling by distance to decision plane
+
+        most_certain = order[:step]
+
+        return np.array(rest_data_ids)[most_certain]
+
+
+
+
     ## Get random ##
     def random(self, step):
         return np.random.choice(self.pool,size=np.min((step,len(self.pool))),replace=False)
