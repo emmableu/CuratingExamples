@@ -153,7 +153,7 @@ def plot_all():
                  color='purple', linewidth=2, label ='best feature & model')
         plt.gca().set_yticklabels(['{:.0f}%'.format(x * 100/ all_data[label_name][0][6]) for x in plt.gca().get_yticks()])
         plt.gca().set_xticklabels(['{:.0f}%'.format((x+start_data+1) * 100/all_data[label_name][0][5]) for x in plt.gca().get_xticks()])
-        ax.set_title(label_name_dict[label_name]  + " #P =" + str(all_data[label_name][0][5]) + " AUC = " + str(round(all_data[label_name][1][4], 2)) + "vs" + str(round(all_data[label_name][0][4], 2)))
+        ax.set_title(label_name_dict[label_name]  + " #P =" + str(all_data[label_name][0][6]) + " AUC = " + str(round(all_data[label_name][2][4], 2)) + "vs"+ str(round(all_data[label_name][1][4], 2)) + "vs" + str(round(all_data[label_name][0][4], 2)))
         plt.legend()
 
 

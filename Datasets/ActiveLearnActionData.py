@@ -162,6 +162,67 @@ class ActiveLearnActionData(object):
 
 
 
+
+    def train_model_feature_selection(self):
+        self.session += 1
+        print("--------------train session ", self.session, "-----------------")
+        poses = np.where(np.array(self.body['code']) == 1)[0]
+        negs = np.where(np.array(self.body['code']) == 0)[0]
+        validation_ids = list(poses) + list(negs)
+
+        unlabeled = np.where(np.array(self.body['code']) == "undetermined")[0]
+        # print("poses: ", poses)
+        print("number of poses: ", len(poses), "/ ", end = "")
+        print("total poses: ", Counter(self.y)[1], "/ ", end = "")
+        print("total coded till now: ", len(validation_ids))
+
+        # print("coded correctly: ", len(poses)-start_data)
+        try:
+            unlabeled_train = np.random.choice(unlabeled, size=len(poses))
+            train_ids1 = list(poses) + list(negs) + list(unlabeled_train)
+            code_array = np.array(self.body.code.to_list())
+            code_array[unlabeled_train] = '0'
+            assert bool(
+                set(code_array[validation_ids]) & set(['undetermined'])) == False, "train set includes un-coded data!"
+
+        except:
+            train_ids1 = list(poses) + list(negs)
+        if no_model_selection:
+            best_model = svm_linear
+        else:
+            if len(poses)==1:
+                best_model = bernoulli_nb
+            else:
+                model_f1 = get_model_f1(train_ids1, validation_ids, self.X, self.y, model_list)
+                print_model(model_f1)
+                itemMaxValue = max(model_f1.items(), key=lambda x: x[1])
+                listOfKeys = list()
+                # Iterate over all the items in dictionary to find keys with max value
+                for key, value in model_f1.items():
+                    if value == itemMaxValue[1]:
+                        listOfKeys.append(key)
+                best_model = np.random.choice(listOfKeys[:4], 1)[0]
+            print("best model for this session is: ", best_model.name)
+        current_model = best_model.model
+        code_array = np.array(self.body.code.to_list())
+        assert bool(set(code_array[validation_ids]) & set(['undetermined'])) == False, "validation set includes un-coded data!"
+        current_model.fit(self.X[validation_ids], code_array[validation_ids])
+        rest_data_ids = get_opposite(range(len(self.y)), validation_ids)
+        # print(list(current_model.classes_))
+        try:
+            pos_at = list(current_model.classes_).index('1')
+        except:
+            pos_at = list(current_model.classes_).index(1)
+
+        prob = current_model.predict_proba(self.X[rest_data_ids])[:, pos_at]
+        order = np.argsort(np.abs(prob))[::-1]  ## uncertainty sampling by distance to decision plane
+
+        most_certain = order[:step]
+
+        return np.array(rest_data_ids)[most_certain]
+
+
+
     def best_train(self, label_name):
         self.session += 1
         print("--------------train session ", self.session, "-----------------")
