@@ -93,10 +93,10 @@ def simulate(X,y,label_name):
                 for id in read.start_as_1_neg():
                     read.code(id)
             else:
-                candidate = read.best_train(label_name)
+                candidate = read.train_model_feature_selection()
                 read.code(candidate)
         all_simulation[i] = (read.body['session'])
-    save_pickle(all_simulation,'all_simulation_' + label_name, base_dir, "simulation/best_train")
+    save_pickle(all_simulation,'all_simulation_' + label_name, base_dir, "simulation/train_model_feature_selection_based_on_coded")
 
 
 # simulate(X, y, 'cochangescore[1, 0]baseline')
@@ -104,16 +104,16 @@ def simulate(X,y,label_name):
 
 
 def encapsulated_simulate():
-    label_name_s = ['keymove', 'jump', 'costopall', 'cochangescore', 'movetomouse', 'moveanimate']
-    label_name_s = ['moveanimate']
+    # label_name_s = ['keymove', 'jump', 'costopall', 'cochangescore', 'movetomouse', 'moveanimate']
+    label_name_s = ['costopall']
     for label_name in label_name_s:
 
-        # X = load_obj("X_train",base_dir + "/cv/test_size0/fold0/code_state[[1, 0], [1, 1], [1, 2], [1, 3]]baseline/"+ label_name + "/","")
-        # y = load_obj("y_train",base_dir + "/cv/test_size0/fold0/code_state[[1, 0], [1, 1], [1, 2], [1, 3]]baseline/"+ label_name + "/","")
+        X = load_obj("X_train",base_dir + "/cv/test_size0/fold0/code_state[[1, 0], [1, 1], [1, 2], [1, 3]]baseline/"+ label_name + "/","")
+        y = load_obj("y_train",base_dir + "/cv/test_size0/fold0/code_state[[1, 0], [1, 1], [1, 2], [1, 3]]baseline/"+ label_name + "/","")
         # simulate(X, y, label_name+"code_state[[1, 0], [1, 1], [1, 2], [1, 3]]baseline")
-        X = load_obj("x",base_dir + "/best_train/"+ label_name + "/","")
-        y = load_obj("y",base_dir + "/best_train/"+ label_name + "/","")
+        # X = load_obj("x",base_dir + "/best_train/"+ label_name + "/","")
+        # y = load_obj("y",base_dir + "/best_train/"+ label_name + "/","")
         simulate(X, y, label_name)
 
 
-# encapsulated_simulate()
+encapsulated_simulate()

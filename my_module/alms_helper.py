@@ -6,13 +6,13 @@ from classifiers.Baseline import BaselineModel
 from classifiers.knn_classifiers.KNN import KNNModel
 from classifiers.lr_classifiers.LogisticRegression import LRModel
 import numpy as np
-from sklearn.model_selection import LeavePOut, KFold, cross_val_predict, cross_validate, LeaveOneOut
+from sklearn.model_selection import LeavePOut, StratifiedKFold, cross_val_predict, cross_validate, LeaveOneOut
 import pandas as pd
 import math
 from sklearn.metrics import zero_one_loss, log_loss
 from collections import Counter
 from sklearn.metrics import make_scorer, accuracy_score, precision_score, recall_score, f1_score
-
+from sklearn.feature_extraction.text import TfidfTransformer
 baseline = BaselineModel()
 knn = KNNModel()
 lr = LRModel()
@@ -27,45 +27,81 @@ lr = LRModel()
 
 
 
-def get_VOI(train_ids, validation_ids, X, y, model_list):
-    X_train_orig = X[train_ids]
+# feature_method_list = ['yes', 'diff', 'all']
+yes_params = [3, 2, 1, 0, 4]
+yes_exist_params = [False, True]
+diff_params = [1, 0]
+all_params = [3, 0, 4, 5, 6, 7]
+
+feature_grids = [(x, y, z, g) for x in yes_params for y in yes_exist_params for z in diff_params for g in all_params]
+
+
+def get_weights(x, y):
+    y_yes_index = np.where(y == 1)[0]
+    yes_x = x[y_yes_index]
+    transformer = TfidfTransformer(smooth_idf=False)
+    tfidf_all = transformer.fit_transform(x).toarray()
+    all_weights = transformer.idf_
+    tfidf_yes = transformer.fit_transform(yes_x).toarray()
+    yes_weights = transformer.idf_
+    y_no_index = np.where(y == 0)[0]
+    no_x = x[y_no_index]
+    tfidf_no = transformer.fit_transform(no_x).toarray()
+    no_weights = transformer.idf_
+
+    return all_weights,yes_weights,no_weights
+
+
+
+
+
+
+
+def get_VOI(train_ids, validation_ids, X, y, cur_model):
+    train_subset_index  = []
+
+    for id in train_ids:
+        if id not in validation_ids:
+            train_subset_index.append(id)
+
+    X_train_orig = X[train_subset_index]
     X_val_orig = X[validation_ids]
-    y_train_orig  = y[train_ids]
+    y_train_orig  = y[train_subset_index]
     y_val_orig = y[validation_ids]
-    v = len(y_val_orig)
-    m = len(model_list)
-    model_name_list = [model.name for model in model_list]
-    iterables = [model_name_list, range(v), range(v)]
-    s = pd.MultiIndex.from_product(iterables, names=['model', 'p_validation_index', 'l_validation_index'])
+    actual_pos = Counter(y_val_orig)[1]
 
-    for j in model_name_list:
-        for i in range(v):
-            s = s.drop((j, i, i))
 
-    y_predict_proba_series = pd.Series([[-1, -1]] * m * v * (v - 1), index=s)
-    y_pred_series = pd.Series([[-1, -1]] * m * v * (v - 1), index=s)
+    split_strategy = StratifiedKFold(3)
+    tp = 0
+    predict_pos = 0
 
-    l2o = LeavePOut(2)
-    l2o.get_n_splits(X_val_orig)
-
-    for train_index, val_index in l2o.split(X_val_orig):
-        X_train, X_val = np.append(X_train_orig, X_val_orig[train_index], axis= 0), X_val_orig[val_index]
-        y_train, y_val = np.append(y_train_orig, y_val_orig[train_index], axis= 0), y_val_orig[val_index]
-        # print(X_train)
-        # print(y_train)
-        for mod in model_list:
-            mod.model.fit(X_train, y_train)
-            y_predict_proba = mod.model.predict_proba(X_val)
-            y_pred = mod.model.predict(X_val)
-            y_predict_proba_series[(mod.name, val_index[0], val_index[1])] = [y_predict_proba[0][0],
-                                                                              y_predict_proba[0][1]]
-            y_pred_series[(mod.name, val_index[0], val_index[1])] = y_pred[0]
-            y_predict_proba_series[(mod.name, val_index[1], val_index[0])] = [y_predict_proba[1][0],
-                                                                              y_predict_proba[1][1]]
-            y_pred_series[(mod.name, val_index[1], val_index[0])] = y_pred[1]
-
-    VOI = get_VOI_tau_m_hat(v, m, y_val_orig, y_pred_series, model_name_list)
-
+    # print("y_train_org: ", y_train_orig)
+    # print('y_val_org: ', y_val_orig)
+    for train_index, val_index in split_strategy.split(X_val_orig, y_val_orig):
+        X_train, X_val = np.append(X_train_orig, X_val_orig[train_index], axis=0), X_val_orig[val_index]
+        y_train, y_val = np.append(y_train_orig, y_val_orig[train_index], axis=0), y_val_orig[val_index]
+        cur_model.model.fit(X_train, y_train)
+        y_pred = cur_model.model.predict(X_val)
+        # print("y_val: ", y_val, "y_train: ", y_train)
+        # print("y_pred: ", y_pred)
+        for index in range(len(y_pred)):
+            if y_pred[index] == 1:
+                predict_pos += 1
+                if y_val[index] == 1:
+                    tp += 1
+    recall = tp / actual_pos
+    # print("in model: ","tp: ", tp, "actual_pos: ", actual_pos, "predict_pos: ", predict_pos)
+    if predict_pos == 0:
+        precision = 0
+    else:
+        precision = tp / predict_pos
+    recall_dict[mod] = recall
+    precision_dict[mod] = precision
+    if recall == precision == 0:
+        f1 = 0
+    else:
+        f1 = 2 * recall * precision / (recall + precision)
+    f1_dict[mod] = f1
     return VOI
 
 
@@ -159,9 +195,15 @@ def get_VOI_tau_m_hat(v, m, y_val_orig, y_pred_series, model_name_list):
 
 
 def get_model_f1(train_ids, validation_ids, X, y, model_list):
-    X_train_orig = X[train_ids]
+
+    train_subset_index  = []
+    for id in train_ids:
+        if id not in validation_ids:
+            train_subset_index.append(id)
+
+    X_train_orig = X[train_subset_index]
     X_val_orig = X[validation_ids]
-    y_train_orig  = y[train_ids]
+    y_train_orig  = y[train_subset_index]
     y_val_orig = y[validation_ids]
 
 
@@ -180,12 +222,15 @@ def get_model_f1(train_ids, validation_ids, X, y, model_list):
                 y_train, y_val = np.append(y_train_orig, y_val_orig[train_index], axis=0), y_val_orig[val_index]
                 mod.model.fit(X_train, y_train)
                 y_pred = mod.model.predict(X_val)
-                if y_val == 1:
+                if y_pred == 1:
                     predict_pos += 1
-                if y_pred == y_val == 1:
-                    tp += 1
+                    if y_val == 1:
+                        tp += 1
             recall = tp / actual_pos
-            precision = tp / predict_pos
+            if predict_pos == 0:
+                precision = 0
+            else:
+                precision = tp / predict_pos
             recall_dict[mod] = recall
             precision_dict[mod] = precision
             if recall == precision == 0:
@@ -194,23 +239,30 @@ def get_model_f1(train_ids, validation_ids, X, y, model_list):
                 f1 = 2 * recall * precision / (recall + precision)
             f1_dict[mod] = f1
     else:
-        split_strategy = KFold(n_splits=5)
+        split_strategy = StratifiedKFold(n_splits=5)
         for mod in model_list:
             tp = 0
             predict_pos = 0
-            for train_index, val_index in split_strategy.split(X_val_orig):
+            # print("y_train_org: ", y_train_orig)
+            # print('y_val_org: ', y_val_orig)
+            for train_index, val_index in split_strategy.split(X_val_orig, y_val_orig):
                 X_train, X_val = np.append(X_train_orig, X_val_orig[train_index], axis=0), X_val_orig[val_index]
                 y_train, y_val = np.append(y_train_orig, y_val_orig[train_index], axis=0), y_val_orig[val_index]
                 mod.model.fit(X_train, y_train)
                 y_pred = mod.model.predict(X_val)
+                # print("y_val: ", y_val, "y_train: ", y_train)
+                # print("y_pred: ", y_pred)
                 for index in range(len(y_pred)):
-                    if y_val[index] == 1:
+                    if y_pred[index] == 1:
                         predict_pos += 1
-                    if y_pred[index] == y_val[index] == 1:
-                        tp += 1
+                        if y_val[index] == 1:
+                            tp += 1
             recall = tp / actual_pos
-            # print("tp: ", tp, "actual_pos: ", actual_pos, "predict_pos: ", predict_pos)
-            precision = tp / predict_pos
+            # print("in model: ","tp: ", tp, "actual_pos: ", actual_pos, "predict_pos: ", predict_pos)
+            if predict_pos == 0:
+                precision = 0
+            else:
+                precision = tp / predict_pos
             recall_dict[mod] = recall
             precision_dict[mod] = precision
             if recall == precision == 0:
@@ -221,6 +273,123 @@ def get_model_f1(train_ids, validation_ids, X, y, model_list):
 
 
     return f1_dict
+
+
+
+
+
+
+def get_feature_list_dict(all_weights,yes_weights,no_weights):
+    feature_dict = {}
+    # np.random.shuffle(feature_grids)
+    for feature_grid in feature_grids:
+        feature_left = []
+        x, y, z, g = feature_grid[0], feature_grid[1], feature_grid[2], feature_grid[3]
+        if y:
+            for i in range(len(yes_weights)):
+                if yes_weights[i] > x and yes_weights[i] < 100 and abs(yes_weights[i] - no_weights[i]) > z and \
+                        all_weights[i] > g:
+                    feature_left.append(i)
+        elif not y:
+            for i in range(len(yes_weights)):
+                if yes_weights[i] > x and abs(yes_weights[i] - no_weights[i]) > z and all_weights[i] > g:
+                    feature_left.append(i)
+        feature_dict[feature_grid] =feature_left
+    return feature_dict
+
+def get_feature_f1(train_ids, validation_ids, X, y, model):
+    train_subset_index  = []
+    for id in train_ids:
+        if id not in validation_ids:
+            train_subset_index.append(id)
+
+    X_train_orig = X[train_subset_index]
+    X_val_orig = X[validation_ids]
+    y_train_orig  = y[train_subset_index]
+    y_val_orig = y[validation_ids]
+    all_weights, yes_weights, no_weights = get_weights(X_val_orig, y_val_orig)
+    feature_dict = get_feature_list_dict(all_weights, yes_weights, no_weights)
+    actual_pos = Counter(y_val_orig)[1]
+    # recall_dict = {}
+    # precision_dict = {}
+    f1_dict = {}
+    mod = model
+    np.random.shuffle(feature_grids)
+    for feature_grid in feature_grids:
+        feature_left = feature_dict[feature_grid]
+        X_train_trans = X_train_orig[:, feature_left]
+        X_val_trans = X_val_orig[:, feature_left]
+
+        exist_index1 = np.where(X_train_trans == 1)[0]
+        exist_index2 = np.where(X_val_trans == 1)[0]
+
+        if len(exist_index1) ==0 or len(exist_index2) == 0:
+            f1_dict[feature_grid] = -1
+            continue
+
+
+        if len(validation_ids) < 5:
+            split_strategy = LeaveOneOut()
+            tp = 0
+            predict_pos = 0
+            for train_index, val_index in split_strategy.split(X_val_trans):
+                X_train, X_val = np.append(X_train_trans, X_val_trans[train_index], axis=0), X_val_trans[val_index]
+                y_train, y_val = np.append(y_train_orig, y_val_orig[train_index], axis=0), y_val_orig[val_index]
+                mod.fit(X_train, y_train)
+                y_pred = mod.predict(X_val)
+                if y_pred == 1:
+                    predict_pos += 1
+                    if y_val ==  1:
+                        tp += 1
+            recall = tp / actual_pos
+            if predict_pos == 0:
+                precision = 0
+            else:
+                precision = tp / predict_pos
+
+            # recall_dict[feature_grid] = recall
+            # precision_dict[feature_grid] = precision
+            if recall == precision == 0:
+                f1 = 0
+            else:
+                f1 = 2 * recall * precision / (recall + precision)
+            f1_dict[feature_grid] = f1
+        else:
+            split_strategy = StratifiedKFold(n_splits=3)
+
+            tp = 0
+            predict_pos = 0
+            for train_index, val_index in split_strategy.split(X_val_trans, y_val_orig):
+                X_train, X_val = np.append(X_train_trans, X_val_trans[train_index], axis=0), X_val_trans[val_index]
+                y_train, y_val = np.append(y_train_orig, y_val_orig[train_index], axis=0), y_val_orig[val_index]
+                mod.fit(X_train, y_train)
+                y_pred = mod.predict(X_val)
+                for index in range(len(y_pred)):
+                    if y_pred[index] == 1:
+                        predict_pos += 1
+                        if y_val[index] == 1:
+                            tp += 1
+            recall = tp / actual_pos
+            # print("tp: ", tp, "actual_pos: ", actual_pos, "predict_pos: ", predict_pos)
+
+
+
+
+            if predict_pos == 0:
+                precision = 0
+            else:
+                precision = tp / predict_pos
+
+            # recall_dict[feature_method] = recall
+            # precision_dict[feature_method] = precision
+            if recall == precision == 0:
+                f1 = 0
+            else:
+                f1 = 2 * recall * precision / (recall + precision)
+            f1_dict[feature_grid] = f1
+
+
+    return f1_dict, feature_dict
 
 
 model_list = [baseline, knn, lr]

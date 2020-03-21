@@ -58,7 +58,7 @@ model_list = [baseline, knn, lr, svm_c, svm_nu, svm_linear, dt, adaboost, baggin
 model_list = [bernoulli_nb, multi_nb, complement_nb,gaussian_nb, adaboost, svm_linear, lr ]
 root_dir = "/Users/wwang33/Documents/IJAIED20/CuratingExamples/"
 
-step = 10
+step = 1
 no_model_selection = False
 
 class ActiveLearnActionData(object):
@@ -71,6 +71,11 @@ class ActiveLearnActionData(object):
         self.last_neg = 0
         self.record = {"x": [], "pos": []}
         self.session = 0
+        self.best_feature_next = list(range(len(self.X[0])))
+        self.last_time_best_feature = (0, False, 0, 0)
+        self.feature_coded_correct_dict = {}
+        self.feature_coded_times_dict= {}
+
 
 
 
@@ -193,8 +198,8 @@ class ActiveLearnActionData(object):
             if len(poses)==1:
                 best_model = bernoulli_nb
             else:
-                model_f1 = get_model_f1(train_ids1, validation_ids, self.X, self.y, model_list)
-                print_model(model_f1)
+                model_f1 = get_model_f1(train_ids1, validation_ids, self.X[:, self.best_feature_next], self.y, model_list)
+                # print_model(model_f1)
                 itemMaxValue = max(model_f1.items(), key=lambda x: x[1])
                 listOfKeys = list()
                 # Iterate over all the items in dictionary to find keys with max value
@@ -203,23 +208,90 @@ class ActiveLearnActionData(object):
                         listOfKeys.append(key)
                 best_model = np.random.choice(listOfKeys[:4], 1)[0]
             print("best model for this session is: ", best_model.name)
-        current_model = best_model.model
+        current_model = best_model
+
+        feature_f1, feature_dict = get_feature_f1(train_ids1, validation_ids, self.X, self.y, current_model.model)
+        print( sorted(feature_f1.items(), key=lambda x: x[1],reverse=True)[:5])
+        print("---  additive-----")
+        additive_dict = {}
+        for key, value in feature_f1.items():
+            if key in self.feature_coded_correct_dict.keys() and self.session > 2:
+                # if self.feature_coded_correct_dict[key] - (len(poses)-3)/(len(validation_ids)-4) > 0.05 :
+                additive_dict[key] = value +self.feature_coded_correct_dict[key] - (len(poses)-3)/(len(validation_ids)-4)
+            else:
+                additive_dict[key] = value
+
+        print(sorted(additive_dict.items(), key=lambda x: x[1],reverse=True)[:5])
+
+        sorted_feature_f1 = [key for key, item in sorted(additive_dict.items(), key=lambda x: x[1],reverse=True)]
+
+
+
+
+        # print(sorted_feature_f1)
         code_array = np.array(self.body.code.to_list())
         assert bool(set(code_array[validation_ids]) & set(['undetermined'])) == False, "validation set includes un-coded data!"
-        current_model.fit(self.X[validation_ids], code_array[validation_ids])
-        rest_data_ids = get_opposite(range(len(self.y)), validation_ids)
-        # print(list(current_model.classes_))
-        try:
-            pos_at = list(current_model.classes_).index('1')
-        except:
-            pos_at = list(current_model.classes_).index(1)
+        for best_feature in sorted_feature_f1:
+            print('using best_feature: ', best_feature, "  to predict")
+            selected_feature =  feature_dict[best_feature]
+            # print("selected_feature")
+            # current_model.fit(self.X[validation_ids], code_array[validation_ids])
+            try:
+                current_model.model.fit(self.X[validation_ids][:, selected_feature], code_array[validation_ids])
+                rest_data_ids = get_opposite(range(len(self.y)), validation_ids)
+            except:
+                continue
+            try:
+                pos_at = list(current_model.model.classes_).index('1')
+            except:
+                pos_at = list(current_model.model.classes_).index(1)
+            # try:
+            prob = current_model.model.predict_proba(self.X[rest_data_ids][:, selected_feature])[:, pos_at]
+            order = np.argsort(np.abs(prob))[::-1]  ## uncertainty sampling by distance to decision plane
+            # most_certain = order[:step]
+            self.best_feature_next = selected_feature
+            self.last_time_best_feature = best_feature
+            # return np.array(rest_data_ids)[most_certain]
 
-        prob = current_model.predict_proba(self.X[rest_data_ids])[:, pos_at]
-        order = np.argsort(np.abs(prob))[::-1]  ## uncertainty sampling by distance to decision plane
+            prob = current_model.model.predict_proba(self.X[rest_data_ids][:, selected_feature])[:, pos_at]
 
-        most_certain = order[:step]
+            if len(rest_data_ids) == 1:
+                return rest_data_ids[0]
 
-        return np.array(rest_data_ids)[most_certain]
+            candidate_id_voi_dict = {}
+            for candidate_id in tqdm(rest_data_ids):
+                code_array = np.array(self.body.code.to_list())
+                train_ids2 = list([candidate_id]) + list(validation_ids)
+                code_array[candidate_id] = '1'
+                assert bool(set(code_array[validation_ids]) & set(['undetermined'])) == False, "train set includes un-coded data!"
+                voi = get_VOI(train_ids2, validation_ids, self.X[rest_data_ids][:, selected_feature], code_array,
+                              [current_model, bernoulli_nb])
+                candidate_id_voi_dict[candidate_id] = voi
+            determine_dict = candidate_id_voi_dict
+            if not determine_dict:
+                return -1
+            for i in determine_dict:
+                determine_dict[i] = determine_dict[i] + (prob[i])
+            print("candidate_id_voi_dict: ", candidate_id_voi_dict)
+            print("determine_dict: ", determine_dict)
+            best_candidate = max(determine_dict.items(), key=operator.itemgetter(1))[0]
+            return best_candidate
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -299,7 +371,7 @@ class ActiveLearnActionData(object):
             for ele in r:
                 if self.body.label[ele] == 1:
                     return [ele]
-            r = self.random(step= 10)
+            r = self.random(step = 10)
 
     def start_as_3_pos(self):
         r = self.random(10)
@@ -310,7 +382,7 @@ class ActiveLearnActionData(object):
                     ele_list.append(ele)
                 if len(ele_list) == 3:
                     return ele_list
-            r = self.random(step= 10)
+            r = self.random(step = 10)
 
 
 
@@ -327,10 +399,30 @@ class ActiveLearnActionData(object):
         # print("in session: ", self.session, "coded:  ", self.body['label'][id], end = "")
         # print("self.body['label']: ", self.body['label'][id])
         print_data = []
-        for bla in np.nditer(id):
-            print_data.append(self.body['label'][bla])
+        print("id: ", id)
+        try:
+            for bla in np.nditer(id):
+                print_data.append(self.body['label'][bla])
+        except:
+            print_data.append(id)
         # print("bla: ", print_data)
         print("coded correct: ", Counter(print_data)[1], "among 10")
         self.body['code'][id] = self.body['label'][id]
         self.body["session"][id] = self.session
+        # if self.last_time_best_feature in self.feature_coded_correct_dict.keys():
+        #     existing_number = self.feature_coded_correct_dict[self.last_time_best_feature]
+        #     existing_times = self.feature_coded_times_dict[self.last_time_best_feature]
+        #     self.feature_coded_correct_dict[self.last_time_best_feature] = ((Counter(print_data)[1] + existing_number*step* existing_times))/(step*(existing_times+1))
+        #     self.feature_coded_times_dict[self.last_time_best_feature] += 1
+        #
+        # elif self.session >=1:
+        #     self.feature_coded_correct_dict[self.last_time_best_feature] =  Counter(print_data)[1]/step
+        #     self.feature_coded_times_dict[self.last_time_best_feature] =1
+        if self.session >=1:
+            self.feature_coded_correct_dict[self.last_time_best_feature] = Counter(print_data)[1] / step
+            # self.feature_coded_times_dict[self.last_time_best_feature] = 1
+            print("self.feature_coded_times_dict", self.feature_coded_times_dict)
+            print("self.feature_coded_correct_dict", self.feature_coded_correct_dict)
+
+
 
