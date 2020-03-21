@@ -59,7 +59,7 @@ label_name_s = ['keymove', 'jump', 'costopall', 'wrap', 'cochangescore', 'moveto
 # y = np.random.randint(2, size=250)
 # # array([1, 0, 0, 0, 1, 1, 0, 0, 1, 0])
 #
-start_data = 3
+# start_data = 3
 # # the amount of positive data to start with
 # # the total amount of data to start with is start_data +1, because it also starts with a negative data
 # #
@@ -79,7 +79,7 @@ def simulate(X,y,label_name):
     for i in range(10):
         read = ActiveLearnActionData(X, y)
         total = total_data
-        for j in (range((total-start_data)//step)):
+        for j in (range((total-1)//step)):
             pos, neg, total_real = read.get_numbers()
             print(pos, neg, total_real)
             real_true = Counter(y)[1]
@@ -104,7 +104,7 @@ def simulate(X,y,label_name):
 
 
 def encapsulated_simulate():
-    # label_name_s = ['keymove', 'jump', 'costopall', 'cochangescore', 'movetomouse', 'moveanimate']
+    label_name_s = ['keymove', 'jump', 'costopall', 'cochangescore', 'movetomouse', 'moveanimate']
     label_name_s = ['moveanimate']
     for label_name in label_name_s:
 
