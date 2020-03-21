@@ -68,7 +68,8 @@ def get_VOI(train_ids, validation_ids, X, y, cur_model):
     X_val_orig = X[validation_ids]
     y_train_orig  = y[train_subset_index]
     y_val_orig = y[validation_ids]
-    actual_pos = Counter(y_val_orig)[1]
+
+    actual_pos =  np.count_nonzero((y_val_orig) == str(1))
 
 
     split_strategy = StratifiedKFold(3)
@@ -85,9 +86,9 @@ def get_VOI(train_ids, validation_ids, X, y, cur_model):
         # print("y_val: ", y_val, "y_train: ", y_train)
         # print("y_pred: ", y_pred)
         for index in range(len(y_pred)):
-            if y_pred[index] == 1:
+            if y_pred[index] == str(1):
                 predict_pos += 1
-                if y_val[index] == 1:
+                if y_val[index] == str(1):
                     tp += 1
     recall = tp / actual_pos
     # print("in model: ","tp: ", tp, "actual_pos: ", actual_pos, "predict_pos: ", predict_pos)
@@ -95,14 +96,11 @@ def get_VOI(train_ids, validation_ids, X, y, cur_model):
         precision = 0
     else:
         precision = tp / predict_pos
-    recall_dict[mod] = recall
-    precision_dict[mod] = precision
     if recall == precision == 0:
         f1 = 0
     else:
         f1 = 2 * recall * precision / (recall + precision)
-    f1_dict[mod] = f1
-    return VOI
+    return f1
 
 
 
