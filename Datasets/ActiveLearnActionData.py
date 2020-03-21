@@ -58,7 +58,7 @@ model_list = [baseline, knn, lr, svm_c, svm_nu, svm_linear, dt, adaboost, baggin
 model_list = [bernoulli_nb, multi_nb, complement_nb,gaussian_nb, adaboost, svm_linear, lr ]
 root_dir = "/Users/wwang33/Documents/IJAIED20/CuratingExamples/"
 
-step = 1
+step = 5
 no_model_selection = False
 
 class ActiveLearnActionData(object):
@@ -539,6 +539,7 @@ class ActiveLearnActionData(object):
 
     ## Code candidate studies ##
     def code(self,id):
+        id = np.array(id)
         print_data = []
         print("id: ", id)
         # try:

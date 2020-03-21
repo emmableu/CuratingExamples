@@ -89,14 +89,15 @@ def simulate(X,y,label_name):
             if pos < 1:
                 # if start_data == 3:
                 for id in read.start_as_1_pos():
-                    read.code(id)
+                    read.code([id])
             else:
                 candidate = read.train_model_feature_selection()
                 read.code(candidate)
         all_simulation[i] = (read.body['session'])
-        save_pickle(all_simulation[i], 'all_simulation_' + label_name, base_dir, "simulation/model_feature_voi_selection/subtrain/session" + str(i))
+        # save_pickle(all_simulation[i], 'all_simulation_' + label_name, base_dir, "simulation/model_feature_no_voi_step=5/subtrain/session" + str(i))
+        save_pickle(all_simulation[i], 'all_simulation_' + label_name, base_dir, "simulation/model_feature_has_voi_step=5/subtrain/session" + str(i))
 
-    save_pickle(all_simulation,'all_simulation_' + label_name, base_dir, "simulation/model_feature_voi_selection")
+    save_pickle(all_simulation,'all_simulation_' + label_name, base_dir, "simulation/model_feature_has_voi_step=5")
 
 
 # simulate(X, y, 'cochangescore[1, 0]baseline')
@@ -105,7 +106,8 @@ def simulate(X,y,label_name):
 
 def encapsulated_simulate():
     label_name_s = ['keymove', 'jump', 'costopall', 'cochangescore', 'movetomouse', 'moveanimate']
-    label_name_s = ['moveanimate']
+    # label_name_s = ['keymove', 'costopall', 'movetomouse', 'moveanimate']
+    # label_name_s = ['costopall']
     for label_name in label_name_s:
 
         X = load_obj("X_train",base_dir + "/cv/test_size0/fold0/code_state[[1, 0], [1, 1], [1, 2], [1, 3]]baseline/"+ label_name + "/","")
