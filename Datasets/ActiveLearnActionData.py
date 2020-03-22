@@ -149,7 +149,7 @@ class ActiveLearnActionData(object):
         current_model = best_model.model
         code_array = np.array(self.body.code.to_list())
         assert bool(set(code_array[validation_ids]) & set(['undetermined'])) == False, "validation set includes un-coded data!"
-        current_model.fit(self.X[validation_ids], code_array[validation_ids])
+        current_model.fit(self.X[train_ids1], code_array[train_ids1])
         rest_data_ids = get_opposite(range(len(self.y)), validation_ids)
         # print(list(current_model.classes_))
         try:
@@ -259,7 +259,7 @@ class ActiveLearnActionData(object):
             # print("selected_feature")
             # current_model.fit(self.X[validation_ids], code_array[validation_ids])
             try:
-                current_model.model.fit(self.X[validation_ids][:, selected_feature], code_array[validation_ids])
+                current_model.model.fit(self.X[train_ids1][:, selected_feature], code_array[train_ids1])
                 rest_data_ids = get_opposite(range(len(self.y)), validation_ids)
             except:
                 continue
@@ -282,7 +282,6 @@ class ActiveLearnActionData(object):
             # save_obj(pattern_list[selected_feature], "selected_feature" + str(len(selected_feature)), base_dir + "temp/experiment_feature/session" + str(self.session), "")
             self.last_time_best_feature = best_feature
             # return np.array(rest_data_ids)[most_certain]
-
             prob = current_model.model.predict_proba(self.X[rest_data_ids][:, selected_feature])[:, pos_at]
             prob = sorted(prob, reverse= True)
             if prob[0] == 0:
@@ -383,7 +382,7 @@ class ActiveLearnActionData(object):
         current_model = best_model.model
         code_array = np.array(self.body.code.to_list())
         assert bool(set(code_array[validation_ids]) & set(['undetermined'])) == False, "validation set includes un-coded data!"
-        current_model.fit(self.X[validation_ids], code_array[validation_ids])
+        current_model.fit(self.X[train_ids1], code_array[train_ids1])
         rest_data_ids = get_opposite(range(len(self.y)), validation_ids)
         # print(list(current_model.classes_))
         try:
@@ -481,7 +480,8 @@ class ActiveLearnActionData(object):
             print('using best_feature: ', best_feature, "  to predict")
             selected_feature = feature_dict[best_feature]
             try:
-                current_model.model.fit(self.X[validation_ids][:, selected_feature], code_array[validation_ids])
+                # print("train_ids1: ", train_ids1)
+                current_model.model.fit(self.X[train_ids1][:, selected_feature], code_array[train_ids1])
                 rest_data_ids = get_opposite(range(len(self.y)), validation_ids)
             except:
                 continue
