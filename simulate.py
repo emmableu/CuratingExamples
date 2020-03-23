@@ -80,8 +80,8 @@ def simulate(X,y,label_name):
         read = ActiveLearnActionData(X, y)
         total = total_data
         for j in (range((total-1)//step)):
-            pos, neg, total_real = read.get_numbers()
-            print(pos, neg, total_real)
+            pos, neg, total = read.get_numbers()
+            print(pos, neg, total)
             real_true = Counter(y)[1]
             # print("actual positive before training: ", real_true)
             if pos >= real_true * 0.5:

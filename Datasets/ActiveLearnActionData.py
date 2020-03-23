@@ -67,9 +67,6 @@ class ActiveLearnActionData(object):
         self.X = np.digitize(X, bins = [1])
         self.y = y
         self.body = self.get_body()
-        self.last_pos = 0
-        self.last_neg = 0
-        self.record = {"x": [], "pos": []}
         self.session = 0
         self.best_feature_next = list(range(len(self.X[0])))
         self.last_time_best_feature = (0, False, 0, 0)
@@ -90,53 +87,32 @@ class ActiveLearnActionData(object):
         return body
 
     def get_numbers(self):
-        total = len(self.body["code"]) - self.last_pos - self.last_neg
-        pos = Counter(self.body["code"])[1] - self.last_pos
-        neg = Counter(self.body["code"])[0] - self.last_neg
-        try:
-            tmp=self.record['x'][-1]
-        except:
-            tmp=-1
-        if int(pos+neg)>tmp:
-            self.record['x'].append(int(pos+neg))
-            self.record['pos'].append(int(pos))
-        self.pool = np.where(np.array(self.body['code']) == "undetermined")[0]
-        self.labeled = list(set(range(len(self.body['code']))) - set(self.pool))
-        return pos, neg, total
-
-
-
-    def train(self):
-        self.session += 1
-        print("--------------train session ", self.session, "-----------------")
+        total = len(self.body["code"])
+        pos = Counter(self.body["code"])[1]
+        neg = Counter(self.body["code"])[0]
         poses = np.where(np.array(self.body['code']) == 1)[0]
         negs = np.where(np.array(self.body['code']) == 0)[0]
-        validation_ids = list(poses) + list(negs)
+        self.code_array = np.array(self.body.code.to_list())
+        self.validation_ids = list(poses) + list(negs)
+        self.unlabeled = np.where(np.array(self.body['code']) == "undetermined")[0]
+        if len(self.unlabeled)>= len(poses):
+            unlabeled_train = np.random.choice(self.unlabeled, size=len(poses))
+            self.train_ids1 = list(poses) + list(negs) + list(unlabeled_train)
+            self.code_array[unlabeled_train] = '0'
+        else:
+            self.train_ids1 = list(poses) + list(negs)
+        assert bool(
+            set(self.code_array[self.validation_ids]) & set(['undetermined'])) == False, "train set includes un-coded data!"
+        return pos, neg, total
 
-        unlabeled = np.where(np.array(self.body['code']) == "undetermined")[0]
-        # print("poses: ", poses)
-        print("number of poses: ", len(poses), "/ ", end = "")
-        print("total poses: ", Counter(self.y)[1], "/ ", end = "")
-        print("total coded till now: ", len(validation_ids))
-
-        # print("coded correctly: ", len(poses)-start_data)
-        try:
-            unlabeled_train = np.random.choice(unlabeled, size=len(poses))
-            train_ids1 = list(poses) + list(negs) + list(unlabeled_train)
-            code_array = np.array(self.body.code.to_list())
-            code_array[unlabeled_train] = '0'
-            assert bool(
-                set(code_array[validation_ids]) & set(['undetermined'])) == False, "train set includes un-coded data!"
-
-        except:
-            train_ids1 = list(poses) + list(negs)
+    def get_model(self):
         if no_model_selection:
             best_model = svm_linear
         else:
-            if len(poses)==1:
+            if len(self.poses)==1:
                 best_model = bernoulli_nb
             else:
-                model_f1 = get_model_f1(train_ids1, validation_ids, self.X, self.y, model_list)
+                model_f1 = get_model_f1(self.train_ids1, self.validation_ids, self.X, self.y, model_list)
                 print_model(model_f1)
                 itemMaxValue = max(model_f1.items(), key=lambda x: x[1])
                 listOfKeys = list()
@@ -144,13 +120,21 @@ class ActiveLearnActionData(object):
                 for key, value in model_f1.items():
                     if value == itemMaxValue[1]:
                         listOfKeys.append(key)
-                best_model = np.random.choice(listOfKeys[:4], 1)[0]
+            best_model = np.random.choice(listOfKeys[:4], 1)[0]
             print("best model for this session is: ", best_model.name)
+            return best_model
+
+    def train(self):
+        self.session += 1
+        self.get_numbers()
+        print("--------------train session ", self.session, "-----------------")
+        best_model = self.get_model()
+
         current_model = best_model.model
         code_array = np.array(self.body.code.to_list())
-        assert bool(set(code_array[validation_ids]) & set(['undetermined'])) == False, "validation set includes un-coded data!"
-        current_model.fit(self.X[train_ids1], code_array[train_ids1])
-        rest_data_ids = get_opposite(range(len(self.y)), validation_ids)
+        assert bool(set(code_array[self.validation_ids]) & set(['undetermined'])) == False, "validation set includes un-coded data!"
+        current_model.fit(self.X[self.train_ids1], code_array[self.train_ids1])
+        rest_data_ids = get_opposite(range(len(self.y)), self.validation_ids)
         # print(list(current_model.classes_))
         try:
             pos_at = list(current_model.classes_).index('1')

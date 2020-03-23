@@ -4,9 +4,8 @@ import os
 import numpy as np
 import time
 import inspect
-
 root_dir = "/Users/wwang33/Documents/IJAIED20/CuratingExamples/"
-base_dir = root_dir + "Datasets/data/SnapASTData/Data_413/"
+base_dir = root_dir + "Datasets/data/PaperSubmission/"
 test_size_list = [0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0]
 
 
