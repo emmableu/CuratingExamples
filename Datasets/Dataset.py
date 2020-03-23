@@ -132,11 +132,12 @@ class Dataset:
         fold = 0
         for action_name in tqdm(action_name_s):
             action_data = ActionData(code_state=code_state, game_label=game_label, action_name=action_name, selected_p_q_list=selected_p_q_list)
-            save_dir = base_dir + "/xy/code_state" + str(selected_p_q_list)  + "/" + action_name
+            save_dir = base_dir + "/xy_0.3heldout/code_state" + str(selected_p_q_list)  + "/" + action_name
             train_pid, test_pid = get_train_test_pid(test_size,fold)
             for p in train_pid:
                 if p not in self.pid_list:
                     print("pid not in pid_list!", p)
+            # action_data.submission_get_pattern_statistics(train_pid, True)
             action_data.save_x_y_train_test(train_pid, test_pid, save_dir)
 
     def save_x_y_to_hard_drive(self, selected_p_q_list, baseline = True):

@@ -213,8 +213,8 @@ def generate_cv(all_pid_s):
     # #
 
 def get_train_test_pid(test_size, fold):
-    train_pid = load_obj("train_pid", base_dir, "xy")
-    test_pid = load_obj("test_pid", base_dir, "xy")
+    train_pid = load_obj("train_pid", base_dir, "xy_0.3heldout")
+    test_pid = load_obj("test_pid", base_dir, "xy_0.3heldout")
     return train_pid, test_pid
 
 def add_by_ele(orig_dict, add_dict):

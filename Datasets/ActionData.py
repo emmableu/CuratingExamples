@@ -88,7 +88,7 @@ class ActionData:
 
 
 
-    def get_pattern_statistics(self, train_pid, baseline):
+    def get_pattern_statistics(self, train_pid, baseline = True):
 
         if baseline:
             pattern_set = load_obj("pattern_set"+ str(self.selected_p_q_list), base_dir,
@@ -98,6 +98,9 @@ class ActionData:
             full_pattern_set = set()
             for p in (self.selected_p_q_list):
                 atomic_add(full_pattern_set, pattern_set['code_state' + str(p)])
+            full_pattern_set = sorted(full_pattern_set)
+            print(full_pattern_set)
+            save_obj(full_pattern_set, "full_patterns", base_dir, "xy_0.3heldout/code_state" + str(self.selected_p_q_list))
             return full_pattern_set
 
         else:
@@ -117,25 +120,30 @@ class ActionData:
         return significant_patterns
 
 
+    def submission_get_pattern_statistics(self, train_pid, baseline):
+        self.get_pattern_statistics(train_pid, baseline)
+
+
     def save_x_y_train_test(self,train_pid, test_pid, save_dir,baseline = True):
-        significant_patterns = self.get_pattern_statistics(train_pid, baseline)
-        save_obj(significant_patterns, "significant_patterns", save_dir, "")
+        # significant_patterns = self.get_pattern_statistics(train_pid, baseline)
+        significant_patterns = load_obj( "full_patterns", base_dir, "xy_0.3heldout/code_state" + str(self.selected_p_q_list))
         num_patterns = len(significant_patterns)
         train_df = self.game_label[self.game_label.pid.isin(train_pid)].reset_index(drop = True)
         test_df = self.game_label[self.game_label.pid.isin(test_pid)].reset_index(drop = True)
         # print("train_df: ", train_df)
         def get_xy(df):
-            x = np.zeros((len(df.index), num_patterns))
+            x = np.empty((len(df.index), num_patterns))
             y = np.zeros(len(df.index))
             for game_index, i in enumerate(df.index):
                 pid = df.at[i, 'pid']
                 code_shape = self.memory_get_code_shape_from_pid(pid)
                 for pattern_index, p in enumerate(significant_patterns):
-                    try:
+                    if p in code_shape.keys():
                         occurance = code_shape[p]
-                    except KeyError:
+                        # print(occurance)
+                    else:
                         occurance = 0
-                    x[game_index][pattern_index] = occurance
+                    x[game_index, pattern_index] = occurance
                 if df.at[i, self.action_name]:
                     y[game_index] = 1
                 else:

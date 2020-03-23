@@ -13,7 +13,7 @@ label_name = 'keymove'
 # x_orig = load_obj('X_train', orig_dir, "")
 # y_orig = load_obj('y_train', orig_dir, "")
 #
-# patterns = load_obj("significant_patterns", base_dir + "/xy/code_state[[1, 0], [1, 1], [1, 2], [1, 3], [2, 3]]/keymove", "")
+# patterns = load_obj("significant_patterns", base_dir + "/xy_0.3heldout/code_state[[1, 0], [1, 1], [1, 2], [1, 3], [2, 3]]/keymove", "")
 # pattern_orig = np.array([pattern for pattern in patterns])
 # # model_list = [ adaboost, gaussian_nb,
 # #                         bernoulli_nb, multi_nb, complement_nb, mlp]

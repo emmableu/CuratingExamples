@@ -12,7 +12,7 @@ action_name_s = ['keymove', 'jump', 'cochangescore', 'movetomouse', 'moveanimate
 # code_shape_p_q_list = [[1, 0], [1, 1], [1, 2], [1, 3], [2, 3]]
 code_shape_p_q_list = [[1, 0]]
 action_name = 'keymove'
-orig_dir = base_dir + "/xy/code_state" + str(code_shape_p_q_list) +  "/" + action_name
+orig_dir = base_dir + "/xy_0.3heldout/code_state" + str(code_shape_p_q_list) +  "/" + action_name
 
 x_train = load_obj('X_train', orig_dir, "")
 x_train = np.digitize(x_train, bins=[1])
@@ -91,45 +91,79 @@ def encapsulated_simulate():
 # cs = load_obj("code_state[[1, 0]]", save_dir)
 # print(cs)
 
-def pattern_examination():
-    # code_shape_p_q_list2 = [[1, 0], [1, 1], [1, 2], [1, 3], [2, 3]]
-    # code_shape_p_q_list1 = [[1, 0]]
-    # action_name = 'keymove'
-    # orig_dir = base_dir + "/xy/code_state" + str(code_shape_p_q_list1) + "/" + action_name
-    # patterns = load_obj("significant_patterns", orig_dir, "")
-    # pattern_orig1 = np.array([pattern for pattern in patterns])
-    # orig_dir = base_dir + "/xy/code_state" + str(code_shape_p_q_list2) + "/" + action_name
-    # patterns = load_obj("significant_patterns", orig_dir, "")
-    # pattern_orig2 = np.array([pattern for pattern in patterns])
-    # # one_hot_patterns = load_obj("pattern0", base_dir + "temp")
-    # print("onehot length: ", len(pattern_orig1))
-    # print("pqgram length: ", len(pattern_orig2))
-
+def pattern_verification():
     code_shape_p_q_list2 = [[1, 0], [1, 1], [1, 2], [1, 3], [2, 3]]
     code_shape_p_q_list1 = [[1, 0]]
-    orig_dir = base_dir + "/CodeState"
-    patterns = load_obj("code_state" + str(code_shape_p_q_list1), orig_dir, "")
-    pid = load_obj('pid', base_dir)
-    pattern_orig1 = patterns.at[pid[0], 'code_state[1, 0]']
-    orig_dir = base_dir + "/CodeState"
-    patterns = load_obj("code_state" + str(code_shape_p_q_list2), orig_dir, "")
-    pattern_orig2 =  patterns.at[pid[0], 'code_state[1, 0]']
-    # one_hot_patterns = load_obj("pattern0", base_dir + "temp")
+    # action_name = 'keymove'
+    orig_dir = base_dir + "/xy_0.3heldout/code_state" + str(code_shape_p_q_list1) + "/" + action_name
+    pattern_dir = base_dir + "/xy_0.3heldout/code_state" + str(code_shape_p_q_list1)
+    patterns = load_obj("full_patterns", pattern_dir, "")
+    # print(patterns)
+    pattern_orig1 = np.array([pattern for pattern in patterns])
+    x_train1 = load_obj('X_train', orig_dir, "")
+    # x_train1 = np.digitize(x_train1, bins=[1])
+
+
+
+    orig_dir = base_dir + "/xy_0.3heldout/code_state" + str(code_shape_p_q_list2) + "/" + action_name
+    pattern_dir = base_dir + "/xy_0.3heldout/code_state" + str(code_shape_p_q_list2)
+    patterns = load_obj("full_patterns", pattern_dir, "")
+    pattern_orig2 = np.array([pattern for pattern in patterns])
+    # print(pattern_orig2)
+    x_train2 = load_obj('X_train', orig_dir, "")
+    # x_train2 = np.digitize(x_train2, bins=[1])
+
     print("onehot length: ", len(pattern_orig1))
     print("pqgram length: ", len(pattern_orig2))
 
 
+    def get_pattern_index():
+        # Actually preform the operation...
+        xsorted = np.argsort(pattern_orig2)
+        ypos = np.searchsorted(pattern_orig2[xsorted], pattern_orig1)
+        indices = xsorted[ypos]
+
+
+        xsorted = np.argsort(pattern_orig1)
+        ypos = np.searchsorted(pattern_orig1[xsorted], pattern_orig1)
+        indices2 = xsorted[ypos]
+        # one_hot_index =np.where(pattern_orig2 in pattern_orig1)[0]
+        # indices = np.where(np.in1d(pattern_orig2, pattern_orig1))[0]
+
+        # one_hot_index = []
+        # for i, e in enumerate(pattern_orig1):
+        #     if e in pattern_orig2:
+        #         one_hot_index.append(np.where(pattern_orig2==e)[0])
+        return indices, indices2
+
+    one_hot_index, indices2 = get_pattern_index()
+    print(one_hot_index)
+
+    print(sorted(one_hot_index))
+    print(pattern_orig2[one_hot_index])
+    x2 = (x_train2[:,one_hot_index][0]).astype(int)
+    x1 = (x_train1[: ,indices2][0].astype(int))
+    print(x2)
+    print(x1)
+    # code_shape_p_q_list2 = [[1, 0], [1, 1], [1, 2], [1, 3], [2, 3]]
+    # code_shape_p_q_list1 = [[1, 0]]
+    # orig_dir = base_dir + "/CodeState"
+    # patterns = load_obj("code_state" + str(code_shape_p_q_list1), orig_dir, "")
+    # pid = load_obj('pid', base_dir)
+    # pattern_orig1 = patterns.at[pid[0], 'code_state[1, 0]']
+    # orig_dir = base_dir + "/CodeState"
+    # patterns = load_obj("code_state" + str(code_shape_p_q_list2), orig_dir, "")
+    # pattern_orig2 =  patterns.at[pid[0], 'code_state[1, 0]']
+    # # one_hot_patterns = load_obj("pattern0", base_dir + "temp")
+    # print("onehot length: ", len(pattern_orig1))
+    # print("pqgram length: ", len(pattern_orig2))
+
+
+def
 
 
 
 
-    for i, e in enumerate(pattern_orig1):
-        if e in pattern_orig2:
-            if (pattern_orig2[e])!=(pattern_orig1[e]):
-                print(e)
-
-            else:
-                print(e, " same")
 
 
 
@@ -137,6 +171,6 @@ def pattern_examination():
 
 
 
-pattern_examination()
+
 
 
