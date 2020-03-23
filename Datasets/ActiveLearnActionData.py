@@ -84,7 +84,7 @@ class ActiveLearnActionData(object):
         for i in range(len(self.y)):
             body.loc[i] = {"X": self.X[i], 'label': int(self.y[i])}
         n = len(self.y)
-        body["code"] = ["undetermined"] * n
+        body["code"] = [-1] * n
         body["session"] = [-1] * n
         return body
 
@@ -94,9 +94,11 @@ class ActiveLearnActionData(object):
         neg = Counter(self.body["code"])[0]
         poses = np.where(np.array(self.body['code']) == 1)[0]
         negs = np.where(np.array(self.body['code']) == 0)[0]
-        self.code_array = np.array(self.body.code.to_list())
+        code_array = np.array(self.body.code.to_list())
+        self.code_array = code_array.astype(int)
+
         self.train_ids1 = list(poses) + list(negs)
-        self.pool = np.where(np.array(self.body['code']) == "undetermined")[0]
+        self.pool = np.where(np.array(self.body['code']) == -1)[0]
         self.labeled = list(set(range(len(self.body['code']))) - set(self.pool))
         assert bool(
             set(self.code_array[self.train_ids1]) & set(['undetermined'])) == False, "train set includes un-coded data!"
@@ -132,6 +134,27 @@ class ActiveLearnActionData(object):
         current_model = best_model
         current_model.model.fit(self.X[self.train_ids1], self.code_array[self.train_ids1])
         return current_model
+
+
+
+
+
+    def dpm_passive_train(self):
+        self.session += 1
+        self.get_numbers()
+
+        print("--------------train session ", self.session, "-----------------")
+        best_model = svm_linear
+        current_model = best_model
+        # print("self.train_ids1: ", self.train_ids1)
+        print(self.X[self.train_ids1])
+        # print("self.code_array[self.train_ids1]", self.code_array[self.train_ids1])
+        selected_features = select_feature(self.X[self.train_ids1], self.code_array[self.train_ids1])
+        input_x = np.insert(self.X[:, selected_features], 0, 1, axis=1)
+        # print("input x: ", input_x)
+        current_model.model.fit(input_x[self.train_ids1], self.code_array[self.train_ids1])
+        return current_model, selected_features
+
 
 
 

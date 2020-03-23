@@ -8,16 +8,16 @@ transformer = TfidfTransformer(smooth_idf=False)
 
 label_name = 'keymove'
 
-orig_dir = base_dir + "/cv/test_size0/fold0/code_state[[1, 0], [1, 1], [1, 2], [1, 3]]baseline/" + label_name
-
-x_orig = load_obj('X_train', orig_dir, "")
-y_orig = load_obj('y_train', orig_dir, "")
-
-patterns = load_obj("significant_patterns", orig_dir, "")
-pattern_orig = [pattern for pattern in patterns]
-model_list = [ adaboost, gaussian_nb,
-                        bernoulli_nb, multi_nb, complement_nb, mlp]
-
+# orig_dir = base_dir + "/cv/test_size0/fold0/code_state[[1, 0], [1, 1], [1, 2], [1, 3]]baseline/" + label_name
+#
+# x_orig = load_obj('X_train', orig_dir, "")
+# y_orig = load_obj('y_train', orig_dir, "")
+#
+# patterns = load_obj("significant_patterns", base_dir + "/xy/code_state[[1, 0], [1, 1], [1, 2], [1, 3], [2, 3]]/keymove", "")
+# pattern_orig = np.array([pattern for pattern in patterns])
+# # model_list = [ adaboost, gaussian_nb,
+# #                         bernoulli_nb, multi_nb, complement_nb, mlp]
+#
 
 
 def not_sure_what_this_is():

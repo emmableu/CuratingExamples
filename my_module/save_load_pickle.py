@@ -90,6 +90,15 @@ def df2list(df,body):
     return body
 
 
+def save_figure(figure, dir = "plots", file_name ="", has_time =True):
+    if dir == "plots":
+        dir = ("/Users/wwang33/Documents/IJAIED20/CuratingExamples/PaperSubmission/Plots")
+    t = time.time()
+    if has_time:
+        file_name = "" + str(int(t)) + ".png"
+    figure.savefig(dir+"/" + file_name)
+
+
 
 
 def atom_mkdir(dir):

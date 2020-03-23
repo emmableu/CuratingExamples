@@ -1,7 +1,11 @@
 import numpy as np
 import sklearn
 import warnings
-
+import sys
+from tqdm import tqdm
+sys.path.append('/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets')
+from Dataset import *
+sys.path.append('/Users/wwang33/Documents/IJAIED20/CuratingExamples')
 from classifiers.Baseline import BaselineModel
 from classifiers.knn_classifiers.KNN import KNNModel
 from classifiers.lr_classifiers.LogisticRegression import LRModel
@@ -54,7 +58,40 @@ def get_weights(x, y):
 
 
 
+def select_feature(x, y):
+    y = y.astype(int)
+    y_yes_index = np.where(y == 1)[0]
+    yes_x = x[y_yes_index]
+    # print('y_yes_index:', y_yes_index)
+    y_no_index = np.where(y == 0)[0]
+    no_x = x[y_no_index]
+    feature_freq1 =  np.mean(yes_x, axis = 0)
+    feature_freq2 =  np.mean(no_x, axis = 0)
+    feature_sd1 = np.std(yes_x, axis=0)
+    feature_sd2 = np.std(no_x, axis=0)
+    # print(feature_freq1)
+    n1 = len(yes_x)
+    n2 = len(no_x)
+    print("n1, n2", n1, n2)
+    selected_patterns = []
 
+    for i in tqdm(range(len(x[0]))):
+        z,p = twoSampZ(feature_freq1[i], feature_freq2[i], feature_sd1[i], feature_sd2[i], n1, n2)
+        # print(p)
+        if p<0.05:
+            selected_patterns.append(i)
+    print("pattern selected with length:" ,len(selected_patterns))
+    return selected_patterns
+
+
+
+def twoSampZ(X1, X2, sd1, sd2, n1, n2, mudiff=0):
+    from numpy import sqrt, abs, round
+    from scipy.stats import norm
+    pooledSE = sqrt(sd1**2/n1 + sd2**2/n2)
+    z = ((X1 - X2) - mudiff)/pooledSE
+    pval = 2*(1 - norm.cdf(abs(z)))
+    return round(z, 3), round(pval, 4)
 
 
 def get_VOI(train_ids, validation_ids, X, y, cur_model):
