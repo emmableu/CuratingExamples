@@ -96,9 +96,26 @@ class Model:
             return perf
 
 
-    def naive_predict(self,X, y):
+    def naive_cross_val_predict(self,X, y):
         y_pred = cross_val_predict(self.model, X, y, cv=10)
         y_test = y
+        perf = self.get_performance_dict(y_test,y_pred)
+        return perf
+
+
+
+
+
+    def naive_predict(self, X, y):
+        y_pred = self.model.predict(X)
+        y_test = y
+        y_pred = y_pred.astype(int)
+        perf = self.get_performance_dict(y_test,y_pred)
+        return perf
+
+
+
+    def get_performance_dict(self, y_test, y_pred):
         self.confusion_matrix = confusion_matrix(y_test, y_pred)
         fpr, tpr, threshold = roc_curve(y_test, y_pred)
         roc_auc = auc(fpr, tpr)

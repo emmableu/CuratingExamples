@@ -4,12 +4,13 @@ import os
 import numpy as np
 import time
 import inspect
+from tqdm import *
 root_dir = "/Users/wwang33/Documents/IJAIED20/CuratingExamples/"
 base_dir = root_dir + "Datasets/data/PaperSubmission/"
 test_size_list = [0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0]
 
 
-def save_pickle(obj, name, dir, sub_dir):
+def save_pickle(obj, name, dir, sub_dir = ""):
     if sub_dir:
         csv_dir = dir +"/"+ sub_dir
         pickle_dir = dir +"/"+ sub_dir + '/pickle_files'
@@ -24,7 +25,7 @@ def save_pickle(obj, name, dir, sub_dir):
 
 
 # for filename in os.listdir(directory):
-def save_obj(obj, name, dir, sub_dir):
+def save_obj(obj, name, dir, sub_dir = ""):
     if sub_dir:
         csv_dir = dir +"/"+ sub_dir
         pickle_dir = dir +"/"+ sub_dir + '/pickle_files'
@@ -51,7 +52,7 @@ def is_obj(name, dir, sub_dir):
     return os.path.isfile(pickle_dir+ "/" + name + ".pkl")
 
 
-def load_obj(name, dir, sub_dir):
+def load_obj(name, dir, sub_dir = ""):
     if sub_dir:
         pickle_dir = dir +"/"+ sub_dir + '/pickle_files'
     else:
@@ -203,8 +204,8 @@ def generate_cv(all_pid_s):
     # #
 
 def get_train_test_pid(test_size, fold):
-    train_pid = load_obj("train_pid", base_dir, "/cv/test_size" + str(test_size)+ "/fold" + str(fold))
-    test_pid = load_obj("test_pid", base_dir, "/cv/test_size" + str(test_size)+ "/fold" + str(fold))
+    train_pid = load_obj("train_pid", base_dir, "xy")
+    test_pid = load_obj("test_pid", base_dir, "xy")
     return train_pid, test_pid
 
 def add_by_ele(orig_dict, add_dict):
@@ -246,6 +247,52 @@ def get_x_y_train_test(get_dir):
     X_test = load_obj("X_test", get_dir, "")
     y_test = load_obj("y_test", get_dir, "")
     return X_train, X_test, y_train, y_test
+
+
+
+
+
+def combine_code_state():
+
+    code_shape_p_q_list = [[1, 0], [1, 1], [1, 2], [1, 3], [2, 3]]
+    code_state1 = load_obj("code_state[[1, 0], [1, 1], [1, 2], [1, 3]]", base_dir,'CodeState')
+    code_state2 = load_obj("code_state[[2, 3]]", base_dir,'CodeState')
+    pid = load_obj('pid', base_dir)
+    data_columns = ["code_state" + str(i) for i in code_shape_p_q_list]
+    code_state_df = pd.DataFrame(index=pid, columns=data_columns)
+
+    for p in tqdm(pid):
+        data = {}
+        for e, i in enumerate(data_columns):
+            if e == 4:
+                data[i] = code_state2.at[p, i]
+            else:
+                data[i] = code_state1.at[p, i]
+
+        code_state_df.loc[p] = data
+
+    # print(code_state_df)
+    save_pickle(code_state_df, "code_state" + str(code_shape_p_q_list), base_dir, 'CodeState')
+    print(code_state_df.columns)
+
+
+def view_code_state():
+    pid = load_obj('pid', base_dir)
+    code_shape_p_q_list = [[1, 0], [1, 1], [1, 2], [1, 3], [2, 3]]
+
+    data_columns = ["code_state" + str(i) for i in code_shape_p_q_list]
+
+    code_state1 = load_obj("code_state[[1, 0], [1, 1], [1, 2], [1, 3], [2, 3]]", base_dir,'CodeState')
+    for p in tqdm(pid):
+        data = {}
+        for e, i in enumerate(data_columns):
+            if e == 4:
+                data[i] = code_state1.at[p, i]
+                print(data)
+                break
+
+
+
 
 
 # all_pid_s =     load_obj( "pid", base_dir, "")
@@ -320,3 +367,6 @@ def get_auc(baseline_y, average_y, best_y):
         # return  1
         return 0
     return fen_zi/fen_mu
+
+# combine_code_state()
+# view_code_state()

@@ -15,7 +15,7 @@ class ActionData:
 
     def memory_get_code_shape_from_pid(self,pid):
         code_shape_dict = {}
-        print(self.code_state.loc['329266361'])
+        # print(self.code_state.loc['329266361'])
         for p_q in self.selected_p_q_list:
             try:
                 code_shape_dict.update(self.code_state.at[str(pid), 'code_state'+ str(p_q)])
@@ -91,8 +91,8 @@ class ActionData:
     def get_pattern_statistics(self, train_pid, baseline):
 
         if baseline:
-            pattern_set = load_obj("pattern_set", base_dir,
-                                    "code_state" + str([[1, 0], [1, 1], [1, 2], [1, 3]]))
+            pattern_set = load_obj("pattern_set"+ str(self.selected_p_q_list), base_dir,
+                                    "CodeState" )
             print("pattern_set", pattern_set.keys())
 
             full_pattern_set = set()

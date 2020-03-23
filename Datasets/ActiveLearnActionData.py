@@ -72,6 +72,8 @@ class ActiveLearnActionData(object):
         self.last_time_best_feature = (0, False, 0, 0)
         self.feature_coded_correct_dict = {}
         self.feature_coded_times_dict= {}
+        self.step = 10
+        self.get_numbers()
 
 
 
@@ -93,16 +95,11 @@ class ActiveLearnActionData(object):
         poses = np.where(np.array(self.body['code']) == 1)[0]
         negs = np.where(np.array(self.body['code']) == 0)[0]
         self.code_array = np.array(self.body.code.to_list())
-        self.validation_ids = list(poses) + list(negs)
-        self.unlabeled = np.where(np.array(self.body['code']) == "undetermined")[0]
-        if len(self.unlabeled)>= len(poses):
-            unlabeled_train = np.random.choice(self.unlabeled, size=len(poses))
-            self.train_ids1 = list(poses) + list(negs) + list(unlabeled_train)
-            self.code_array[unlabeled_train] = '0'
-        else:
-            self.train_ids1 = list(poses) + list(negs)
+        self.train_ids1 = list(poses) + list(negs)
+        self.pool = np.where(np.array(self.body['code']) == "undetermined")[0]
+        self.labeled = list(set(range(len(self.body['code']))) - set(self.pool))
         assert bool(
-            set(self.code_array[self.validation_ids]) & set(['undetermined'])) == False, "train set includes un-coded data!"
+            set(self.code_array[self.train_ids1]) & set(['undetermined'])) == False, "train set includes un-coded data!"
         return pos, neg, total
 
     def get_model(self):
@@ -123,6 +120,21 @@ class ActiveLearnActionData(object):
             best_model = np.random.choice(listOfKeys[:4], 1)[0]
             print("best model for this session is: ", best_model.name)
             return best_model
+
+
+
+    def passive_train(self):
+        self.session += 1
+        self.get_numbers()
+
+        print("--------------train session ", self.session, "-----------------")
+        best_model = svm_linear
+        current_model = best_model
+        current_model.model.fit(self.X[self.train_ids1], self.code_array[self.train_ids1])
+        return current_model
+
+
+
 
     def train(self):
         self.session += 1
@@ -489,6 +501,7 @@ class ActiveLearnActionData(object):
 
     ## Get random ##
     def random(self, step):
+        # print(self.pool)
         return np.random.choice(self.pool,size=np.min((step,len(self.pool))),replace=False)
 
 
