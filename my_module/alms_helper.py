@@ -85,7 +85,7 @@ def select_feature(x, y, jaccard):
     for i in tqdm(range(len(x[0]))):
         z,p = twoSampZ(feature_freq1[i], feature_freq2[i], feature_sd1[i], feature_sd2[i], n1, n2)
         # print(p)
-        if p<0.05:
+        if p<0.01:
             selected_patterns.append(i)
     print("pattern selected with length:" ,len(selected_patterns))
 
@@ -372,7 +372,17 @@ def get_model_f1(train_ids, validation_ids, X, y, model_list):
 
     return f1_dict
 
+def submission_get_model_f1(train_ids, X, y, model_list):
+    X = X[train_ids]
+    y = y[train_ids]
+    f1_dict = {}
 
+    for mod in model_list:
+        return_dict = mod.naive_cross_val_predict(X, y, cv = 3)
+        f1_dict[mod] = return_dict['f1']
+
+
+    return f1_dict
 
 
 

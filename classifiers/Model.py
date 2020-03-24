@@ -96,8 +96,8 @@ class Model:
             return perf
 
 
-    def naive_cross_val_predict(self,X, y):
-        y_pred = cross_val_predict(self.model, X, y, cv=10)
+    def naive_cross_val_predict(self,X, y, cv):
+        y_pred = cross_val_predict(self.model, X, y, cv=cv)
         y_test = y
         perf = self.get_performance_dict(y_test,y_pred)
         return perf

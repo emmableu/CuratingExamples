@@ -27,10 +27,10 @@ def median_digitize(x):
         x[:,i] = np.digitize(x[:,i], bins, right=True)
     return x
 
-def get_data(code_shape_p_q_list, digit01):
+def get_data(code_shape_p_q_list, digit01, action_name):
     # code_shape_p_q_list = [[1, 0], [1, 1], [1, 2], [1, 3], [2, 3]]
     # code_shape_p_q_list = [[1, 0]]
-    action_name = 'cochangescore'
+    # action_name = 'cochangescore'
     orig_dir = base_dir + "/xy_0.3heldout/code_state" + str(code_shape_p_q_list) +  "/" + action_name
 
     x_train = load_obj('X_train', orig_dir, "")
@@ -57,7 +57,7 @@ def get_data(code_shape_p_q_list, digit01):
 
 def save_performance_for_one_repetition(new_row, save_dir, code_shape_p_q_list, repetition, dpm):
     if dpm:
-        file_name = "0.05_dpm_code_state" + str(code_shape_p_q_list)
+        file_name = "0.01_dpm_code_state" + str(code_shape_p_q_list)
     else:
         file_name = "code_state" + str(code_shape_p_q_list)
     if is_obj(file_name, save_dir, ""):
@@ -69,14 +69,14 @@ def save_performance_for_one_repetition(new_row, save_dir, code_shape_p_q_list, 
 
 def atomic_save_performance_for_one_repetition(new_row, save_dir, code_shape_p_q_list,repetition, dpm):
     if dpm:
-        file_name = "0.05_dpm_code_state" + str(code_shape_p_q_list)
+        file_name = "0.01_dpm_code_state" + str(code_shape_p_q_list)
     else:
         file_name = "code_state" + str(code_shape_p_q_list)
     df = pd.DataFrame.from_dict({repetition: new_row}, orient="index")
     save_obj(df, file_name, save_dir, "")
 
-def pattern_mining(label_name, dpm, code_shape_p_q_list, digit01):
-    x_train, y_train, x_test, y_test, pattern_orig = get_data(code_shape_p_q_list, digit01)
+def pattern_mining(label_name, dpm, code_shape_p_q_list, digit01, model_selection):
+    x_train, y_train, x_test, y_test, pattern_orig = get_data(code_shape_p_q_list, digit01, label_name)
     total_data = len(y_train)
     all_simulation = {}
     all_simulation["y"] = y_train
@@ -92,11 +92,14 @@ def pattern_mining(label_name, dpm, code_shape_p_q_list, digit01):
             new_row_key = new_row_key
             candidate = read.random(read.step)
             read.code(candidate)
-            if dpm:
+            if model_selection:
+                model = read.passive_model_selection_train()
+                input_test = np.insert(x_test, 0, 1, axis=1)
+            elif dpm:
                 if code_shape_p_q_list == [[1, 0]]:
                     model, selected_feature = read.dpm_passive_train(jaccard=False)
                 else:
-                    model, selected_feature = read.dpm_passive_train(jaccard=True)
+                    model, selected_feature = read.dpm_passive_train(jaccard=False)
                 input_test = np.insert(x_test[:, selected_feature], 0, 1, axis=1)
             else:
                 model = read.passive_train()
@@ -109,31 +112,35 @@ def pattern_mining(label_name, dpm, code_shape_p_q_list, digit01):
 
         print("new_row: ", new_row)
         if digit01:
-            save_dir = base_dir + "/Simulation/PatternMining/SessionTable/0_1_Digitalized_Jaccard/" + label_name
+            save_dir = base_dir + "/Simulation/PatternMining/SessionTable/0_1_Digitalized/" + label_name
+            if model_selection:
+                save_dir = base_dir + "/Simulation/PatternMining/SessionTable/0_1_Digitalized/model_selection/" + label_name
         else:
-            save_dir = base_dir + "/Simulation/PatternMining/SessionTable/0_1_2_Digitalized_Jaccard/" + label_name
+            save_dir = base_dir + "/Simulation/PatternMining/SessionTable/0_1_2_Digitalized/" + label_name
+            if model_selection:
+                save_dir = base_dir + "/Simulation/PatternMining/SessionTable/0_1_2_Digitalized/model_selection/" + label_name
         if repetition == 0:
             atomic_save_performance_for_one_repetition(new_row, save_dir, code_shape_p_q_list,repetition, dpm)
         else:
             save_performance_for_one_repetition(new_row, save_dir,code_shape_p_q_list, repetition, dpm)
+        # save_performance_for_one_repetition(new_row, save_dir,code_shape_p_q_list, repetition, dpm)
 
 def encapsulated_simulate():
-    label_name_s = action_name_s
+    label_name_s = ['moveanimate']
     dpm_s = [True, False]
-    code_shape_p_q_list_s = [[[1, 0]], [[1, 0], [1, 1], [1, 2], [1, 3], [2, 3]]]
+    dpm_s = [False]
+    # code_shape_p_q_list_s = [[[1, 0]], [[1, 0], [1, 1], [1, 2], [1, 3], [2, 3]]]
+    code_shape_p_q_list_s = [[[1, 0], [1, 1], [1, 2], [1, 3], [2, 3]]]
+    # code_shape_p_q_list_s = [[[1, 0]]]
     # digit01_s = [True, False]
     digit01_s = [True]
-
-    # label_name_s = ['keymove']
-    # dpm_s = [True]
-    # code_shape_p_q_list_s = [[[1, 0]]]
-    # digit01_s = [False]
+    model_selection = True
 
     for label_name in label_name_s:
         for dpm in dpm_s:
             for code_shape_p_q_list in code_shape_p_q_list_s:
                 for digit01 in digit01_s:
-                    pattern_mining(label_name, dpm, code_shape_p_q_list, digit01)
+                    pattern_mining(label_name, dpm, code_shape_p_q_list, digit01, model_selection)
 
 def pattern_verification():
     code_shape_p_q_list2 = [[1, 0], [1, 1], [1, 2], [1, 3], [2, 3]]
@@ -241,7 +248,7 @@ def pattern_examination():
     # print(len(indices))
 
 # encapsulated_simulate()
-pattern_examination()
+# pattern_examination()
 
 
 

@@ -1,11 +1,14 @@
 from __future__ import print_function, division
+
 try:
     import cPickle as pickle
 except:
     import pickle
 import sys
+
 sys.path.append("/Users/wwang33/Documents/IJAIED20/CuratingExamples/my_module")
 import sys
+
 sys.path.append("/Users/wwang33/Documents/IJAIED20/CuratingExamples/my_module")
 from alms_helper import *
 from ActionData import *
@@ -52,14 +55,15 @@ complement_nb = ComplementNBModel()
 mlp = MLPModel()
 
 # Removed baseline from models in case baseline result changes
-model_list = [baseline, knn, lr, svm_c, svm_nu, svm_linear, dt, adaboost, bagging, rf, gaussian_nb,
-                    bernoulli_nb, multi_nb, complement_nb, mlp]
+# model_list = [baseline, knn, lr, svm_c, svm_nu, svm_linear, dt, adaboost, bagging, rf, gaussian_nb,
+#                     bernoulli_nb, multi_nb, complement_nb, mlp]
 
-model_list = [bernoulli_nb, multi_nb, complement_nb,gaussian_nb, adaboost, svm_linear, lr ]
+model_list = [bernoulli_nb, multi_nb, complement_nb, gaussian_nb, adaboost, svm_linear, lr]
 root_dir = "/Users/wwang33/Documents/IJAIED20/CuratingExamples/"
 
 step = 5
 no_model_selection = False
+
 
 class ActiveLearnActionData(object):
 
@@ -71,13 +75,9 @@ class ActiveLearnActionData(object):
         self.best_feature_next = list(range(len(self.X[0])))
         self.last_time_best_feature = (0, False, 0, 0)
         self.feature_coded_correct_dict = {}
-        self.feature_coded_times_dict= {}
+        self.feature_coded_times_dict = {}
         self.step = 10
         self.get_numbers()
-
-
-
-
 
     def get_body(self):
         body = pd.DataFrame(columns=['X', 'label'])
@@ -105,38 +105,37 @@ class ActiveLearnActionData(object):
         return pos, neg, total
 
     def get_model(self):
-        if no_model_selection:
-            best_model = svm_linear
-        else:
-            if len(self.poses)==1:
-                best_model = bernoulli_nb
-            else:
-                model_f1 = get_model_f1(self.train_ids1, self.validation_ids, self.X, self.y, model_list)
-                print_model(model_f1)
-                itemMaxValue = max(model_f1.items(), key=lambda x: x[1])
-                listOfKeys = list()
-                # Iterate over all the items in dictionary to find keys with max value
-                for key, value in model_f1.items():
-                    if value == itemMaxValue[1]:
-                        listOfKeys.append(key)
-            best_model = np.random.choice(listOfKeys[:4], 1)[0]
-            print("best model for this session is: ", best_model.name)
-            return best_model
+        model_f1 = submission_get_model_f1(self.train_ids1, self.X, self.y, model_list)
+        print_model(model_f1)
+        itemMaxValue = max(model_f1.items(), key=lambda x: x[1])
+        listOfKeys = list()
+        # Iterate over all the items in dictionary to find keys with max value
+        for key, value in model_f1.items():
+            if value == itemMaxValue[1]:
+                listOfKeys.append(key)
+        best_model = np.random.choice(listOfKeys[:4], 1)[0]
+        print("best model for this session is: ", best_model.name)
+        return best_model
 
-
-
-    def passive_train(self):
+    def active_uncertainty_train(self):
         self.session += 1
         self.get_numbers()
-
         print("--------------train session ", self.session, "-----------------")
         best_model = svm_linear
         current_model = best_model
         input_x = np.insert(self.X, 0, 1, axis=1)
         current_model.model.fit(input_x[self.train_ids1], self.code_array[self.train_ids1])
-        return current_model
-
-
+        rest_data_ids = get_opposite(range(len(self.y)), self.train_ids1)
+        if len(rest_data_ids) == 0:
+            return current_model, []
+        try:
+            pos_at = list(current_model.model.classes_).index('1')
+        except:
+            pos_at = list(current_model.model.classes_).index(1)
+        prob = current_model.model.predict_proba(input_x[rest_data_ids])[:, pos_at]
+        order = np.argsort(np.abs(prob))  ## uncertainty sampling by distance to decision plane
+        most_uncertain = order[:self.step]
+        return current_model, np.array(rest_data_ids)[most_uncertain]
 
 
 
@@ -153,37 +152,38 @@ class ActiveLearnActionData(object):
         current_model.model.fit(input_x[self.train_ids1], self.code_array[self.train_ids1])
         return current_model, selected_features
 
-
-
-
-
-    def train(self):
+    def active_model_selection_train(self):
         self.session += 1
         self.get_numbers()
         print("--------------train session ", self.session, "-----------------")
         best_model = self.get_model()
-
         current_model = best_model.model
         code_array = np.array(self.body.code.to_list())
-        assert bool(set(code_array[self.validation_ids]) & set(['undetermined'])) == False, "validation set includes un-coded data!"
-        current_model.fit(self.X[self.train_ids1], code_array[self.train_ids1])
-        rest_data_ids = get_opposite(range(len(self.y)), self.validation_ids)
-        # print(list(current_model.classes_))
+        input_x = np.insert(self.X, 0, 1, axis=1)
+        current_model.fit(input_x[self.train_ids1], code_array[self.train_ids1])
+        rest_data_ids = get_opposite(range(len(self.y)), self.train_ids1)
         try:
             pos_at = list(current_model.classes_).index('1')
         except:
             pos_at = list(current_model.classes_).index(1)
 
-        prob = current_model.predict_proba(self.X[rest_data_ids])[:, pos_at]
+        prob = current_model.predict_proba(input_x[rest_data_ids])[:, pos_at]
         order = np.argsort(np.abs(prob))[::-1]  ## uncertainty sampling by distance to decision plane
 
-        most_certain = order[:step]
+        most_certain = order[:self.step]
 
         return np.array(rest_data_ids)[most_certain]
 
+    def passive_model_selection_train(self):
+        self.session += 1
+        self.get_numbers()
+        print("--------------train session ", self.session, "-----------------")
+        best_model = self.get_model()
+        code_array = np.array(self.body.code.to_list())
+        input_x = np.insert(self.X, 0, 1, axis=1)
+        best_model.model.fit(input_x[self.train_ids1], code_array[self.train_ids1])
 
-
-
+        return best_model
 
     def train_model_feature_selection(self):
         self.session += 1
@@ -194,8 +194,8 @@ class ActiveLearnActionData(object):
         rest_data_ids = get_opposite(range(len(self.y)), validation_ids)
         unlabeled = np.where(np.array(self.body['code']) == "undetermined")[0]
         # print("poses: ", poses)
-        print("number of poses: ", len(poses), "/ ", end = "")
-        print("total poses: ", Counter(self.y)[1], "/ ", end = "")
+        print("number of poses: ", len(poses), "/ ", end="")
+        print("total poses: ", Counter(self.y)[1], "/ ", end="")
         print("total coded till now: ", len(validation_ids))
 
         # print("coded correctly: ", len(poses)-start_data)
@@ -210,8 +210,7 @@ class ActiveLearnActionData(object):
         except:
             train_ids1 = list(poses) + list(negs)
 
-
-        if len(poses)< 3 or len(negs) < 3:
+        if len(poses) < 3 or len(negs) < 3:
             print("small sample, naive train")
             best_model = bernoulli_nb
 
@@ -222,15 +221,16 @@ class ActiveLearnActionData(object):
                 pos_at = list(best_model.model.classes_).index(1)
 
             prob = best_model.model.predict_proba(self.X[rest_data_ids])[:, pos_at]
-            prob = sorted(prob, reverse= True)
+            prob = sorted(prob, reverse=True)
             candidate_id_voi_dict = {}
             for candidate_id in tqdm(rest_data_ids):
                 candidate_id_voi_dict[candidate_id] = 0
-            print("candidate_id_voi_dict: ", sorted(candidate_id_voi_dict.items(), key=lambda x: x[1],reverse=True)[:5])
+            print("candidate_id_voi_dict: ",
+                  sorted(candidate_id_voi_dict.items(), key=lambda x: x[1], reverse=True)[:5])
             determine_dict = candidate_id_voi_dict
             for i in range(len(rest_data_ids)):
                 determine_dict[rest_data_ids[i]] += (prob[i])
-            print("determine_dict: ", sorted(candidate_id_voi_dict.items(), key=lambda x: x[1],reverse=True)[:5])
+            print("determine_dict: ", sorted(candidate_id_voi_dict.items(), key=lambda x: x[1], reverse=True)[:5])
             print("prob: ", sorted(prob, reverse=True))
             sorted_candidate = sorted(determine_dict.items(), key=operator.itemgetter(1), reverse=True)
             best_index = [ind[0] for ind in sorted_candidate][:step]
@@ -254,25 +254,26 @@ class ActiveLearnActionData(object):
         current_model = best_model
 
         feature_f1, feature_dict = get_feature_f1(train_ids1, validation_ids, self.X, self.y, current_model.model)
-        print( sorted(feature_f1.items(), key=lambda x: x[1],reverse=True)[:5])
+        print(sorted(feature_f1.items(), key=lambda x: x[1], reverse=True)[:5])
         print("---  additive-----")
         additive_dict = {}
         for key, value in feature_f1.items():
             if key in self.feature_coded_correct_dict.keys() and self.session > 20:
                 # if self.feature_coded_correct_dict[key] - (len(poses)-3)/(len(validation_ids)-4) > 0.05 :
-                additive_dict[key] = value +self.feature_coded_correct_dict[key] - (len(poses)-1)/(len(validation_ids)-1)
+                additive_dict[key] = value + self.feature_coded_correct_dict[key] - (len(poses) - 1) / (
+                            len(validation_ids) - 1)
             else:
                 additive_dict[key] = value
-        print(sorted(additive_dict.items(), key=lambda x: x[1],reverse=True)[:5])
-        sorted_feature_f1 = [key for key, item in sorted(additive_dict.items(), key=lambda x: x[1],reverse=True)]
+        print(sorted(additive_dict.items(), key=lambda x: x[1], reverse=True)[:5])
+        sorted_feature_f1 = [key for key, item in sorted(additive_dict.items(), key=lambda x: x[1], reverse=True)]
         # print(sorted_feature_f1)
         code_array = np.array(self.body.code.to_list())
-        assert bool(set(code_array[validation_ids]) & set(['undetermined'])) == False, "validation set includes un-coded data!"
-
+        assert bool(
+            set(code_array[validation_ids]) & set(['undetermined'])) == False, "validation set includes un-coded data!"
 
         for best_feature in sorted_feature_f1:
             print('using best_feature: ', best_feature, "  to predict")
-            selected_feature =  feature_dict[best_feature]
+            selected_feature = feature_dict[best_feature]
             # print("selected_feature")
             # current_model.fit(self.X[validation_ids], code_array[validation_ids])
             try:
@@ -300,7 +301,7 @@ class ActiveLearnActionData(object):
             self.last_time_best_feature = best_feature
             # return np.array(rest_data_ids)[most_certain]
             prob = current_model.model.predict_proba(self.X[rest_data_ids][:, selected_feature])[:, pos_at]
-            prob = sorted(prob, reverse= True)
+            prob = sorted(prob, reverse=True)
             if prob[0] == 0:
                 print('last feature could not get pos value, change feature')
                 continue
@@ -317,40 +318,25 @@ class ActiveLearnActionData(object):
                     code_array = np.array(self.body.code.to_list())
                     train_ids2 = list([candidate_id]) + list(validation_ids)
                     code_array[candidate_id] = 1
-                    assert bool(set(code_array[validation_ids]) & set(['undetermined'])) == False, "train set includes un-coded data!"
+                    assert bool(set(code_array[validation_ids]) & set(
+                        ['undetermined'])) == False, "train set includes un-coded data!"
                     voi = get_VOI(train_ids2, validation_ids, self.X[:, selected_feature], code_array,
-                                current_model)
+                                  current_model)
                     candidate_id_voi_dict[candidate_id] = voi
-            print("candidate_id_voi_dict: ", sorted(candidate_id_voi_dict.items(), key=lambda x: x[1],reverse=True)[:5])
+            print("candidate_id_voi_dict: ",
+                  sorted(candidate_id_voi_dict.items(), key=lambda x: x[1], reverse=True)[:5])
             determine_dict = candidate_id_voi_dict
             if not determine_dict:
                 return -1
             for i in range(len(rest_data_ids)):
                 determine_dict[rest_data_ids[i]] += (prob[i])
-            print("determine_dict: ", sorted(candidate_id_voi_dict.items(), key=lambda x: x[1],reverse=True)[:5])
+            print("determine_dict: ", sorted(candidate_id_voi_dict.items(), key=lambda x: x[1], reverse=True)[:5])
             # prob.sort(reversed = True)
             print("prob: ", sorted(prob, reverse=True))
-            sorted_candidate = sorted(determine_dict.items(), key=operator.itemgetter(1), reverse = True)
+            sorted_candidate = sorted(determine_dict.items(), key=operator.itemgetter(1), reverse=True)
             best_index = [ind[0] for ind in sorted_candidate][:step]
             print("best_index: ", best_index)
             return best_index
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     def best_train(self, label_name):
         self.session += 1
@@ -361,8 +347,8 @@ class ActiveLearnActionData(object):
 
         unlabeled = np.where(np.array(self.body['code']) == "undetermined")[0]
         # print("poses: ", poses)
-        print("number of poses: ", len(poses), "/ ", end = "")
-        print("total poses: ", Counter(self.y)[1], "/ ", end = "")
+        print("number of poses: ", len(poses), "/ ", end="")
+        print("total poses: ", Counter(self.y)[1], "/ ", end="")
         print("total coded till now: ", len(validation_ids))
 
         # print("coded correctly: ", len(poses)-start_data)
@@ -391,14 +377,13 @@ class ActiveLearnActionData(object):
         if label_name == 'cochangescore':
             best_model = bernoulli_nb
 
-
         if label_name == 'movetomouse':
             best_model = bernoulli_nb
 
-
         current_model = best_model.model
         code_array = np.array(self.body.code.to_list())
-        assert bool(set(code_array[validation_ids]) & set(['undetermined'])) == False, "validation set includes un-coded data!"
+        assert bool(
+            set(code_array[validation_ids]) & set(['undetermined'])) == False, "validation set includes un-coded data!"
         current_model.fit(self.X[train_ids1], code_array[train_ids1])
         rest_data_ids = get_opposite(range(len(self.y)), validation_ids)
         # print(list(current_model.classes_))
@@ -413,10 +398,6 @@ class ActiveLearnActionData(object):
         most_certain = order[:step]
 
         return np.array(rest_data_ids)[most_certain]
-
-
-
-
 
     def selection_train_no_voi(self):
         self.session += 1
@@ -483,7 +464,7 @@ class ActiveLearnActionData(object):
             if key in self.feature_coded_correct_dict.keys() and self.session > 20:
                 # if self.feature_coded_correct_dict[key] - (len(poses)-3)/(len(validation_ids)-4) > 0.05 :
                 additive_dict[key] = value + self.feature_coded_correct_dict[key] - (len(poses) - 1) / (
-                            len(validation_ids) - 1)
+                        len(validation_ids) - 1)
             else:
                 additive_dict[key] = value
         print(sorted(additive_dict.items(), key=lambda x: x[1], reverse=True)[:5])
@@ -514,17 +495,10 @@ class ActiveLearnActionData(object):
             self.last_time_best_feature = best_feature
             return np.array(rest_data_ids)[most_certain]
 
-
-
-
-
-
-
     ## Get random ##
     def random(self, step):
         # print(self.pool)
-        return np.random.choice(self.pool,size=np.min((step,len(self.pool))),replace=False)
-
+        return np.random.choice(self.pool, size=np.min((step, len(self.pool))), replace=False)
 
     def start_as_1_pos(self):
         r = self.random(10)
@@ -532,7 +506,7 @@ class ActiveLearnActionData(object):
             for ele in r:
                 if self.body.label[ele] == 1:
                     return [ele]
-            r = self.random(step = 10)
+            r = self.random(step=10)
 
     def start_as_3_pos(self):
         r = self.random(10)
@@ -543,9 +517,7 @@ class ActiveLearnActionData(object):
                     ele_list.append(ele)
                 if len(ele_list) == 3:
                     return ele_list
-            r = self.random(step = 10)
-
-
+            r = self.random(step=10)
 
     def start_as_1_neg(self):
         r = self.random(10)
@@ -553,10 +525,10 @@ class ActiveLearnActionData(object):
             for ele in r:
                 if self.body.label[ele] == 0:
                     return [ele]
-            r = self.random(step= 10)
+            r = self.random(step=10)
 
     ## Code candidate studies ##
-    def code(self,id):
+    def code(self, id):
         id = np.array(id)
         print_data = []
         print("id: ", id)
@@ -574,7 +546,7 @@ class ActiveLearnActionData(object):
             existing_times = self.feature_coded_times_dict[self.last_time_best_feature]
 
             precision1 = Counter(print_data)[1] / step
-            precision2 = (existing_number * step * existing_times )/ (step * existing_times)
+            precision2 = (existing_number * step * existing_times) / (step * existing_times)
             if precision1 + precision2 == 0:
                 weighted_precision = 0
             else:
