@@ -130,6 +130,7 @@ class Dataset:
         game_label = pd.read_csv(base_dir + "/game_label_415.csv")
         test_size = 0.3
         fold = 0
+        x_save_dir = base_dir + "/xy_0.3heldout/code_state" + str(selected_p_q_list)
         for action_name in tqdm(action_name_s):
             action_data = ActionData(code_state=code_state, game_label=game_label, action_name=action_name, selected_p_q_list=selected_p_q_list)
             save_dir = base_dir + "/xy_0.3heldout/code_state" + str(selected_p_q_list)  + "/" + action_name
@@ -138,7 +139,8 @@ class Dataset:
                 if p not in self.pid_list:
                     print("pid not in pid_list!", p)
             # action_data.submission_get_pattern_statistics(train_pid, True)
-            action_data.save_x_y_train_test(train_pid, test_pid, save_dir)
+            action_data.save_x_y_train_test(train_pid, test_pid, x_save_dir, save_dir, reduce_size = True, baseline = True)
+            # action_data.save_reduced_size_x_y_train_test(train_pid, test_pid, save_dir)
 
     def save_x_y_to_hard_drive(self, selected_p_q_list, baseline = True):
         code_state = load_obj("code_state", base_dir, "code_state" + str(self.code_shape_p_q_list))

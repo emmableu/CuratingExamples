@@ -64,7 +64,7 @@ no_model_selection = False
 class ActiveLearnActionData(object):
 
     def __init__(self, X, y):
-        self.X = np.digitize(X, bins = [1])
+        self.X = X
         self.y = y
         self.body = self.get_body()
         self.session = 0
@@ -132,24 +132,22 @@ class ActiveLearnActionData(object):
         print("--------------train session ", self.session, "-----------------")
         best_model = svm_linear
         current_model = best_model
-        current_model.model.fit(self.X[self.train_ids1], self.code_array[self.train_ids1])
+        input_x = np.insert(self.X, 0, 1, axis=1)
+        current_model.model.fit(input_x[self.train_ids1], self.code_array[self.train_ids1])
         return current_model
 
 
 
 
 
-    def dpm_passive_train(self):
+    def dpm_passive_train(self, jaccard):
         self.session += 1
         self.get_numbers()
 
         print("--------------train session ", self.session, "-----------------")
         best_model = svm_linear
         current_model = best_model
-        # print("self.train_ids1: ", self.train_ids1)
-        print(self.X[self.train_ids1])
-        # print("self.code_array[self.train_ids1]", self.code_array[self.train_ids1])
-        selected_features = select_feature(self.X[self.train_ids1], self.code_array[self.train_ids1])
+        selected_features = select_feature(self.X[self.train_ids1], self.code_array[self.train_ids1], jaccard)
         input_x = np.insert(self.X[:, selected_features], 0, 1, axis=1)
         # print("input x: ", input_x)
         current_model.model.fit(input_x[self.train_ids1], self.code_array[self.train_ids1])

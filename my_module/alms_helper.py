@@ -3,6 +3,9 @@ import sklearn
 import warnings
 import sys
 from tqdm import tqdm
+from itertools import combinations
+sys.path.append("/Users/wwang33/Documents/IJAIED20/CuratingExamples/my_module")
+from save_load_pickle import *
 sys.path.append('/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets')
 from Dataset import *
 sys.path.append('/Users/wwang33/Documents/IJAIED20/CuratingExamples')
@@ -58,7 +61,11 @@ def get_weights(x, y):
 
 
 
-def select_feature(x, y):
+
+
+def select_feature(x, y, jaccard):
+    x = np.digitize(x, bins=[1])
+
     y = y.astype(int)
     y_yes_index = np.where(y == 1)[0]
     yes_x = x[y_yes_index]
@@ -81,7 +88,63 @@ def select_feature(x, y):
         if p<0.05:
             selected_patterns.append(i)
     print("pattern selected with length:" ,len(selected_patterns))
-    return selected_patterns
+
+    if not jaccard:
+        return selected_patterns
+    else:
+        keep = jaccard_select(selected_patterns, x)
+        print("jaccard similarity returns feature with length: ", len(keep))
+        return keep
+
+
+
+def jaccard_select(selected_patterns, x):
+    # print("selected_patterns: ", selected_patterns)
+    code_shape_p_q_list =  [[1, 0], [1, 1], [1, 2], [1, 3], [2, 3]]
+    # code_shape_p_q_list =  [[1, 0]]
+    #ATTENTION! Below IS by default from the full codestate, not the one hot!
+    pattern_dir = base_dir + "/xy_0.3heldout/code_state" + str(code_shape_p_q_list)
+    patterns = load_obj("full_patterns", pattern_dir, "")
+    pattern_orig = np.array(patterns)
+    print("start jaccard reduction")
+    # p_pair_list = list(combinations(selected_patterns, 2))
+    # for p_pair in tqdm(p_pair_list):
+    reduced_list = [c1 for c1 in tqdm(selected_patterns) if jaccard_keep(c1, selected_patterns, pattern_orig, x)]
+    print("jaccard selected a reduced list of length: ", len(reduced_list))
+    return reduced_list
+
+def jaccard_keep(c1, selected_patterns, pattern_orig, x):
+    for c2 in (selected_patterns):
+        if c2 == c1:
+            continue
+        c1_name, c2_name = pattern_orig[c1], pattern_orig[c2]
+        s_c1, s_c2 = set(), set()
+        for i in range(len(x)):
+            if x[i, c1] == 1:
+                s_c1.add(i)
+            if x[i, c2] == 1:
+                s_c2.add(i)
+        union_set = s_c1.union(s_c2)
+        joint_set = s_c1.intersection(s_c2)
+        if len(union_set) == 0:
+            continue
+        j = len(joint_set)/len(union_set)
+        if j >= 0.975*0.975:
+            # print("j >= 0.95^2, c1, c2 name are: ", c1_name, c2_name)
+            # print('union_set: ', union_set)
+            # print('joint_set: ', joint_set)
+            len_c1_name = len(c1_name.split("|"))
+            len_c2_name = len(c2_name.split("|"))
+            if len_c1_name <= len_c2_name:
+                return False
+    return True
+
+
+
+
+
+
+
 
 
 

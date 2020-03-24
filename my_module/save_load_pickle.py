@@ -41,7 +41,7 @@ def save_obj(obj, name, dir, sub_dir = ""):
         pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
 
 
-def is_obj(name, dir, sub_dir):
+def is_obj(name, dir, sub_dir = ""):
     if sub_dir:
         csv_dir = dir +"/"+ sub_dir
         pickle_dir = dir +"/"+ sub_dir + '/pickle_files'

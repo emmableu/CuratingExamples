@@ -9,44 +9,74 @@ from pattern_mining_util import *
 
 
 action_name_s = ['keymove', 'jump', 'cochangescore', 'movetomouse', 'moveanimate']
-# code_shape_p_q_list = [[1, 0], [1, 1], [1, 2], [1, 3], [2, 3]]
-code_shape_p_q_list = [[1, 0]]
-action_name = 'keymove'
-orig_dir = base_dir + "/xy_0.3heldout/code_state" + str(code_shape_p_q_list) +  "/" + action_name
-
-x_train = load_obj('X_train', orig_dir, "")
-x_train = np.digitize(x_train, bins=[1])
-
-y_train = load_obj('y_train', orig_dir, "")
-x_test = load_obj('X_test', orig_dir, "")
-x_test= np.digitize(x_test, bins=[1])
-
-y_test = load_obj('y_test', orig_dir, "")
-
-patterns = load_obj("significant_patterns", orig_dir, "")
-pattern_orig = np.array([pattern for pattern in patterns])
-model_list = [ adaboost, gaussian_nb,
-                        bernoulli_nb, multi_nb, complement_nb, mlp, svm_linear]
-
-
+model_list = [adaboost, gaussian_nb,
+              bernoulli_nb, multi_nb, complement_nb, mlp, svm_linear]
 model = svm_linear
 
-def save_performance_for_one_repetition(new_row, save_dir, repetition):
-    file_name = "0.05_dpm_code_state" + str(code_shape_p_q_list)
+def median_digitize(x):
+    medium = np.median(x, axis=0)
+    # print("medium: ", medium)
+
+    medium[medium == 0] = 1
+    # print("medium: ", medium)
+    maxi = np.max(x, axis=0)
+    maxi[maxi == 0] = 2
+
+    for i in range(len(x[0])):
+        bins = np.array([0,medium[i], maxi[i]])
+        x[:,i] = np.digitize(x[:,i], bins, right=True)
+    return x
+
+def get_data(code_shape_p_q_list, digit01):
+    # code_shape_p_q_list = [[1, 0], [1, 1], [1, 2], [1, 3], [2, 3]]
+    # code_shape_p_q_list = [[1, 0]]
+    action_name = 'cochangescore'
+    orig_dir = base_dir + "/xy_0.3heldout/code_state" + str(code_shape_p_q_list) +  "/" + action_name
+
+    x_train = load_obj('X_train', orig_dir, "")
+    x_test = load_obj('X_test', orig_dir, "")
+
+    if digit01:
+        x_train = np.digitize(x_train, bins=[1])
+        x_test = np.digitize(x_test, bins=[1])
+    else:
+        # print("x_train_before: ", x_train[0][:30])
+        x_train = median_digitize(x_train)
+        x_test = median_digitize(x_test)
+        # print("x_train_after: ", x_train[0][:30])
+
+
+    y_train = load_obj('y_train', orig_dir, "")
+
+    y_test = load_obj('y_test', orig_dir, "")
+    pattern_dir = base_dir + "/xy_0.3heldout/code_state" + str(code_shape_p_q_list)
+    patterns = load_obj("full_patterns", pattern_dir, "")
+    pattern_orig = np.array([pattern for pattern in patterns])
+
+    return x_train, y_train, x_test, y_test, pattern_orig
+
+def save_performance_for_one_repetition(new_row, save_dir, code_shape_p_q_list, repetition, dpm):
+    if dpm:
+        file_name = "0.05_dpm_code_state" + str(code_shape_p_q_list)
+    else:
+        file_name = "code_state" + str(code_shape_p_q_list)
     if is_obj(file_name, save_dir, ""):
         evaluation_metrics = load_obj(file_name, save_dir, "")
         evaluation_metrics.loc[repetition] = new_row
         save_obj(evaluation_metrics, file_name, save_dir, "")
     else:
-        atomic_save_performance_for_one_repetition(new_row, save_dir, repetition)
+        atomic_save_performance_for_one_repetition(new_row, save_dir,code_shape_p_q_list, repetition, dpm)
 
-def atomic_save_performance_for_one_repetition(new_row, save_dir, repetition):
-    file_name = "0.05_dpm_code_state" + str(code_shape_p_q_list)
+def atomic_save_performance_for_one_repetition(new_row, save_dir, code_shape_p_q_list,repetition, dpm):
+    if dpm:
+        file_name = "0.05_dpm_code_state" + str(code_shape_p_q_list)
+    else:
+        file_name = "code_state" + str(code_shape_p_q_list)
     df = pd.DataFrame.from_dict({repetition: new_row}, orient="index")
     save_obj(df, file_name, save_dir, "")
 
-
-def pattern_mining(label_name):
+def pattern_mining(label_name, dpm, code_shape_p_q_list, digit01):
+    x_train, y_train, x_test, y_test, pattern_orig = get_data(code_shape_p_q_list, digit01)
     total_data = len(y_train)
     all_simulation = {}
     all_simulation["y"] = y_train
@@ -62,34 +92,48 @@ def pattern_mining(label_name):
             new_row_key = new_row_key
             candidate = read.random(read.step)
             read.code(candidate)
-            model, selected_feature = read.dpm_passive_train()
-            input_test = np.insert(x_test[:, selected_feature], 0, 1, axis=1)
+            if dpm:
+                if code_shape_p_q_list == [[1, 0]]:
+                    model, selected_feature = read.dpm_passive_train(jaccard=False)
+                else:
+                    model, selected_feature = read.dpm_passive_train(jaccard=True)
+                input_test = np.insert(x_test[:, selected_feature], 0, 1, axis=1)
+            else:
+                model = read.passive_train()
+                input_test = np.insert(x_test, 0, 1, axis=1)
+
             perf_dict = model.naive_predict(input_test, y_test)
 
             new_row_value = (perf_dict['f1'])
             new_row[new_row_key] = new_row_value
 
         print("new_row: ", new_row)
-        # break
-        save_dir = base_dir + "/Simulation/PatternMining/SessionTable/" + label_name
-        if repetition == 0:
-            atomic_save_performance_for_one_repetition(new_row, save_dir, repetition)
+        if digit01:
+            save_dir = base_dir + "/Simulation/PatternMining/SessionTable/0_1_Digitalized_Jaccard/" + label_name
         else:
-            save_performance_for_one_repetition(new_row, save_dir, repetition)
-
+            save_dir = base_dir + "/Simulation/PatternMining/SessionTable/0_1_2_Digitalized_Jaccard/" + label_name
+        if repetition == 0:
+            atomic_save_performance_for_one_repetition(new_row, save_dir, code_shape_p_q_list,repetition, dpm)
+        else:
+            save_performance_for_one_repetition(new_row, save_dir,code_shape_p_q_list, repetition, dpm)
 
 def encapsulated_simulate():
     label_name_s = action_name_s
+    dpm_s = [True, False]
+    code_shape_p_q_list_s = [[[1, 0]], [[1, 0], [1, 1], [1, 2], [1, 3], [2, 3]]]
+    # digit01_s = [True, False]
+    digit01_s = [True]
+
+    # label_name_s = ['keymove']
+    # dpm_s = [True]
+    # code_shape_p_q_list_s = [[[1, 0]]]
+    # digit01_s = [False]
+
     for label_name in label_name_s:
-        pattern_mining(label_name)
-
-
-
-# encapsulated_simulate()
-
-# save_dir = base_dir + "/Simulation/PatternMining/SessionTable"
-# cs = load_obj("code_state[[1, 0]]", save_dir)
-# print(cs)
+        for dpm in dpm_s:
+            for code_shape_p_q_list in code_shape_p_q_list_s:
+                for digit01 in digit01_s:
+                    pattern_mining(label_name, dpm, code_shape_p_q_list, digit01)
 
 def pattern_verification():
     code_shape_p_q_list2 = [[1, 0], [1, 1], [1, 2], [1, 3], [2, 3]]
@@ -158,18 +202,46 @@ def pattern_verification():
     # print("onehot length: ", len(pattern_orig1))
     # print("pqgram length: ", len(pattern_orig2))
 
+def pattern_examination():
+    # code_shape_p_q_list = [[1, 0], [1, 1], [1, 2], [1, 3], [2, 3]]
+    # code_shape_p_q_list = [[1, 0]]
+    # x_train, y_train, x_test, y_test, pattern_orig = get_data(code_shape_p_q_list)
+    # selected_features = select_feature(x_train, y_train)
+    # selected_patterns1 = pattern_orig[selected_features]
 
-def
+    code_shape_p_q_list = [[1, 0], [1, 1], [1, 2], [1, 3], [2, 3]]
+    x_train, y_train, x_test, y_test, pattern_orig = get_data(code_shape_p_q_list, digit01 = True)
+    selected_features = select_feature(x_train, y_train, jaccard = False)
+    train_x = np.insert(x_train[:, selected_features], 0, 1, axis=1)
+    # print("input x: ", input_x)
+    model.model.fit(train_x, y_train)
+    input_test = np.insert(x_test[:, selected_features], 0, 1, axis=1)
+    perf_dict = model.naive_predict(input_test, y_test)
+    print(perf_dict)
+
+
+    selected_features = select_feature(x_train, y_train, jaccard = True)
+    selected_patterns2 = pattern_orig[selected_features]
+    save_obj(selected_patterns2, 'cochangescore_jaccard', base_dir + 'temp')
+    # selected_patterns2 = pattern_orig[selected_features]
+    train_x = np.insert(x_train[:, selected_features], 0, 1, axis=1)
+    # print("input x: ", input_x)
+    model.model.fit(train_x, y_train)
+    input_test = np.insert(x_test[:, selected_features], 0, 1, axis=1)
+    perf_dict = model.naive_predict(input_test, y_test)
+    print(perf_dict)
 
 
 
+    #
+    # xsorted = np.argsort(selected_patterns2)
+    # ypos = np.searchsorted(selected_patterns2[xsorted], selected_patterns1)
+    # indices = xsorted[ypos]
+    # print(selected_patterns2[indices])
+    # print(len(indices))
 
-
-
-
-
-
-
+# encapsulated_simulate()
+pattern_examination()
 
 
 

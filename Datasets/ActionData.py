@@ -5,6 +5,7 @@ import pandas as pd
 from save_load_pickle import *
 root_dir = "/Users/wwang33/Documents/IJAIED20/CuratingExamples/"
 from tqdm import tqdm
+from alms_helper import *
 class ActionData:
     def __init__(self, code_state, game_label , action_name, selected_p_q_list):
         self.code_state = code_state
@@ -124,16 +125,15 @@ class ActionData:
         self.get_pattern_statistics(train_pid, baseline)
 
 
-    def save_x_y_train_test(self,train_pid, test_pid, save_dir,baseline = True):
+    def save_x_y_train_test(self,train_pid, test_pid, x_save_dir, save_dir,reduce_size = True, baseline = True):
         # significant_patterns = self.get_pattern_statistics(train_pid, baseline)
         significant_patterns = load_obj( "full_patterns", base_dir, "xy_0.3heldout/code_state" + str(self.selected_p_q_list))
         num_patterns = len(significant_patterns)
         train_df = self.game_label[self.game_label.pid.isin(train_pid)].reset_index(drop = True)
         test_df = self.game_label[self.game_label.pid.isin(test_pid)].reset_index(drop = True)
         # print("train_df: ", train_df)
-        def get_xy(df):
+        def get_x(df):
             x = np.empty((len(df.index), num_patterns))
-            y = np.zeros(len(df.index))
             for game_index, i in enumerate(df.index):
                 pid = df.at[i, 'pid']
                 code_shape = self.memory_get_code_shape_from_pid(pid)
@@ -144,19 +144,33 @@ class ActionData:
                     else:
                         occurance = 0
                     x[game_index, pattern_index] = occurance
+            if reduce_size == True:
+                keep = jaccard_select(list(range(len(significant_patterns))), x)
+                save_obj(keep, 'jaccard_reduced_patterns', x_save_dir)
+                x = x[:, keep]
+            return x
+
+        def get_y(df):
+            y = np.zeros(len(df.index))
+            for game_index, i in enumerate(df.index):
                 if df.at[i, self.action_name]:
                     y[game_index] = 1
                 else:
                     y[game_index] = 0
-            return x, y
+            return y
 
-        X_train, y_train = get_xy(train_df)
-        X_test, y_test = get_xy(test_df)
+        if is_obj( 'jaccard_reduced_patterns', x_save_dir):
+            pass
+        else:
+            X_train = get_x(train_df)
+            X_test = get_x(train_df)
+            save_obj(X_train, "X_train_reduced", x_save_dir, "")
+            save_obj(X_test, "X_test_reduced", x_save_dir, "")
 
-        save_obj(X_train, "X_train", save_dir, "")
-        save_obj(y_train, "y_train", save_dir, "")
-        save_obj(X_test, "X_test", save_dir, "")
-        save_obj(y_test, "y_test", save_dir, "")
+        # y_train = get_y(test_df)
+        # y_test = get_y(test_df)
+        # save_obj(y_train, "y_train", x_save_dir, "")
+        # save_obj(y_test, "y_test", x_save_dir, "")
 
 
 
