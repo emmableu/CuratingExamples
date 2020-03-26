@@ -9,7 +9,7 @@ if __name__=='__main__':
     # code_shape_p_q_list = [[1, 0], [1, 1], [1, 2], [1, 3], [1, 4], [2, 0], [2, 1], [2, 2], [2, 3], [2, 4]]
     code_shape_p_q_list2 = [[1, 0], [1, 1], [1, 2], [1, 3], [2, 3]]
     code_shape_p_q_list1 = [[1, 0]]
-    for code_shape_p_q_list in [code_shape_p_q_list2]:
+    for code_shape_p_q_list in [code_shape_p_q_list1, code_shape_p_q_list2]:
         dataset = Dataset(code_shape_p_q_list = code_shape_p_q_list)
         # dataset.create_code_state()
         # dataset.get_all_pattern_keys()

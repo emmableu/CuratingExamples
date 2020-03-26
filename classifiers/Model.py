@@ -3,6 +3,8 @@ from sklearn.model_selection import cross_val_predict
 import sys
 sys.path.append("/Users/wwang33/Documents/IJAIED20/CuratingExamples/my_module")
 from save_load_pickle import *
+from sklearn.model_selection import KFold, cross_val_score, LeaveOneOut
+
 
 class Model:
     def __init__(self):
@@ -103,6 +105,16 @@ class Model:
         return perf
 
 
+    def get_model_f1(self,X, y):
+        try:
+            perf = self.naive_cross_val_predict(X,y)
+        except:
+            split_strategy = LeaveOneOut()
+            y_pred = cross_val_predict(X, y, cv = split_strategy)
+            y_test = y
+            y_pred = y_pred.astype(int)
+            perf = self.get_performance_dict(y_test, y_pred)
+        return perf
 
 
 

@@ -92,12 +92,12 @@ class ActiveLearnActionData(object):
         total = len(self.body["code"])
         pos = Counter(self.body["code"])[1]
         neg = Counter(self.body["code"])[0]
-        poses = np.where(np.array(self.body['code']) == 1)[0]
-        negs = np.where(np.array(self.body['code']) == 0)[0]
+        self.poses = np.where(np.array(self.body['code']) == 1)[0]
+        self.negs = np.where(np.array(self.body['code']) == 0)[0]
         code_array = np.array(self.body.code.to_list())
         self.code_array = code_array.astype(int)
 
-        self.train_ids1 = list(poses) + list(negs)
+        self.train_ids1 = list(self.poses) + list(self.negs)
         self.pool = np.where(np.array(self.body['code']) == -1)[0]
         self.labeled = list(set(range(len(self.body['code']))) - set(self.pool))
         assert bool(
@@ -120,7 +120,7 @@ class ActiveLearnActionData(object):
     def active_uncertainty_train(self):
         self.session += 1
         self.get_numbers()
-        print("--------------train session ", self.session, "-----------------")
+        print("--------------uncertainty train session ", self.session, "-----------------")
         best_model = svm_linear
         current_model = best_model
         input_x = np.insert(self.X, 0, 1, axis=1)
@@ -133,9 +133,33 @@ class ActiveLearnActionData(object):
         except:
             pos_at = list(current_model.model.classes_).index(1)
         prob = current_model.model.predict_proba(input_x[rest_data_ids])[:, pos_at]
-        order = np.argsort(np.abs(prob))  ## uncertainty sampling by distance to decision plane
-        most_uncertain = order[:self.step]
-        return current_model, np.array(rest_data_ids)[most_uncertain]
+        order = np.argsort(np.abs(prob-0.5))[:self.step]    ## uncertainty sampling by prediction probability
+        return current_model, np.array(rest_data_ids)[order]
+
+
+    def passive_train(self, get_candidate=False):
+        self.session += 1
+        self.get_numbers()
+
+        print("--------------vanila passive train session ", self.session, "-----------------")
+        best_model = svm_linear
+        current_model = best_model
+        input_x = np.insert(self.X, 0, 1, axis=1)
+        current_model.model.fit(input_x[self.train_ids1], self.code_array[self.train_ids1])
+        if not get_candidate:
+            return current_model
+        else:
+            rest_data_ids = get_opposite(range(len(self.y)), self.train_ids1)
+            try:
+                pos_at = list(current_model.model.classes_).index('1')
+            except:
+                pos_at = list(current_model.model.classes_).index(1)
+            prob = current_model.model.predict_proba(input_x[rest_data_ids])[:, pos_at]
+            order1 = np.argsort(np.abs(prob))[::-1]  ## uncertainty sampling by distance to decision plane
+
+            most_certain = np.array(rest_data_ids)[order1[:self.step]]
+            return best_model, most_certain
+
 
 
 
@@ -152,11 +176,14 @@ class ActiveLearnActionData(object):
         current_model.model.fit(input_x[self.train_ids1], self.code_array[self.train_ids1])
         return current_model, selected_features
 
-    def active_model_selection_train(self):
+    def active_model_selection_train(self, all_uncertainty = False):
         self.session += 1
         self.get_numbers()
         print("--------------train session ", self.session, "-----------------")
-        best_model = self.get_model()
+        if len(self.poses) == 1:
+            best_model = svm_linear
+        else:
+            best_model = self.get_model()
         current_model = best_model.model
         code_array = np.array(self.body.code.to_list())
         input_x = np.insert(self.X, 0, 1, axis=1)
@@ -168,11 +195,17 @@ class ActiveLearnActionData(object):
             pos_at = list(current_model.classes_).index(1)
 
         prob = current_model.predict_proba(input_x[rest_data_ids])[:, pos_at]
-        order = np.argsort(np.abs(prob))[::-1]  ## uncertainty sampling by distance to decision plane
+        order1 = np.argsort(np.abs(prob))[::-1]  ## uncertainty sampling by distance to decision plane
 
-        most_certain = order[:self.step]
-
-        return np.array(rest_data_ids)[most_certain]
+        most_certain = np.array(rest_data_ids)[order1[:self.step]]
+        order2 = np.argsort(np.abs(prob-0.5))[:self.step]    ## uncertainty sampling by prediction probability
+        most_uncertain =  np.array(rest_data_ids)[order2[:self.step]]
+        if all_uncertainty:
+            return best_model, most_uncertain
+        if len(self.poses) <=10:
+            return best_model, most_uncertain
+        else:
+            return best_model, most_certain
 
     def passive_model_selection_train(self):
         self.session += 1
@@ -182,8 +215,11 @@ class ActiveLearnActionData(object):
         code_array = np.array(self.body.code.to_list())
         input_x = np.insert(self.X, 0, 1, axis=1)
         best_model.model.fit(input_x[self.train_ids1], code_array[self.train_ids1])
-
         return best_model
+
+
+
+
 
     def train_model_feature_selection(self):
         self.session += 1
@@ -565,3 +601,44 @@ class ActiveLearnActionData(object):
               sorted(self.feature_coded_times_dict.items(), key=lambda x: x[1], reverse=True))
         print("self.feature_coded_correct_dict",
               sorted(self.feature_coded_correct_dict.items(), key=lambda x: x[1], reverse=True))
+
+
+
+
+    def code_recall_curve(self, id):
+        id = np.array(id)
+        print_data = []
+        print("id: ", id)
+        # try:
+        for bla in np.nditer(id):
+            print_data.append(self.body['label'][bla])
+
+        print("coded correct: ", Counter(print_data)[1], "among 10")
+        self.body['code'][id] = self.body['label'][id]
+        self.body["session"][id] = self.session
+        if self.last_time_best_feature in self.feature_coded_correct_dict.keys():
+            existing_number = self.feature_coded_correct_dict[self.last_time_best_feature]
+            existing_times = self.feature_coded_times_dict[self.last_time_best_feature]
+
+            precision1 = Counter(print_data)[1] / step
+            precision2 = (existing_number * step * existing_times) / (step * existing_times)
+            if precision1 + precision2 == 0:
+                weighted_precision = 0
+            else:
+                weighted_precision = (precision1 * 0.7 + precision2 * 0.3)
+
+            self.feature_coded_correct_dict[self.last_time_best_feature] = weighted_precision
+            self.feature_coded_times_dict[self.last_time_best_feature] += 1
+
+        elif self.session >= 1:
+            self.feature_coded_correct_dict[self.last_time_best_feature] = Counter(print_data)[1] / step
+            self.feature_coded_times_dict[self.last_time_best_feature] = 1
+        # if self.session >=1:
+        #     self.feature_coded_correct_dict[self.last_time_best_feature] = Counter(print_data)[1] / step
+        #     # self.feature_coded_times_dict[self.last_time_best_feature] = 1
+        print("self.feature_coded_times_dict",
+              sorted(self.feature_coded_times_dict.items(), key=lambda x: x[1], reverse=True))
+        print("self.feature_coded_correct_dict",
+              sorted(self.feature_coded_correct_dict.items(), key=lambda x: x[1], reverse=True))
+
+        return Counter(print_data)[1]

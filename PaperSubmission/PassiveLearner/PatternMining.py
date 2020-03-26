@@ -27,11 +27,26 @@ def median_digitize(x):
         x[:,i] = np.digitize(x[:,i], bins, right=True)
     return x
 
-def get_data(code_shape_p_q_list, digit01, action_name):
+def get_data(code_shape_p_q_list, digit01, action_name, datafolder):
     # code_shape_p_q_list = [[1, 0], [1, 1], [1, 2], [1, 3], [2, 3]]
     # code_shape_p_q_list = [[1, 0]]
     # action_name = 'cochangescore'
-    orig_dir = base_dir + "/xy_0.3heldout/code_state" + str(code_shape_p_q_list) +  "/" + action_name
+    orig_dir = base_dir + "/"+ datafolder + "/code_state" + str(code_shape_p_q_list) +  "/" + action_name
+    # x_train_dir =
+
+    if datafolder == 'xy_0heldout' and digit01 == True:
+        x_dir = base_dir + "/"+ datafolder + "/code_state" + str(code_shape_p_q_list)
+        x_train = load_obj('X_train', x_dir, "")
+        x_train = np.digitize(x_train, bins=[1])
+        y_train = load_obj('y_train', orig_dir, "")
+
+        pattern_dir = base_dir + "/xy_0heldout/code_state" + str(code_shape_p_q_list)
+        patterns = load_obj("full_patterns", pattern_dir, "")
+        pattern_orig = np.array([pattern for pattern in patterns])
+
+        return x_train, y_train, pattern_orig
+
+
 
     x_train = load_obj('X_train', orig_dir, "")
     x_test = load_obj('X_test', orig_dir, "")
@@ -76,7 +91,7 @@ def atomic_save_performance_for_one_repetition(new_row, save_dir, code_shape_p_q
     save_obj(df, file_name, save_dir, "")
 
 def pattern_mining(label_name, dpm, code_shape_p_q_list, digit01, model_selection):
-    x_train, y_train, x_test, y_test, pattern_orig = get_data(code_shape_p_q_list, digit01, label_name)
+    x_train, y_train, x_test, y_test, pattern_orig = get_data(code_shape_p_q_list, digit01, label_name, datafolder = "xy_0.3heldout")
     total_data = len(y_train)
     all_simulation = {}
     all_simulation["y"] = y_train
@@ -106,7 +121,6 @@ def pattern_mining(label_name, dpm, code_shape_p_q_list, digit01, model_selectio
                 input_test = np.insert(x_test, 0, 1, axis=1)
 
             perf_dict = model.naive_predict(input_test, y_test)
-
             new_row_value = (perf_dict['f1'])
             new_row[new_row_key] = new_row_value
 
@@ -217,7 +231,7 @@ def pattern_examination():
     # selected_patterns1 = pattern_orig[selected_features]
 
     code_shape_p_q_list = [[1, 0], [1, 1], [1, 2], [1, 3], [2, 3]]
-    x_train, y_train, x_test, y_test, pattern_orig = get_data(code_shape_p_q_list, digit01 = True)
+    x_train, y_train, x_test, y_test, pattern_orig = get_data(code_shape_p_q_list, digit01 = True, datafolder = "xy_0.3heldout")
     selected_features = select_feature(x_train, y_train, jaccard = False)
     train_x = np.insert(x_train[:, selected_features], 0, 1, axis=1)
     # print("input x: ", input_x)
@@ -251,5 +265,19 @@ def pattern_examination():
 # pattern_examination()
 
 
+
+def cross_validation_for_grams():
+    code_shape_p_q_list_s = [[[1, 0]], [[1, 0], [1, 1], [1, 2], [1, 3], [2, 3]]]
+    label_name_s = ['moveanimate']
+    for label_name in label_name_s:
+        print(label_name)
+        for code_shape_p_q_list in  code_shape_p_q_list_s:
+            x_train, y_train, pattern_orig = get_data(code_shape_p_q_list, digit01= True, action_name = label_name, datafolder = "xy_0heldout")
+            print(len(x_train[0]))
+            perf = svm_linear.naive_cross_val_predict(x_train, y_train, cv = 10)
+            print(perf)
+
+
+# cross_validation_for_grams()
 
 

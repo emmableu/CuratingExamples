@@ -101,7 +101,7 @@ class ActionData:
                 atomic_add(full_pattern_set, pattern_set['code_state' + str(p)])
             full_pattern_set = sorted(full_pattern_set)
             print(full_pattern_set)
-            save_obj(full_pattern_set, "full_patterns", base_dir, "xy_0.3heldout/code_state" + str(self.selected_p_q_list))
+            save_obj(full_pattern_set, "full_patterns", base_dir, "xy_0heldout/code_state" + str(self.selected_p_q_list))
             return full_pattern_set
 
         else:
@@ -127,10 +127,13 @@ class ActionData:
 
     def save_x_y_train_test(self,train_pid, test_pid, x_save_dir, save_dir,reduce_size = True, baseline = True):
         # significant_patterns = self.get_pattern_statistics(train_pid, baseline)
-        significant_patterns = load_obj( "full_patterns", base_dir, "xy_0.3heldout/code_state" + str(self.selected_p_q_list))
+        significant_patterns = load_obj( "full_patterns", base_dir, "xy_0heldout/code_state" + str(self.selected_p_q_list))
         num_patterns = len(significant_patterns)
         train_df = self.game_label[self.game_label.pid.isin(train_pid)].reset_index(drop = True)
-        test_df = self.game_label[self.game_label.pid.isin(test_pid)].reset_index(drop = True)
+        if not test_pid:
+            pass
+        else:
+            test_df = self.game_label[self.game_label.pid.isin(test_pid)].reset_index(drop = True)
         # print("train_df: ", train_df)
         def get_x(df):
             x = np.empty((len(df.index), num_patterns))
@@ -163,13 +166,13 @@ class ActionData:
             pass
         else:
             X_train = get_x(train_df)
-            X_test = get_x(train_df)
-            save_obj(X_train, "X_train_reduced", x_save_dir, "")
-            save_obj(X_test, "X_test_reduced", x_save_dir, "")
+            # X_test = get_x(train_df)
+            save_obj(X_train, "X_train", x_save_dir, "")
+            # save_obj(X_test, "X_test_reduced", x_save_dir, "")
 
-        # y_train = get_y(test_df)
+        y_train = get_y(train_df)
         # y_test = get_y(test_df)
-        # save_obj(y_train, "y_train", x_save_dir, "")
+        save_obj(y_train, "y_train", save_dir, "")
         # save_obj(y_test, "y_test", x_save_dir, "")
 
 

@@ -103,6 +103,7 @@ def jaccard_select(selected_patterns, x):
     code_shape_p_q_list =  [[1, 0], [1, 1], [1, 2], [1, 3], [2, 3]]
     # code_shape_p_q_list =  [[1, 0]]
     #ATTENTION! Below IS by default from the full codestate, not the one hot!
+    #need to change if running this!
     pattern_dir = base_dir + "/xy_0.3heldout/code_state" + str(code_shape_p_q_list)
     patterns = load_obj("full_patterns", pattern_dir, "")
     pattern_orig = np.array(patterns)
@@ -378,7 +379,7 @@ def submission_get_model_f1(train_ids, X, y, model_list):
     f1_dict = {}
 
     for mod in model_list:
-        return_dict = mod.naive_cross_val_predict(X, y, cv = 3)
+        return_dict = mod.naive_cross_val_predict(X, y, cv = 5)
         f1_dict[mod] = return_dict['f1']
 
 
