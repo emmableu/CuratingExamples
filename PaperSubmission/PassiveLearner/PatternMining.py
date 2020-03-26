@@ -157,6 +157,7 @@ def encapsulated_simulate():
                     pattern_mining(label_name, dpm, code_shape_p_q_list, digit01, model_selection)
 
 def pattern_verification():
+    action_name = 'keymove'
     code_shape_p_q_list2 = [[1, 0], [1, 1], [1, 2], [1, 3], [2, 3]]
     code_shape_p_q_list1 = [[1, 0]]
     # action_name = 'keymove'

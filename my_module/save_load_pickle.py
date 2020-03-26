@@ -5,8 +5,10 @@ import numpy as np
 import time
 import inspect
 from tqdm import *
+from translation_dict import *
 root_dir = "/Users/wwang33/Documents/IJAIED20/CuratingExamples/"
 base_dir = root_dir + "Datasets/data/PaperSubmission/"
+# base_dir = root_dir + "Datasets/data/ScratchASTData/"
 test_size_list = [0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0]
 
 

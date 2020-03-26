@@ -125,9 +125,12 @@ class Dataset:
         save_pickle(all_pattern_keys,  "pattern_set" + str(self.code_shape_p_q_list),  base_dir, "CodeState")
 
     def submission_save_x_y_to_hard_drive(self, selected_p_q_list):
-        code_state = load_obj( "code_state" + str(self.code_shape_p_q_list), base_dir, "CodeState")
+        if base_dir.split("/")[-1]== 'ScratchASTData':
+            code_state = load_obj( "code_state" + str(self.code_shape_p_q_list), base_dir, "CodeState")
+        else:
+            code_state = load_obj( "code_state" + str(self.code_shape_p_q_list), base_dir, "CodeState")
         action_name_s = ['keymove', 'jump', 'cochangescore', 'movetomouse', 'moveanimate', 'costopall']
-        action_name_s = ['costopall']
+        # action_name_s = ['costopall']
         game_label = pd.read_csv(base_dir + "/game_label_415.csv")
         test_size = 0
         fold = 0
@@ -168,6 +171,10 @@ class Dataset:
                         if p not in self.pid_list:
                             print("pid not in pid_list!", p)
                     action_data.save_x_y_train_test(train_pid, test_pid, save_dir, baseline)
+
+    def convert_one_hot_to_embedding(self):
+        onehot_dir = base_dir + "/xy_0heldout/code_state[[1, 0]]"
+
 
 
 

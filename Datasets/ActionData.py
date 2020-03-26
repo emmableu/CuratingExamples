@@ -16,12 +16,15 @@ class ActionData:
 
     def memory_get_code_shape_from_pid(self,pid):
         code_shape_dict = {}
-        # print(self.code_state.loc['329266361'])
-        for p_q in self.selected_p_q_list:
-            try:
-                code_shape_dict.update(self.code_state.at[str(pid), 'code_state'+ str(p_q)])
-            except KeyError:
-                print(pid, "keyerror!")
+        if base_dir.split("/")[-2] == 'ScratchASTData':
+            code_shape_dict.update(self.code_state.at[(pid)])
+        else:
+            # print(self.code_state.loc['329266361'])
+            for p_q in self.selected_p_q_list:
+                try:
+                    code_shape_dict.update(self.code_state.at[str(pid), 'code_state'+ str(p_q)])
+                except KeyError:
+                    print(pid, "keyerror!")
         # start = time.time()
         # code_shape_dict.update(self.code_state.at[str(pid), 'code_state[1, 3]'])
         # end = time.time()
@@ -92,13 +95,17 @@ class ActionData:
     def get_pattern_statistics(self, train_pid, baseline = True):
 
         if baseline:
-            pattern_set = load_obj("pattern_set"+ str(self.selected_p_q_list), base_dir,
-                                    "CodeState" )
-            print("pattern_set", pattern_set.keys())
-
+            pattern_set = load_obj("pattern_set" + str(self.selected_p_q_list), base_dir,
+                                   "CodeState")
+            # print("pattern_set", pattern_set.keys())
             full_pattern_set = set()
-            for p in (self.selected_p_q_list):
-                atomic_add(full_pattern_set, pattern_set['code_state' + str(p)])
+            print(base_dir.split("/"))
+            if base_dir.split("/")[-2] == 'ScratchASTData':
+                atomic_add(full_pattern_set, pattern_set)
+            else:
+                for p in (self.selected_p_q_list):
+                    atomic_add(full_pattern_set, pattern_set['code_state' + str(p)])
+
             full_pattern_set = sorted(full_pattern_set)
             print(full_pattern_set)
             save_obj(full_pattern_set, "full_patterns", base_dir, "xy_0heldout/code_state" + str(self.selected_p_q_list))
