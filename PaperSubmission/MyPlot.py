@@ -20,31 +20,10 @@ total_pos_dict = {
 }
 
 def get_xy_error_from_session_table(data):
-    # print(data)
-
-    # x = np.array(data.columns.to_list())
-    # y = []
-    # for x_i, x_e in enumerate(x):
-    #     y.append(data.at[9, x_e])
-    #
-    # y = np.array(y)
-    # # print("y_array")
-    #
-    # # y = np.mean(y_array, axis=0)
-    # # y = y_array
-    # error = np.array([0] *len(x))
-    # # print(y)
-    # return x, y, error
 
     x = np.array(data.columns.to_list())
-    # print(x)
     repetition = len(data.index)
-    # print(repetition)
     y_array = np.empty([repetition, len(x)])
-    # repetition = 1
-    # y_array = np.empty([1, len(x)])
-    # print(repetition)
-    # print(len(x))
     for repe in (data.index):
         # print(repe)
         for x_i, x_e in enumerate(x):

@@ -172,12 +172,6 @@ class Dataset:
                             print("pid not in pid_list!", p)
                     action_data.save_x_y_train_test(train_pid, test_pid, save_dir, baseline)
 
-    def convert_one_hot_to_embedding(self):
-        onehot_dir = base_dir + "/xy_0heldout/code_state[[1, 0]]"
-
-
-
-
 
 
 
