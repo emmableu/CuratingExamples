@@ -1,6 +1,7 @@
 import sys
 sys.path.append('/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets')
 from Dataset import *
+from translation_dict import *
 sys.setrecursionlimit(10**8)
 from ActiveLearnActionData import *
 import warnings

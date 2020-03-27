@@ -8,7 +8,7 @@ word2idx, idx2word = tuple(np.load(embedding_dir + "dict.npy", allow_pickle=True
 embeddings = np.load(embedding_dir + "embeddings.npy")
 # one_hot_embeddings = np.diag(np.ones((embeddings.shape[0])))
 
-data_dir = base_dir + "/xy_0heldout/code_state[[1, 0]]"
+data_dir = base_dir + "/xy_0heldout/scratch_code_state[[1, 0]]"
 x_train = load_obj('X_train', data_dir)
 pattern_data = load_obj('full_patterns', data_dir)
 w2i = np.array([data for data in word2idx])
@@ -23,4 +23,17 @@ w2i = np.array([data for data in word2idx])
 w2i = np.array([data for data in word2idx])
 w2i = sorted(w2i)
 print(w2i)
-print(pattern_data)
+
+# print(pattern_data)
+translated_snap = []
+for i in w2i:
+    try:
+        translated_snap.append(SB2_TO_SB3_OP_MAP[i])
+        print(i)
+    except:
+        print("no")
+
+
+start_x = [0] * 100
+
+
