@@ -1,6 +1,7 @@
 import sys
 sys.path.append("/Users/wwang33/Documents/IJAIED20/CuratingExamples/my_module")
 from save_load_pickle import *
+from translation_dict import *
 import pandas as pd
 from CodeShape import *
 from Test import *

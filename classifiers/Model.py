@@ -105,12 +105,12 @@ class Model:
         return perf
 
 
-    def get_model_f1(self,X, y):
+    def model_cross_val_predict(self,X, y):
         try:
-            perf = self.naive_cross_val_predict(X,y)
+            perf = self.naive_cross_val_predict(X,y, cv = 3)
         except:
             split_strategy = LeaveOneOut()
-            y_pred = cross_val_predict(X, y, cv = split_strategy)
+            y_pred = cross_val_predict(self.model, X, y, cv = split_strategy)
             y_test = y
             y_pred = y_pred.astype(int)
             perf = self.get_performance_dict(y_test, y_pred)

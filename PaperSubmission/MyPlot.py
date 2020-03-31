@@ -64,14 +64,20 @@ def get_dict(recall_curve):
     if recall_curve:
 
         label_file_dict = {"Baseline": "code_state[[1, 0]]",
+            "Estimate": "code_state[[1, 0]]",
             "OneHotImproved": "code_state[[1, 0]]",
+            "OneHotImprovedEstimate": "code_state[[1, 0]]",
                            'Improved': "code_state[[1, 0], [1, 1], [1, 2], [1, 3], [2, 3]]"}
 
         label_folder_dict = {"Baseline": base_dir + "Simulation/PatternMining/SessionTable/ActiveLearning/BaselineCertainty_RecallCurve/",
+                                "Estimate": base_dir + "Simulation/PatternMining/SessionTable/ActiveLearning/BaselineCertainty_RecallCurve/EstimateY/",
                              "OneHotImproved":base_dir + "Simulation/PatternMining/SessionTable/ActiveLearning/OneHotModelSelectionUncertainty_10_RecallCurve/",
+                             "OneHotImprovedEstimate":base_dir + "Simulation/PatternMining/SessionTable/ActiveLearning/OneHotModelSelectionUncertainty_10_RecallCurve/EstimateY",
                                      "Improved": base_dir + "Simulation/PatternMining/SessionTable/ActiveLearning/ModelSelectionUncertainty_10_RecallCurve/"}
         label_color_dict = {'Baseline': ['#9A7652', '#A88769'],
-                                    'OneHotImproved': ['#A13034', '#E1666A'],
+                                    'Estimate': ['#A13034', '#E1666A'],
+                                    'OneHotImproved':['#9A7652', '#A88769'],
+                                    'OneHotImprovedEstimate': ['#A13034', '#E1666A'],
                                     'Improved': ['#A13034', '#E1666A']}
         return label_color_dict, label_file_dict, label_folder_dict
 
@@ -116,9 +122,10 @@ def recall_curve():
     plt.clf()
     fig = plt.figure(figsize=(24, 16))
     gs = fig.add_gridspec(2, 3)
-    label_s = ['Baseline', 'Improved']
+    label_s = ['Baseline', 'Estimate']
+    label_s = ['OneHotImproved', 'OneHotImprovedEstimate']
     # label_s = ['Baseline']
-    # action_name_s = ['keymove']
+    action_name_s = ['keymove']
     for action_index, action_name in enumerate(action_name_s):
         label_color_dict, label_file_dict, label_folder_dict = get_dict(recall_curve = True)
         ax = fig.add_subplot(gs[action_index // 3, action_index % 3])

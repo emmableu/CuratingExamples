@@ -1,9 +1,11 @@
 .DS_STORE
-*.csv
-*.pkl
+Datasets/data/*
+!Datasets/data/PaperSubmission/
+Datasets/data/PaperSubmission/*
+!Datasets/data/PaperSubmission/Simulation/
+#*.pkl
 *.png
 .idea/*
-*/data/*
 *__pycache__*
 *.ipynb_checkpoints*
 *.vscode*

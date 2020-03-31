@@ -282,3 +282,24 @@ def cross_validation_for_grams():
 # cross_validation_for_grams()
 
 
+def cross_validation_for_embeddings():
+    # code_shape_p_q_list_s = [[[1, 0]], [[1, 0], [1, 1], [1, 2], [1, 3], [2, 3]]]
+    label_name_s = action_name_s
+    for label_name in label_name_s:
+        print(label_name)
+        data_folder = base_dir + "/xy_0heldout/scratch_code_state[[1, 0]]"
+        x_train = load_obj("x_train_135", data_folder)
+        y_train = load_obj('y_train', data_folder, label_name)
+        # print(len(x_train[0]))
+        # print(perf)
+        print("one-hot, reduced from 169 to 135 important words")
+        perf = svm_linear.naive_cross_val_predict(x_train, y_train, cv = 10)
+        x_train = load_obj("x_train_onehot_embedding", data_folder)
+        print("onehot using embeddings")
+        perf = svm_linear.naive_cross_val_predict(x_train, y_train, cv = 10)
+
+        # print(perf)
+
+
+
+# cross_validation_for_embeddings()

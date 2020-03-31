@@ -1,4 +1,5 @@
 from __future__ import print_function, division
+from sklearn import linear_model
 
 try:
     import cPickle as pickle
@@ -78,6 +79,8 @@ class ActiveLearnActionData(object):
         self.feature_coded_times_dict = {}
         self.step = 10
         self.get_numbers()
+        self.last_pos = 0
+        self.train_prevalence = 0
 
     def get_body(self):
         body = pd.DataFrame(columns=['X', 'label'])
@@ -136,7 +139,6 @@ class ActiveLearnActionData(object):
         order = np.argsort(np.abs(prob-0.5))[:self.step]    ## uncertainty sampling by prediction probability
         return current_model, np.array(rest_data_ids)[order]
 
-
     def passive_train(self, get_candidate=False):
         self.session += 1
         self.get_numbers()
@@ -159,9 +161,6 @@ class ActiveLearnActionData(object):
 
             most_certain = np.array(rest_data_ids)[order1[:self.step]]
             return best_model, most_certain
-
-
-
 
     def dpm_passive_train(self, jaccard):
         self.session += 1
@@ -207,6 +206,13 @@ class ActiveLearnActionData(object):
         else:
             return best_model, most_certain
 
+
+
+
+
+
+
+
     def passive_model_selection_train(self):
         self.session += 1
         self.get_numbers()
@@ -219,7 +225,92 @@ class ActiveLearnActionData(object):
 
 
 
+    def estimate_curve_orig(self, clf_class, reuse=False, num_neg=0):
+        clf = clf_class.model
 
+        def prob_sample(probs):
+            order = np.argsort(probs)[::-1]
+            count = 0
+            can = []
+            sample = []
+            for i, x in enumerate(probs[order]):
+                count = count + x
+                can.append(order[i])
+                if count >= 1:
+                    # sample.append(np.random.choice(can,1)[0])
+                    sample.append(can[0])
+                    count = 0
+                    can = []
+            return sample
+        input_x = np.insert(self.X, 0, 1, axis=1)
+        prob1 = clf.decision_function(input_x)
+        prob = np.array([[x] for x in prob1])
+        y = np.array([1 if x == 1 else 0 for x in self.body['code']])
+        y0 = np.copy(y)
+
+        if len(self.poses) and reuse:
+            all = list(set(self.poses) | set(self.negs) | set(self.pool))
+        else:
+            all = range(len(self.y))
+        pos_num_last = Counter(y0)[1]
+        lifes = 1
+        life = lifes
+        while (True):
+            # C = Counter(y0[all])[1]/ num_neg
+            es = linear_model.LogisticRegression(penalty='l2', fit_intercept=True)
+            es.fit(prob[all], y0[all])
+            pos_at = list(es.classes_).index(1)
+            pre = es.predict_proba(prob[self.pool])[:, pos_at]
+            y = np.copy(y0)
+            sample = prob_sample(pre)
+            for x in self.pool[sample]:
+                y[x] = 1
+            pos_num = Counter(y)[1]
+            if pos_num == pos_num_last:
+                life = life - 1
+                if life == 0:
+                    break
+            else:
+                life = lifes
+            pos_num_last = pos_num
+
+
+        est_y = pos_num - self.last_pos
+        pre = es.predict_proba(prob)[:, pos_at]
+
+        return est_y, pre
+
+    def estimate_curve(self, clf_class, reuse=False, num_neg=0):
+        if len(self.poses) <= 10:
+            self.train_prevalence = len(self.poses) / len(self.labeled)
+        est_y = len(self.y) * self.train_prevalence
+        return est_y
+
+
+
+
+        # self.get_numbers()
+        # clf = lr.model
+        # train_prevalence = len(self.poses)/len(self.labeled)
+        # input_x = np.insert(self.X, 0, 1, axis=1)
+        # clf.fit(input_x[self.train_ids1], self.y[self.train_ids1])
+        # rest_data_ids = get_opposite(range(len(self.y)), self.train_ids1)
+        # # pos_at = list(clf.classes_).index(1)
+        # y_pred =clf.predict(input_x[rest_data_ids])
+        # print(y_pred)
+        # # y_pred = clf.predict(input_x)
+        # test_prevalence = (Counter(y_pred)[1])/len(rest_data_ids)
+        # total_prevalence = ((Counter(y_pred)[1]) + len(self.poses))/(len(rest_data_ids) +len(self.labeled))
+        # # prevalence = min(train_prevalence, total_prevalence)
+        # est_y = len(self.y) *total_prevalence
+        # return est_y
+
+    def init_estimate_curve(self, clf_class, reuse=False, num_neg=0):
+        self.get_numbers()
+        clf = clf_class.model
+        train_prevalence = len(self.poses)/len(self.labeled)
+        est_y = len(self.y) *train_prevalence
+        return est_y
 
     def train_model_feature_selection(self):
         self.session += 1
@@ -601,9 +692,6 @@ class ActiveLearnActionData(object):
               sorted(self.feature_coded_times_dict.items(), key=lambda x: x[1], reverse=True))
         print("self.feature_coded_correct_dict",
               sorted(self.feature_coded_correct_dict.items(), key=lambda x: x[1], reverse=True))
-
-
-
 
     def code_recall_curve(self, id):
         id = np.array(id)
