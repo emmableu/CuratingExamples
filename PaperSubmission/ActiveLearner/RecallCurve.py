@@ -27,7 +27,7 @@ def recall_curve(label_name, code_shape_p_q_list):
     all_simulation = {}
     all_simulation["y"] = y_train
     y_pos = Counter(y_train)[1]
-    for repetition in range(10):
+    for repetition in range(30):
         new_row1 = {}
         new_row2 = {}
         read = ActiveLearnActionData(x_train, y_train)
@@ -51,6 +51,11 @@ def recall_curve(label_name, code_shape_p_q_list):
             new_row1[new_row1_key] = cum_hit_count
             read.get_numbers()
             model, candidate = read.active_model_selection_train()
+            est_y = read.estimate_curve(svm_linear)
+            if j == (total - 1) // read.step-1:
+                assert read.post_turn_point, "post turn point is false even at the end!"
+            print("uncertainty is ", read.uncertainty)
+
             hit_count = read.code_recall_curve(candidate)
             cum_hit_count += hit_count
             # if cum_hit_count > y_pos*0.9:
@@ -61,7 +66,7 @@ def recall_curve(label_name, code_shape_p_q_list):
         print("new_row1: ", new_row1)
         print("new_row2: ", new_row2)
         save_dir1 = base_dir + "/Simulation/PatternMining/SessionTable/ActiveLearning/OneHotModelSelectionUncertainty_10_RecallCurve/" + label_name
-        save_dir2 = base_dir + "/Simulation/PatternMining/SessionTable/ActiveLearning/OneHotModelSelectionUncertainty_10_RecallCurve/EstimateY/" + label_name
+        save_dir2 = base_dir + "/Simulation/PatternMining/SessionTable/ActiveLearning/OneHotModelSelectionUncertainty_10_RecallCurve/EstimateY_3Conditions/" + label_name
         if repetition == 0:
             atomic_save_hit_for_one_repetition(new_row1, save_dir1, code_shape_p_q_list, repetition)
             atomic_save_hit_for_one_repetition(new_row2, save_dir2, code_shape_p_q_list, repetition)
@@ -118,7 +123,9 @@ def baseline_recall_curve(label_name, code_shape_p_q_list):
 
 
 def encapsulated_simulate():
+    action_name_s = ['movetomouse', 'moveanimate', 'cochangescore', 'jump', 'keymove']
     label_name_s = action_name_s
+    # label_name_s = ['cochangescore']
     code_shape_p_q_list2 = [[1, 0], [1, 1], [1, 2], [1, 3], [2, 3]]
     code_shape_p_q_list1 = [[1, 0]]
     # for code_shape_p_q_list in [code_shape_p_q_list1]:

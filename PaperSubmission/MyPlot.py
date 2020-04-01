@@ -10,7 +10,7 @@ warnings.filterwarnings('ignore')
 from matplotlib import pyplot as plt
 plt.rcParams.update({'font.size': 22})
 import numpy as np
-action_name_s =  ['keymove', 'jump', 'cochangescore', 'movetomouse', 'moveanimate']
+action_name_s = ['movetomouse', 'moveanimate', 'cochangescore', 'jump','keymove' ]
 total_pos_dict = {
     'keymove': 190,
     'jump': 78,
@@ -53,12 +53,14 @@ def get_dict(recall_curve):
                            'one_hot_dpm':  "0.05_dpm_code_state[[1, 0]]",
                            'pq_gram_dpm': "0.05_dpm_code_state[[1, 0], [1, 1], [1, 2], [1, 3], [2, 3]]"}
 
-        general_label_folder_dict = {"passive":base_dir+"Simulation/PatternMining/SessionTable/0_1_Digitalized",
+        general_label_folder_dict = {"passive":base_dir+"Simulation/PatternMining/SessionTable/ActiveLearning/F1Curve/PassiveSampling/",
                                      "model_selection":base_dir+"Simulation/PatternMining/SessionTable/0_1_Digitalized/model_selection",
-                                     "uncertainty": base_dir + "Simulation/PatternMining/SessionTable/ActiveLearning/Uncertainty/"}
+                                     "uncertainty": base_dir + "Simulation/PatternMining/SessionTable/ActiveLearning/Uncertainty/",
+                                     "active": base_dir + "Simulation/PatternMining/SessionTable/ActiveLearning/F1Curve/ModelSelectionAndUncertainty/"}
         general_label_color_dict = {'passive': ['#9D82BC', '#AD9FBD'],
                                     'model_selection': ['#9A7652', '#A88769'],
-                                    'uncertainty': ['#A13034', '#E1666A']}
+                                    'uncertainty': ['#A13034', '#E1666A'],
+                                    'active': ['#A13034', '#E1666A']}
         return label_color_dict,label_file_dict, general_label_color_dict, general_label_folder_dict
 
     if recall_curve:
@@ -67,32 +69,45 @@ def get_dict(recall_curve):
             "Estimate": "code_state[[1, 0]]",
             "OneHotImproved": "code_state[[1, 0]]",
             "OneHotImprovedEstimate": "code_state[[1, 0]]",
+            "3ConditionsEstimate": "code_state[[1, 0]]",
                            'Improved': "code_state[[1, 0], [1, 1], [1, 2], [1, 3], [2, 3]]"}
 
         label_folder_dict = {"Baseline": base_dir + "Simulation/PatternMining/SessionTable/ActiveLearning/BaselineCertainty_RecallCurve/",
                                 "Estimate": base_dir + "Simulation/PatternMining/SessionTable/ActiveLearning/BaselineCertainty_RecallCurve/EstimateY/",
                              "OneHotImproved":base_dir + "Simulation/PatternMining/SessionTable/ActiveLearning/OneHotModelSelectionUncertainty_10_RecallCurve/",
                              "OneHotImprovedEstimate":base_dir + "Simulation/PatternMining/SessionTable/ActiveLearning/OneHotModelSelectionUncertainty_10_RecallCurve/EstimateY",
+                             "3ConditionsEstimate":base_dir + "Simulation/PatternMining/SessionTable/ActiveLearning/OneHotModelSelectionUncertainty_10_RecallCurve/EstimateY_3Conditions",
                                      "Improved": base_dir + "Simulation/PatternMining/SessionTable/ActiveLearning/ModelSelectionUncertainty_10_RecallCurve/"}
         label_color_dict = {'Baseline': ['#9A7652', '#A88769'],
                                     'Estimate': ['#A13034', '#E1666A'],
                                     'OneHotImproved':['#9A7652', '#A88769'],
-                                    'OneHotImprovedEstimate': ['#A13034', '#E1666A'],
+                                    'OneHotImprovedEstimate': ['#51C176', '#A0DDB4'],
+                                    '3ConditionsEstimate': ['#A13034', '#E1666A'],
                                     'Improved': ['#A13034', '#E1666A']}
-        return label_color_dict, label_file_dict, label_folder_dict
+
+        formal_legend = { 'OneHotImproved':'Discovered',
+                                    '3ConditionsEstimate': "#Positive Estimate",}
+
+        return label_color_dict, label_file_dict, label_folder_dict, formal_legend
 
 def f1_curve():
     label_color_dict, label_file_dict, general_label_color_dict, general_label_folder_dict = get_dict(recall_curve=False)
     plt.clf()
     legend = 'general_label'
+    action_name_s = ['keymove', 'jump', 'cochangescore', 'movetomouse', 'moveanimate']
+    # action_name_s = ['keymove', 'jump', 'cochangescore']
+
+    # action_name_s = ['keymove']
     if legend == 'label':
         general_label_s = ['passive']
         label_s = ['one_hot', 'one_hot_dpm', 'pq_gram', 'pq_gram_dpm']
 
     else:
         general_label_s = ['passive', 'uncertainty']
-        general_label_s = ['passive', 'model_selection', 'uncertainty']
-        label_s = ['pq_gram']
+        general_label_s = ['passive', 'model_selection', 'uncertainty', 'active']
+        general_label_s = ['passive', 'active']
+        # general_label_s = ['passive']
+        label_s = ['one_hot']
 
     fig = plt.figure(figsize=(24, 16))
     gs = fig.add_gridspec(2, 3)
@@ -122,12 +137,15 @@ def recall_curve():
     plt.clf()
     fig = plt.figure(figsize=(24, 16))
     gs = fig.add_gridspec(2, 3)
-    label_s = ['Baseline', 'Estimate']
-    label_s = ['OneHotImproved', 'OneHotImprovedEstimate']
+    label_s = ['Baseline', "3ConditionsEstimate"]
+    label_s = ['OneHotImproved', 'OneHotImprovedEstimate','3ConditionsEstimate']
+    label_s = ['OneHotImproved','3ConditionsEstimate']
     # label_s = ['Baseline']
-    action_name_s = ['keymove']
+    action_name_s = ['keymove', 'jump', 'cochangescore', 'movetomouse', 'moveanimate']
+    # action_name_s = ['keymove']
+    # action_name_s = ['movetomouse']
     for action_index, action_name in enumerate(action_name_s):
-        label_color_dict, label_file_dict, label_folder_dict = get_dict(recall_curve = True)
+        label_color_dict, label_file_dict, label_folder_dict, formal_legend = get_dict(recall_curve = True)
         ax = fig.add_subplot(gs[action_index // 3, action_index % 3])
         x_all = {}
         y_all = {}
@@ -149,13 +167,16 @@ def recall_curve():
             x = x_all[label][:(len(x_all[shortest_label]))]
             y = y_all[label][:(len(y_all[shortest_label]))]
             order_5 = np.argsort(np.abs(y - 0.5*total_pos))[0]  ## uncertainty sampling by prediction probability
-            order_9 = np.argsort(np.abs(y - 0.9*total_pos))[0]
-            if label == 'Improved':
-                for order in [order_5, order_9]:
+            order_120 = np.argsort(np.abs(y - 1.25*total_pos))[0]
+            if label == 'OneHotImproved':
+                for order in [order_5]:
+                    plt.text(x[order], y[order], '({:.0f}%, {:.0f}%)'.format(x[order]*100/total, y[order] * 100/total_pos))
+            if label == '3ConditionsEstimate':
+                for order in [order_120]:
                     plt.text(x[order], y[order], '({:.0f}%, {:.0f}%)'.format(x[order]*100/total, y[order] * 100/total_pos))
 
             error = error_all[label][:(len(error_all[shortest_label]))]
-            plt.plot(x, y, 'k', color=label_color_dict[label][0], label=label)
+            plt.plot(x, y, 'k', color=label_color_dict[label][0], label=formal_legend[label])
             plt.fill_between(x, y - error, y + error,
                              alpha=0.2, linewidth=2, edgecolor=label_color_dict[label][0],
                              linestyle='dashdot', facecolor=label_color_dict[label][1],
@@ -174,5 +195,5 @@ def recall_curve():
     save_figure(plt)
 
 
-recall_curve()
+f1_curve()
 

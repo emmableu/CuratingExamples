@@ -81,6 +81,10 @@ class ActiveLearnActionData(object):
         self.get_numbers()
         self.last_pos = 0
         self.train_prevalence = 0
+        self.uncertainty = True
+        self.turn_point_arrival = False
+        self.post_turn_point = False
+        self.steady_growth = False
 
     def get_body(self):
         body = pd.DataFrame(columns=['X', 'label'])
@@ -101,10 +105,82 @@ class ActiveLearnActionData(object):
         self.code_array = code_array.astype(int)
 
         self.train_ids1 = list(self.poses) + list(self.negs)
+        self.rest_data_ids = get_opposite(range(len(self.y)), self.train_ids1)
+
         self.pool = np.where(np.array(self.body['code']) == -1)[0]
         self.labeled = list(set(range(len(self.body['code']))) - set(self.pool))
         assert bool(
             set(self.code_array[self.train_ids1]) & set(['undetermined'])) == False, "train set includes un-coded data!"
+        self.session_data = self.get_session_data()
+        f = np.array(self.session_data, dtype=np.float)
+
+        def moving_average(x, w):
+            return np.convolve(x, np.ones(w), 'valid') / w
+
+        if len(self.session_data)>10:
+            self.session_data_ma = moving_average(f, 3)
+            f = moving_average(f, 3)
+            g = np.gradient(f)
+            g = moving_average(g, 3)
+
+
+            if not self.steady_growth and not self.turn_point_arrival: #deterimine whether this point is steady growth point
+                g_order = np.argsort(abs(g))
+                print(g)
+                print(g_order)
+                xsorted = np.argsort(g_order)
+                ypos = np.searchsorted(g_order[xsorted], [len(g) - 1, len(g) - 2, len(g) - 3])
+                indices2 = xsorted[ypos]
+                if np.sum(indices2) < 8:
+                    self.steady_growth = True
+                    print("steady growth point arrival!")
+                    print(self.session)
+
+            if not self.turn_point_arrival: #determine whether this point is turn point
+                g_order = np.argsort(g)
+                print(g)
+                print(g_order)
+
+                xsorted = np.argsort(g_order)
+                ypos = np.searchsorted(g_order[xsorted], [len(g) - 1, len(g) - 2, len(g) - 3])
+                indices2 = xsorted[ypos]
+
+                print("indices2", indices2)
+                if 0 in indices2:
+                    if g[len(g)-1] < -0.9:
+                        self.turn_point_arrival = True
+                        print("turn point arrival!")
+                        print(self.session)
+
+
+                    elif 1 in indices2 and g[len(g)-1]<-0.7:
+                        self.turn_point_arrival = True
+                        print("turn point arrival!")
+                        print(self.session)
+
+
+            print("session data and gradients")
+            for f_i, f_d in enumerate(f):
+                try:
+                    print(f[f_i], g[f_i-1])
+                except:
+                    continue
+            self.session_data_ma = moving_average(f, 3)
+            # session_order = np.argsort(self.session_data_ma)
+            # xsorted = np.argsort(session_order)
+            # ypos = np.searchsorted(session_order[xsorted], [len(self.session_data_ma) - 1, len(self.session_data_ma) - 2, len(self.session_data_ma) - 3])
+            # indices2 = xsorted[ypos]
+            if self.turn_point_arrival:
+                if self.session_data_ma[len(g) - 1] < 2:
+                        self.post_turn_point = True
+                        print("post_turn point")
+                        print(self.session)
+            else:
+                if self.session_data_ma[len(g) - 1] < 1 and self.session_data_ma[len(g) - 2] < 1 and self.session_data_ma[len(g) - 3] < 1 and self.session_data_ma[len(g) - 4] < 1:
+                        self.post_turn_point = True
+
+                print("indices2", indices2)
+
         return pos, neg, total
 
     def get_model(self):
@@ -202,8 +278,10 @@ class ActiveLearnActionData(object):
         if all_uncertainty:
             return best_model, most_uncertain
         if len(self.poses) <=10:
+            self.uncertainty = True
             return best_model, most_uncertain
         else:
+            self.uncertainty = False
             return best_model, most_certain
 
 
@@ -281,15 +359,38 @@ class ActiveLearnActionData(object):
         return est_y, pre
 
     def estimate_curve(self, clf_class, reuse=False, num_neg=0):
-        if len(self.poses) <= 10:
+        self.get_numbers()
+        if (self.uncertainty):
             self.train_prevalence = len(self.poses) / len(self.labeled)
         est_y = len(self.y) * self.train_prevalence
+        if self.steady_growth and not self.post_turn_point:
+            clf = clf_class.model
+            clf.fit(self.X[self.train_ids1], self.y[self.train_ids1])
+            y_pred = clf.predict(self.X)
+            # test_prevalence = (Counter(y_pred)[1])/len(self.y)
+            est_y = (est_y + (Counter(y_pred)[1]))/2
+
+
+
+        if self.post_turn_point:
+            # est_y2 =len(self.poses)+self.session_data_ma[-1] * len(self.pool)/self.step
+            est_y2 =len(self.poses)
+            est_y = est_y2
         return est_y
 
+    def get_session_data(self):
+        session_data = []
+        for i in range(self.session):
+            body_data = self.body[self.body.session == i]
+            pos_count = Counter(body_data['code'])[1]
+            if i == 0:
+                pos_count -= 1
+            session_data.append(pos_count)
+        return session_data
 
 
 
-        # self.get_numbers()
+            # self.get_numbers()
         # clf = lr.model
         # train_prevalence = len(self.poses)/len(self.labeled)
         # input_x = np.insert(self.X, 0, 1, axis=1)

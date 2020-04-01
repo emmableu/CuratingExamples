@@ -8,7 +8,7 @@ warnings.filterwarnings('ignore')
 from pattern_mining_util import *
 
 
-action_name_s = ['keymove', 'jump', 'cochangescore', 'movetomouse', 'moveanimate']
+action_name_s = ['movetomouse', 'moveanimate', 'cochangescore', 'jump','keymove' ]
 model_list = [adaboost, gaussian_nb,
               bernoulli_nb, multi_nb, complement_nb, mlp, svm_linear]
 model = svm_linear

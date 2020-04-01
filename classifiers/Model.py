@@ -5,7 +5,6 @@ sys.path.append("/Users/wwang33/Documents/IJAIED20/CuratingExamples/my_module")
 from save_load_pickle import *
 from sklearn.model_selection import KFold, cross_val_score, LeaveOneOut
 
-
 class Model:
     def __init__(self):
         self.name = "Model"
@@ -106,6 +105,11 @@ class Model:
 
 
     def model_cross_val_predict(self,X, y):
+        if Counter(y)[1] < 2:
+            perf  = {"tp": 0, "tn": 0, "fp": 0, "fn": 0, "accuracy": 0, "precision": 0, "recall": 0,
+                "f1": 0, "auc": 0}
+            return perf
+
         try:
             perf = self.naive_cross_val_predict(X,y, cv = 3)
         except:
