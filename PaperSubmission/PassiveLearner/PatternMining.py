@@ -91,7 +91,7 @@ def atomic_save_performance_for_one_repetition(new_row, save_dir, code_shape_p_q
     save_obj(df, file_name, save_dir, "")
 
 def pattern_mining(label_name, dpm, code_shape_p_q_list, digit01, model_selection):
-    x_train, y_train, x_test, y_test, pattern_orig = get_data(code_shape_p_q_list, digit01, label_name, datafolder = "xy_0.3heldout")
+    x_train, y_train, pattern_orig = get_data(code_shape_p_q_list, digit01, label_name, datafolder = "xy_0heldout")
     total_data = len(y_train)
     all_simulation = {}
     all_simulation["y"] = y_train

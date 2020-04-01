@@ -755,7 +755,6 @@ class ActiveLearnActionData(object):
                     return [ele]
             r = self.random(step=10)
 
-    ## Code candidate studies ##
     def code(self, id):
         id = np.array(id)
         print_data = []
