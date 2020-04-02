@@ -61,38 +61,38 @@ mlp = MLPModel()
 
 model_list = [bernoulli_nb, multi_nb, complement_nb, gaussian_nb, adaboost, svm_linear, lr]
 from trainers.Trainer import Trainer
+from samplers.RandomSampler import RandomSampler
+from samplers.Sampler import Sampler
 
 
+def get_best_model(X, y):
+    model_f1 = get_model_list_f1_dict(X, y, model_list)
+    print_model(model_f1)
+    itemMaxValue = max(model_f1.items(), key=lambda x: x[1])
+    listOfKeys = list()
+    # Iterate over all the items in dictionary to find keys with max value
+    for key, value in model_f1.items():
+        if value == itemMaxValue[1]:
+            listOfKeys.append(key)
+    best_model = np.random.choice(listOfKeys[:4], 1)[0]
+    print("best model for this session is: ", best_model.name)
+    return best_model
 
 
 class ModelSelectionTrainer(Trainer):
-    def __init__(self, X, y):
-        super().__init__(X, y)
+    def __init__(self, X, y, train_id_list, pool_id_list):
+        super().__init__(X, y, train_id_list, pool_id_list)
         self.comment = "Model Selection Training, no preprocessing and no candidate"
 
-    def get_model(self):
-        model_f1 = get_model_list_f1_dict(self.X, self.y, model_list)
-        print_model(model_f1)
-        itemMaxValue = max(model_f1.items(), key=lambda x: x[1])
-        listOfKeys = list()
-        # Iterate over all the items in dictionary to find keys with max value
-        for key, value in model_f1.items():
-            if value == itemMaxValue[1]:
-                listOfKeys.append(key)
-        best_model = np.random.choice(listOfKeys[:4], 1)[0]
-        print("best model for this session is: ", best_model.name)
-        return best_model
-
-    def train(self):
+    def train(self, pre_processor):
+        self.trainer_preprocess_add_constant(pre_processor)
         if len(Counter(self.y)[1]) < 2:
             best_model = svm_linear
         else:
-            best_model = self.get_model()
-        best_model.model.fit(self.X, self.y)
-        return best_model
-
-
-    def trainer_sample(self, sampler):
-        prob = current_model.predict_proba(input_x[rest_data_ids])[:, pos_at]
-        return mdl
-
+            best_model = get_best_model(self.X_train, self.y_train)
+        best_model.model.fit(self.X_train, self.y_train)
+        try:
+            pos_at = list(best_model.model.classes_).index('1')
+        except:
+            pos_at = list(best_model.model.classes_).index(1)
+        return best_model, pos_at

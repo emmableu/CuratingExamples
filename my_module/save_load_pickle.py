@@ -7,6 +7,7 @@ import inspect
 from tqdm import *
 from collections import Counter
 # from translation_dict import *
+from PatternMining import *
 root_dir = "/Users/wwang33/Documents/IJAIED20/CuratingExamples/"
 base_dir = root_dir + "Datasets/data/PaperSubmission/"
 # base_dir = root_dir + "Datasets/data/ScratchASTData/"
