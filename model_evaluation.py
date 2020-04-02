@@ -41,14 +41,14 @@ no_tuning_models = [baseline, knn, lr, svm_c, svm_nu, svm_linear, dt, adaboost, 
 
 
 
-def main():
-    x1, y1 = get_xy_from_csv("preprocessed_data/team_seasons_classified_1.csv")
-    for model in no_tuning_models:
-        model.get_and_save_performance(x1, y1, "results/model_evaluation_1.csv", "results/figures1/")
-        print("--------------" + model.get_name() + "--------------")
-        print(model.get_confusion_matrix())
-        print(model.get_performance())
+# def main():
+#     x1, y1 = get_xy_from_csv("preprocessed_data/team_seasons_classified_1.csv")
+#     for model in no_tuning_models:
+#         model.get_and_save_performance(x1, y1, "results/model_evaluation_1.csv", "results/figures1/")
+#         print("--------------" + model.get_name() + "--------------")
+#         print(model.get_confusion_matrix())
+#         print(model.get_performance())
+#
 
 
-
-main()
+# main()

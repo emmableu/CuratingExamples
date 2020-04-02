@@ -99,7 +99,7 @@ def baseline_recall_curve(label_name, code_shape_p_q_list):
             new_row1_key = min((j)*read.step + 11, total)
             new_row1_key = new_row1_key
             read.get_numbers()
-            model, candidate = read.passive_train(get_candidate = True)
+            model, candidate = read.train()
             est_y = read.estimate_curve(model)
             hit_count = read.code_recall_curve(candidate)
             cum_hit_count += hit_count
@@ -133,8 +133,8 @@ def encapsulated_simulate():
     #         baseline_recall_curve(label_name, code_shape_p_q_list)
     for code_shape_p_q_list in [code_shape_p_q_list1]:
         for label_name in label_name_s:
-            # baseline_recall_curve(label_name, code_shape_p_q_list)
-            recall_curve(label_name, code_shape_p_q_list)
+            baseline_recall_curve(label_name, code_shape_p_q_list)
+            # recall_curve(label_name, code_shape_p_q_list)
 
 
 encapsulated_simulate()

@@ -16,6 +16,10 @@ from collections import Counter
 import operator
 from sklearn.model_selection import train_test_split
 from tqdm import tqdm
+from trainers.sub_trainers.dpm_ms_trainers import *
+from trainers.sub_trainers.ms_trainers import *
+from trainers.sub_trainers.svm_trainers import *
+from trainers.sub_trainers.dpm_svm_trainers import *
 
 import warnings
 
@@ -138,99 +142,10 @@ class ActiveLearnActionData(object):
         return pos, neg, total
 
 
-    def active_uncertainty_train(self):
-        self.session += 1
-        self.get_numbers()
-        print("--------------uncertainty train session ", self.session, "-----------------")
-        best_model = svm_linear
-        current_model = best_model
-        input_x = np.insert(self.X, 0, 1, axis=1)
-        current_model.model.fit(input_x[self.train_id_list], self.code_array[self.train_id_list])
-        pool_id_list = get_opposite(range(len(self.y)), self.train_id_list)
-        if len(pool_id_list) == 0:
-            return current_model, []
-        try:
-            pos_at = list(current_model.model.classes_).index('1')
-        except:
-            pos_at = list(current_model.model.classes_).index(1)
-        prob = current_model.model.predict_proba(input_x[pool_id_list])[:, pos_at]
-        order = np.argsort(np.abs(prob-0.5))[:self.step]    ## uncertainty sampling by prediction probability
-        return current_model, np.array(pool_id_list)[order]
-
-    def passive_train(self, get_candidate=False):
-        self.session += 1
-        self.get_numbers()
-
-        print("--------------vanila passive train session ", self.session, "-----------------")
-        best_model = svm_linear
-        current_model = best_model
-        input_x = np.insert(self.X, 0, 1, axis=1)
-        current_model.model.fit(input_x[self.train_id_list], self.code_array[self.train_id_list])
-        if not get_candidate:
-            return current_model
-        else:
-            pool_id_list = get_opposite(range(len(self.y)), self.train_id_list)
-            try:
-                pos_at = list(current_model.model.classes_).index('1')
-            except:
-                pos_at = list(current_model.model.classes_).index(1)
-            prob = current_model.model.predict_proba(input_x[pool_id_list])[:, pos_at]
-            order1 = np.argsort(np.abs(prob))[::-1]  ## uncertainty sampling by distance to decision plane
-
-            most_certain = np.array(pool_id_list)[order1[:self.step]]
-            return best_model, most_certain
-
-
-
-    def active_model_selection_train(self, all_uncertainty = False):
-        self.session += 1
-        self.get_numbers()
-        print("--------------train session ", self.session, "-----------------")
-        if len(self.poses) == 1:
-            best_model = svm_linear
-        else:
-            best_model = self.get_model()
-        current_model = best_model.model
-        code_array = np.array(self.body.code.to_list())
-        input_x = np.insert(self.X, 0, 1, axis=1)
-        current_model.fit(input_x[self.train_id_list], code_array[self.train_id_list])
-        pool_id_list = get_opposite(range(len(self.y)), self.train_id_list)
-        try:
-            pos_at = list(current_model.classes_).index('1')
-        except:
-            pos_at = list(current_model.classes_).index(1)
-
-        prob = current_model.predict_proba(input_x[pool_id_list])[:, pos_at]
-        order1 = np.argsort(np.abs(prob))[::-1]  ## uncertainty sampling by distance to decision plane
-
-        most_certain = np.array(pool_id_list)[order1[:self.step]]
-        order2 = np.argsort(np.abs(prob-0.5))[:self.step]    ## uncertainty sampling by prediction probability
-        most_uncertain =  np.array(pool_id_list)[order2[:self.step]]
-        if all_uncertainty:
-            return best_model, most_uncertain
-        if len(self.poses) <=10:
-            self.uncertainty = True
-            return best_model, most_uncertain
-        else:
-            self.uncertainty = False
-            return best_model, most_certain
-
-
-
-
-
-
-
-
-    def passive_model_selection_train(self):
-        self.session += 1
-        self.get_numbers()
-        print("--------------train session ", self.session, "-----------------")
-        best_model = self.get_model()
-        code_array = np.array(self.body.code.to_list())
-        input_x = np.insert(self.X, 0, 1, axis=1)
-        best_model.model.fit(input_x[self.train_id_list], code_array[self.train_id_list])
-        return best_model
+    def train(self):
+        trainer = DPMMSCertaintyTrainer(self.X, self.y, self.train_id_list, self.pool_id_list)
+        candidate = trainer.learn_and_sample()
+        return candidate
 
 
 

@@ -4,6 +4,8 @@ import sys
 
 sys.path.append("/Users/wwang33/Documents/IJAIED20/CuratingExamples/my_module")
 from save_load_pickle import *
+sys.path.append("/Users/wwang33/Documents/IJAIED20/CuratingExamples")
+from model_evaluation import *
 from preprocessors.PreProcessor import *
 from preprocessors.DPMPreProcessor import *
 from sklearn.model_selection import KFold, cross_val_score, LeaveOneOut
@@ -28,7 +30,7 @@ class Trainer:
         self.step = 10
 
     def __trainer_preprocess(self):
-        return self.pre_processor.preprocess(self.X_train, self.y)
+        return self.pre_processor.preprocess(self.X_train, self.y_train)
 
     def trainer_preprocess_add_constant(self):
         temp = self.__trainer_preprocess()
@@ -50,5 +52,5 @@ class Trainer:
         model_obj, pos_at = self.train()
         prob = self.get_pool_prob(model_obj, pos_at)
         self.sampler.populate(self.step, self.pool_id_list, prob)
-        return self.sampler.sample()
+        return model_obj, self.sampler.sample()
 
