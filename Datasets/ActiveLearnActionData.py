@@ -27,6 +27,7 @@ import warnings
 class ActiveLearnActionData(object):
 
     def __init__(self, X, y):
+        self.trainer = SVMRandomTrainer()
         self.X = X
         self.y = y
         self.body = self.get_body()
@@ -143,9 +144,10 @@ class ActiveLearnActionData(object):
 
 
     def train(self):
-        trainer = DPMMSCertaintyTrainer(self.X, self.y, self.train_id_list, self.pool_id_list)
-        candidate = trainer.learn_and_sample()
-        return candidate
+        self.get_numbers()
+        self.trainer.populate(self.X, self.y, self.train_id_list, self.pool_id_list)
+        model, candidate = self.trainer.learn_and_sample()
+        return model, candidate
 
 
 

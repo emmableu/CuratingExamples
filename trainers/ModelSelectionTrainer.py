@@ -60,7 +60,7 @@ mlp = MLPModel()
 #                     bernoulli_nb, multi_nb, complement_nb, mlp]
 
 model_list = [bernoulli_nb, multi_nb, complement_nb, gaussian_nb, adaboost, svm_linear, lr]
-from trainers.Trainer import Trainer
+from trainers.Trainer import *
 from samplers.RandomSampler import RandomSampler
 from samplers.Sampler import Sampler
 
@@ -80,12 +80,11 @@ def get_best_model(X, y):
 
 
 class ModelSelectionTrainer(Trainer):
-    def __init__(self, X, y, train_id_list, pool_id_list):
-        super().__init__(X, y, train_id_list, pool_id_list)
-        self.comment = "Model Selection Training, no preprocessing and no candidate"
+    def __init__(self):
+        super().__init__()
 
-    def train(self, pre_processor):
-        self.trainer_preprocess_add_constant(pre_processor)
+    def train(self):
+        self.trainer_preprocess_add_constant()
         if len(Counter(self.y)[1]) < 2:
             best_model = svm_linear
         else:

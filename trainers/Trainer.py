@@ -2,6 +2,8 @@ from sklearn.metrics import confusion_matrix, roc_curve, auc
 from sklearn.model_selection import cross_val_predict
 import sys
 
+from preprocessors.PreProcessor import PreProcessor
+
 sys.path.append("/Users/wwang33/Documents/IJAIED20/CuratingExamples/my_module")
 from save_load_pickle import *
 sys.path.append("/Users/wwang33/Documents/IJAIED20/CuratingExamples")
@@ -15,10 +17,19 @@ from samplers.CertaintySampler import CertaintySampler
 from samplers.UncertaintySampler import UncertaintySampler
 
 
-
-
 class Trainer:
-    def __init__(self, X, y, train_id_list, pool_id_list):
+    def __init__(self):
+        self.X_train = None
+        self.y_train = None
+        self.X_pool =None
+        self.y_pool = None
+        self.pool_id_list = None
+        self.pre_processor = None
+        self.sampler =None
+        self.step = None
+
+
+    def populate(self, X, y, train_id_list, pool_id_list):
         self.comment = "Parent class trainer"
         self.X_train = X[train_id_list]
         self.y_train = y[train_id_list]
