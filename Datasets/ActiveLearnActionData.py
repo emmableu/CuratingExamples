@@ -183,18 +183,6 @@ class ActiveLearnActionData(object):
 
         return pos, neg, total
 
-    def get_model(self):
-        model_f1 = submission_get_model_f1(self.train_ids1, self.X, self.y, model_list)
-        print_model(model_f1)
-        itemMaxValue = max(model_f1.items(), key=lambda x: x[1])
-        listOfKeys = list()
-        # Iterate over all the items in dictionary to find keys with max value
-        for key, value in model_f1.items():
-            if value == itemMaxValue[1]:
-                listOfKeys.append(key)
-        best_model = np.random.choice(listOfKeys[:4], 1)[0]
-        print("best model for this session is: ", best_model.name)
-        return best_model
 
     def active_uncertainty_train(self):
         self.session += 1

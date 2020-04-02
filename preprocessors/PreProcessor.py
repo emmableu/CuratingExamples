@@ -7,5 +7,6 @@ class PreProcessor():
         self.comment = "pre-process data, the default case is not preprocess"
 
     def preprocess(self, X, y):
-        input_x = np.insert(X, 0, 1, axis=1)
-        return input_x
+        return X
+
+

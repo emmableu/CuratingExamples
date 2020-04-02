@@ -43,6 +43,6 @@ class DPMPreProcessor(PreProcessor):
 
     def preprocess(self, X, y):
         selected_features = select_feature(X, y, jaccard=False)
-        input_x = np.insert(X[:, selected_features], 0, 1, axis=1)
-        return input_x
+        return X[:, selected_features]
+
 

@@ -12,6 +12,13 @@ base_dir = root_dir + "Datasets/data/PaperSubmission/"
 # base_dir = root_dir + "Datasets/data/ScratchASTData/"
 test_size_list = [0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0]
 
+
+
+def add_constant_term(X):
+    input_x = np.insert(X, 0, 1, axis=1)
+    return input_x
+
+
 def get_data(code_shape_p_q_list, digit01, action_name, datafolder):
     # code_shape_p_q_list = [[1, 0], [1, 1], [1, 2], [1, 3], [2, 3]]
     # code_shape_p_q_list = [[1, 0]]

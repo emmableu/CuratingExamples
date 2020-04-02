@@ -7,19 +7,25 @@ from preprocessors.PreProcessor import *
 from preprocessors.DPMPreProcessor import *
 from sklearn.model_selection import KFold, cross_val_score, LeaveOneOut
 
-class Trainer:
-    def __init__(self, X, y):
-        self.comment = "Parent class trainer"
-        self.X = X
-        self.y = y
 
-    def trainer_preprocess(self, pre_processor):
-        self.X = pre_processor.preprocess(self.X, self.y)
+
+
+
+class Trainer:
+    def __init__(self, X, y, train_id_list, pool_id_list):
+        self.comment = "Parent class trainer"
+        self.X_train = X[train_id_list]
+        self.y_train = y[train_id_list]
+        self.X_pool = X[pool_id_list]
+        self.y_pool = y[pool_id_list]
+
+    def trainer_preprocess(self, pre_processor = PreProcessor()):
+        self.X_train = pre_processor.preprocess(self.X_train, self.y)
 
     def train(self):
         pass
 
-    def get_sample(self, sampler):
+    def trainer_sample(self, sampler):
         pass
 
 

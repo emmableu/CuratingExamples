@@ -336,15 +336,14 @@ def get_model_f1(train_ids, validation_ids, X, y, model_list):
 
     return f1_dict
 
-def submission_get_model_f1(train_ids, X, y, model_list):
-    X = X[train_ids]
-    y = y[train_ids]
+def get_model_list_f1_dict(X, y, model_list):
+    # X = X[train_ids]
+    # y = y[train_ids]
     f1_dict = {}
 
     for mod in model_list:
-        return_dict = mod.naive_cross_val_predict(X, y, cv = 5)
+        return_dict = mod.model_cross_val_predict(X, y, cv = 5)
         f1_dict[mod] = return_dict['f1']
-
 
     return f1_dict
 
