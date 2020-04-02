@@ -104,14 +104,14 @@ class Model:
         return perf
 
 
-    def model_cross_val_predict(self,X, y):
+    def model_cross_val_predict(self,X, y, cv =10):
         if Counter(y)[1] < 2:
             perf  = {"tp": 0, "tn": 0, "fp": 0, "fn": 0, "accuracy": 0, "precision": 0, "recall": 0,
                 "f1": 0, "auc": 0}
             return perf
 
         try:
-            perf = self.naive_cross_val_predict(X,y, cv = 3)
+            perf = self.naive_cross_val_predict(X,y, cv = cv)
         except:
             split_strategy = LeaveOneOut()
             y_pred = cross_val_predict(self.model, X, y, cv = split_strategy)

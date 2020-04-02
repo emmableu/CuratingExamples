@@ -238,18 +238,7 @@ class ActiveLearnActionData(object):
             most_certain = np.array(rest_data_ids)[order1[:self.step]]
             return best_model, most_certain
 
-    def dpm_passive_train(self, jaccard):
-        self.session += 1
-        self.get_numbers()
 
-        print("--------------train session ", self.session, "-----------------")
-        best_model = svm_linear
-        current_model = best_model
-        selected_features = select_feature(self.X[self.train_ids1], self.code_array[self.train_ids1], jaccard)
-        input_x = np.insert(self.X[:, selected_features], 0, 1, axis=1)
-        # print("input x: ", input_x)
-        current_model.model.fit(input_x[self.train_ids1], self.code_array[self.train_ids1])
-        return current_model, selected_features
 
     def active_model_selection_train(self, all_uncertainty = False):
         self.session += 1

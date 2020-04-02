@@ -27,48 +27,6 @@ def median_digitize(x):
         x[:,i] = np.digitize(x[:,i], bins, right=True)
     return x
 
-def get_data(code_shape_p_q_list, digit01, action_name, datafolder):
-    # code_shape_p_q_list = [[1, 0], [1, 1], [1, 2], [1, 3], [2, 3]]
-    # code_shape_p_q_list = [[1, 0]]
-    # action_name = 'cochangescore'
-    orig_dir = base_dir + "/"+ datafolder + "/code_state" + str(code_shape_p_q_list) +  "/" + action_name
-    # x_train_dir =
-
-    if datafolder == 'xy_0heldout' and digit01 == True:
-        x_dir = base_dir + "/"+ datafolder + "/code_state" + str(code_shape_p_q_list)
-        x_train = load_obj('X_train', x_dir, "")
-        x_train = np.digitize(x_train, bins=[1])
-        y_train = load_obj('y_train', orig_dir, "")
-
-        pattern_dir = base_dir + "/xy_0heldout/code_state" + str(code_shape_p_q_list)
-        patterns = load_obj("full_patterns", pattern_dir, "")
-        pattern_orig = np.array([pattern for pattern in patterns])
-
-        return x_train, y_train, pattern_orig
-
-
-
-    x_train = load_obj('X_train', orig_dir, "")
-    x_test = load_obj('X_test', orig_dir, "")
-
-    if digit01:
-        x_train = np.digitize(x_train, bins=[1])
-        x_test = np.digitize(x_test, bins=[1])
-    else:
-        # print("x_train_before: ", x_train[0][:30])
-        x_train = median_digitize(x_train)
-        x_test = median_digitize(x_test)
-        # print("x_train_after: ", x_train[0][:30])
-
-
-    y_train = load_obj('y_train', orig_dir, "")
-
-    y_test = load_obj('y_test', orig_dir, "")
-    pattern_dir = base_dir + "/xy_0.3heldout/code_state" + str(code_shape_p_q_list)
-    patterns = load_obj("full_patterns", pattern_dir, "")
-    pattern_orig = np.array([pattern for pattern in patterns])
-
-    return x_train, y_train, x_test, y_test, pattern_orig
 
 def save_performance_for_one_repetition(new_row, save_dir, code_shape_p_q_list, repetition, dpm):
     if dpm:
@@ -109,18 +67,20 @@ def pattern_mining(label_name, dpm, code_shape_p_q_list, digit01, model_selectio
             read.code(candidate)
             if model_selection:
                 model = read.passive_model_selection_train()
-                input_test = np.insert(x_test, 0, 1, axis=1)
+                # input_test = np.insert(x_test, 0, 1, axis=1)
             elif dpm:
                 if code_shape_p_q_list == [[1, 0]]:
                     model, selected_feature = read.dpm_passive_train(jaccard=False)
                 else:
                     model, selected_feature = read.dpm_passive_train(jaccard=False)
-                input_test = np.insert(x_test[:, selected_feature], 0, 1, axis=1)
+                    x_input = np.insert(x_train[:, selected_feature], 0, 1, axis=1)
+                # input_test = np.insert(x_test[:, selected_feature], 0, 1, axis=1)
             else:
                 model = read.passive_train()
-                input_test = np.insert(x_test, 0, 1, axis=1)
+                x_input = np.insert(x_train, 0, 1, axis=1)
+                # input_test = np.insert(x_test, 0, 1, axis=1)
 
-            perf_dict = model.naive_predict(input_test, y_test)
+            perf_dict = model.model_cross_val_predict(x_input, y_train, cv = 5)
             new_row_value = (perf_dict['f1'])
             new_row[new_row_key] = new_row_value
 

@@ -12,6 +12,48 @@ base_dir = root_dir + "Datasets/data/PaperSubmission/"
 # base_dir = root_dir + "Datasets/data/ScratchASTData/"
 test_size_list = [0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0]
 
+def get_data(code_shape_p_q_list, digit01, action_name, datafolder):
+    # code_shape_p_q_list = [[1, 0], [1, 1], [1, 2], [1, 3], [2, 3]]
+    # code_shape_p_q_list = [[1, 0]]
+    # action_name = 'cochangescore'
+    orig_dir = base_dir + "/"+ datafolder + "/code_state" + str(code_shape_p_q_list) +  "/" + action_name
+    # x_train_dir =
+
+    if datafolder == 'xy_0heldout' and digit01 == True:
+        x_dir = base_dir + "/"+ datafolder + "/code_state" + str(code_shape_p_q_list)
+        x_train = load_obj('X_train', x_dir, "")
+        x_train = np.digitize(x_train, bins=[1])
+        y_train = load_obj('y_train', orig_dir, "")
+
+        pattern_dir = base_dir + "/xy_0heldout/code_state" + str(code_shape_p_q_list)
+        patterns = load_obj("full_patterns", pattern_dir, "")
+        pattern_orig = np.array([pattern for pattern in patterns])
+
+        return x_train, y_train, pattern_orig
+
+
+
+    x_train = load_obj('X_train', orig_dir, "")
+    x_test = load_obj('X_test', orig_dir, "")
+
+    if digit01:
+        x_train = np.digitize(x_train, bins=[1])
+        x_test = np.digitize(x_test, bins=[1])
+    else:
+        # print("x_train_before: ", x_train[0][:30])
+        x_train = median_digitize(x_train)
+        x_test = median_digitize(x_test)
+        # print("x_train_after: ", x_train[0][:30])
+
+
+    y_train = load_obj('y_train', orig_dir, "")
+
+    y_test = load_obj('y_test', orig_dir, "")
+    pattern_dir = base_dir + "/xy_0.3heldout/code_state" + str(code_shape_p_q_list)
+    patterns = load_obj("full_patterns", pattern_dir, "")
+    pattern_orig = np.array([pattern for pattern in patterns])
+
+    return x_train, y_train, x_test, y_test, pattern_orig
 
 def save_pickle(obj, name, dir, sub_dir = ""):
     if sub_dir:
