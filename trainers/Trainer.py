@@ -35,6 +35,7 @@ class Trainer:
         self.y_train = y[train_id_list]
         self.X_pool = X[pool_id_list]
         self.y_pool = y[pool_id_list]
+        self.train_id_list = train_id_list
         self.pool_id_list = pool_id_list
         self.pre_processor = PreProcessor()
         self.sampler = RandomSampler()

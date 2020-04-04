@@ -7,7 +7,7 @@ import sys
 sys.path.append('/Users/wwang33/Documents/IJAIED20/CuratingExamples/PaperSubmission/PassiveLearner')
 from PatternMining import *
 sys.setrecursionlimit(10**8)
-from ActiveLearnActionData import *
+from InteractiveActiveLearnActionData import *
 import warnings
 warnings.filterwarnings('ignore')
 import os
@@ -24,8 +24,8 @@ code_shape_p_q_list = [[1, 0]]
 label_name = 'keymove'
 x_train, y_train, pattern_orig = get_data(code_shape_p_q_list, digit01=True, action_name=label_name,
                                           datafolder="xy_0heldout")
-
-target=ActiveLearnActionData(x_train, y_train)
+scratch_id_list = load_obj('pid', base_dir)
+target=FrontEndActiveLearnActionData(x_train, y_train, scratch_id_list)
 global clf
 clf = []
 

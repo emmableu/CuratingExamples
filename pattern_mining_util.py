@@ -2,6 +2,7 @@ import sys
 sys.path.append('/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets')
 from Dataset import *
 sys.setrecursionlimit(10**8)
+import numpy as np
 np.set_printoptions(threshold=sys.maxsize)
 from sklearn.feature_extraction.text import TfidfTransformer
 transformer = TfidfTransformer(smooth_idf=False)

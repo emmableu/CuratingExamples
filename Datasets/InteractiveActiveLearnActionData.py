@@ -6,7 +6,7 @@ from ActiveLearnActionData import *
 import warnings
 warnings.filterwarnings('ignore')
 
-class FrontEndActiveLearnActionData(ActiveLearnActionData):
+class InteractiveActiveLearnActionData(ActiveLearnActionData):
     def __init__(self, X, y, scratch_id_list):
         super().__init__(X, y)
         self.scratch_id_list = scratch_id_list

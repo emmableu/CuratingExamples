@@ -6,26 +6,14 @@ from ActiveLearnActionData import *
 import warnings
 warnings.filterwarnings('ignore')
 from pattern_mining_util import *
-
+from trainers.CrossValidationTrainer import *
 
 action_name_s = ['movetomouse', 'moveanimate', 'cochangescore', 'jump','keymove' ]
 model_list = [adaboost, gaussian_nb,
               bernoulli_nb, multi_nb, complement_nb, mlp, svm_linear]
 model = svm_linear
 
-def median_digitize(x):
-    medium = np.median(x, axis=0)
-    # print("medium: ", medium)
 
-    medium[medium == 0] = 1
-    # print("medium: ", medium)
-    maxi = np.max(x, axis=0)
-    maxi[maxi == 0] = 2
-
-    for i in range(len(x[0])):
-        bins = np.array([0,medium[i], maxi[i]])
-        x[:,i] = np.digitize(x[:,i], bins, right=True)
-    return x
 
 
 def save_performance_for_one_repetition(new_row, save_dir, code_shape_p_q_list, repetition, dpm):
@@ -229,14 +217,26 @@ def pattern_examination():
 
 def cross_validation_for_grams():
     code_shape_p_q_list_s = [[[1, 0]], [[1, 0], [1, 1], [1, 2], [1, 3], [2, 3]]]
-    label_name_s = ['moveanimate']
+    label_name_s = ['credesclones']
+    trainer = CrossValidationTrainer()
+    trainer = DPMCrossValidationTrainer()
+    repetition  = -1
+
     for label_name in label_name_s:
         print(label_name)
         for code_shape_p_q_list in  code_shape_p_q_list_s:
+            repetition += 1
             x_train, y_train, pattern_orig = get_data(code_shape_p_q_list, digit01= True, action_name = label_name, datafolder = "xy_0heldout")
+            x_train = x_train[list(range(len(y_train)))]
+            trainer.populate(x_train, y_train)
             print(len(x_train[0]))
-            perf = svm_linear.naive_cross_val_predict(x_train, y_train, cv = 10)
-            print(perf)
+            print(len(x_train))
+            perf = trainer.cross_val_get_score()
+            new_row = {'label': label_name, "code_shape": code_shape_p_q_list}
+            new_row.update(perf)
+            save_dir = base_dir + "/temp/performance_for_dpm_with_pqgram/"
+            save_performance_for_one_repetition(new_row, save_dir, code_shape_p_q_list, repetition, dpm=True)
+            # print(perf)
 
 
 # cross_validation_for_grams()
@@ -258,8 +258,9 @@ def cross_validation_for_embeddings():
         print("onehot using embeddings")
         perf = svm_linear.naive_cross_val_predict(x_train, y_train, cv = 10)
 
-        # print(perf)
 
 
 
-# cross_validation_for_embeddings()
+
+cross_validation_for_grams()
+

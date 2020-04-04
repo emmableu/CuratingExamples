@@ -45,7 +45,7 @@ class Model:
         self.confusion_matrix = confusion_matrix(y_test, y_pred)
         fpr, tpr, threshold = roc_curve(y_test, y_pred)
         roc_auc = auc(fpr, tpr)
-        print(self.confusion_matrix)
+        # print(self.confusion_matrix)
         try:
             tn, fp, fn, tp = self.confusion_matrix.ravel()
         except ValueError:
@@ -105,19 +105,23 @@ class Model:
 
 
     def model_cross_val_predict(self,X, y, cv =10):
-        if Counter(y)[1] < 2:
-            perf  = {"tp": 0, "tn": 0, "fp": 0, "fn": 0, "accuracy": 0, "precision": 0, "recall": 0,
-                "f1": 0, "auc": 0}
-            return perf
+        # if Counter(y)[1][0] < 2:
+        #     perf  = {"tp": 0, "tn": 0, "fp": 0, "fn": 0, "accuracy": 0, "precision": 0, "recall": 0,
+        #         "f1": 0, "auc": 0}
+        #     return perf
 
         try:
             perf = self.naive_cross_val_predict(X,y, cv = cv)
         except:
-            split_strategy = LeaveOneOut()
-            y_pred = cross_val_predict(self.model, X, y, cv = split_strategy)
-            y_test = y
-            y_pred = y_pred.astype(int)
-            perf = self.get_performance_dict(y_test, y_pred)
+            try:
+                split_strategy = LeaveOneOut()
+                y_pred = cross_val_predict(self.model, X, y, cv = split_strategy)
+                y_test = y
+                y_pred = y_pred.astype(int)
+                perf = self.get_performance_dict(y_test, y_pred)
+            except:
+                perf = {"tp": 0, "tn": 0, "fp": 0, "fn": 0, "accuracy": 0, "precision": 0, "recall": 0,
+                        "f1": 0, "auc": 0}
         return perf
 
 

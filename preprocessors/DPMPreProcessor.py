@@ -41,8 +41,9 @@ class DPMPreProcessor(PreProcessor):
     def __init__(self):
         super().__init__()
 
-    def preprocess(self, X, y):
+    def preprocess(self, X, y, X_test):
         selected_features = select_feature(X, y, jaccard=False)
-        return X[:, selected_features]
+        return X[:, selected_features], X_test[:, selected_features]
+
 
 

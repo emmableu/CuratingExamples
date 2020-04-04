@@ -7,14 +7,26 @@ import inspect
 from tqdm import *
 from collections import Counter
 # from translation_dict import *
-from PatternMining import *
+# from PatternMining import *
 root_dir = "/Users/wwang33/Documents/IJAIED20/CuratingExamples/"
 base_dir = root_dir + "Datasets/data/PaperSubmission/"
 # base_dir = root_dir + "Datasets/data/ScratchASTData/"
 test_size_list = [0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0]
 
 
+def median_digitize(x):
+    medium = np.median(x, axis=0)
+    # print("medium: ", medium)
 
+    medium[medium == 0] = 1
+    # print("medium: ", medium)
+    maxi = np.max(x, axis=0)
+    maxi[maxi == 0] = 2
+
+    for i in range(len(x[0])):
+        bins = np.array([0,medium[i], maxi[i]])
+        x[:,i] = np.digitize(x[:,i], bins, right=True)
+    return x
 def add_constant_term(X):
     input_x = np.insert(X, 0, 1, axis=1)
     return input_x

@@ -6,7 +6,7 @@ class PreProcessor():
     def __init__(self):
         self.comment = "pre-process data, the default case is not preprocess"
 
-    def preprocess(self, X, y):
-        return X
+    def preprocess(self, X, y, X_test=None):
+        return X, X_test
 
 
