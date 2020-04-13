@@ -36,7 +36,7 @@ from classifiers.bayes_classifiers.BernoulliNB import BernoulliNBModel
 from classifiers.bayes_classifiers.MultinomialNB import MultinomialNBModel
 from classifiers.bayes_classifiers.ComplementNB import ComplementNBModel
 from classifiers.neural_network_classifiers.MLPModel import MLPModel
-
+# from trainers.Trainer import *
 warnings.filterwarnings("ignore", category=sklearn.exceptions.ConvergenceWarning)
 
 baseline = BaselineModel()

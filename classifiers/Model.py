@@ -42,6 +42,16 @@ class Model:
     def get_performance(self,X_train, X_test, y_train, y_test):
         self.model.fit(X_train, y_train)
         y_pred = self.model.predict(X_test)
+        # es = linear_model.LogisticRegression(penalty='l2', fit_intercept=True)
+        # es.fit(prob[all], y0[all])
+        # pos_at = list(self.model.classes_)
+        # print(pos_at)
+        # print(self.model.__class__)
+        # y_1_prob = self.model.predict_proba(X_test)[1]
+        # y_pred = [int(ele>=0.5) for ele in y_1_prob]
+        # y_pred = np.array(y_pred)
+        # print("y_pred: ", y_pred)
+        # print("y_1_prob: ", y_1_prob)
         self.confusion_matrix = confusion_matrix(y_test, y_pred)
         fpr, tpr, threshold = roc_curve(y_test, y_pred)
         roc_auc = auc(fpr, tpr)

@@ -7,6 +7,7 @@ import warnings
 warnings.filterwarnings('ignore')
 from pattern_mining_util import *
 from trainers.CrossValidationTrainer import *
+from trainers.ModelSelectionTrainer import *
 
 action_name_s = ['movetomouse', 'moveanimate', 'cochangescore', 'jump','keymove' ]
 model_list = [adaboost, gaussian_nb,
@@ -217,7 +218,8 @@ def pattern_examination():
 
 def cross_validation_for_grams():
     code_shape_p_q_list_s = [[[1, 0]], [[1, 0], [1, 1], [1, 2], [1, 3], [2, 3]]]
-    label_name_s = ['credesclones']
+    code_shape_p_q_list_s = [[[1, 0]]]
+    label_name_s = ['movetomouse']
     trainer = CrossValidationTrainer()
     trainer = DPMCrossValidationTrainer()
     repetition  = -1

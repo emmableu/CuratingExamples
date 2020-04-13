@@ -444,3 +444,37 @@ def get_auc(baseline_y, average_y, best_y):
 
 # combine_code_state()
 # view_code_state()
+
+def x_y_to_r_dataframe():
+    data_dir = base_dir + "/xy_0heldout/code_state[[1, 0]]/"
+    X_train = load_obj("X_train", data_dir)
+    y_train = load_obj("y_train", data_dir, 'keymove')
+    # X_test = load_obj("X_test", data_dir)
+    # y_test = load_obj("y_test", data_dir, 'keymove')
+    pattern = load_obj("full_patterns", data_dir)
+    pattern = list(pattern)
+    print(len(pattern))
+    pattern_df_train = get_pattern_df(X_train, y_train, pattern)
+    # pattern_df_test = get_pattern_df(X_test, y_test, pattern)
+    save_obj(pattern_df_train, 'pattern_df_train', data_dir,  'keymove')
+    # save_obj(pattern_df_test, 'pattern_df_test', data_dir,  'keymove')
+    for i,p in enumerate(pattern):
+        if p == 'reportMouseX' or p == 'reportMouseY':
+            print(i)
+
+
+def get_pattern_df(x, y, pattern):
+    pattern_df = pd.DataFrame()
+    for i in range(len(x)):
+        row_dict = {}
+        for j in range(len(x[0])):
+            row_dict[pattern[j]]= x[i,j]
+        try:
+            row_dict['zzzY'] = y[i]
+        except:
+            return pattern_df
+        pattern_df = pattern_df.append(row_dict, ignore_index=True)
+    return pattern_df
+
+
+# x_y_to_r_dataframe()

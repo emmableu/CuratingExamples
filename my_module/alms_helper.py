@@ -12,6 +12,7 @@ sys.path.append('/Users/wwang33/Documents/IJAIED20/CuratingExamples')
 from classifiers.Baseline import BaselineModel
 from classifiers.knn_classifiers.KNN import KNNModel
 from classifiers.lr_classifiers.LogisticRegression import LRModel
+from classifiers.ORExistenceModel import *
 import numpy as np
 from sklearn.model_selection import LeavePOut, StratifiedKFold, cross_val_predict, cross_validate, LeaveOneOut
 import pandas as pd
@@ -23,6 +24,7 @@ from sklearn.feature_extraction.text import TfidfTransformer
 baseline = BaselineModel()
 knn = KNNModel()
 lr = LRModel()
+or_existence = ORExistenceModel()
 
 
 
