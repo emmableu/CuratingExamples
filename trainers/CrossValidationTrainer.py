@@ -30,7 +30,7 @@ class CrossValidationTrainer(ModelSelectionTrainer):
             # print("y_train: ", self.y_train[train_id])
             # print("y_test: ",self.y_train[test_id])
             if self.dpm:
-                add_performance = or_existence.get_performance(x_train_new, x_test_new, self.y_train[train_id],
+                add_performance = svm_linear.get_performance(x_train_new, x_test_new, self.y_train[train_id],
                                                      self.y_train[test_id])
             else:
                 add_performance = lr.get_performance(x_train_new, x_test_new, self.y_train[train_id],
@@ -39,7 +39,7 @@ class CrossValidationTrainer(ModelSelectionTrainer):
 
         performance = get_dict_average(performance_temp, cv_total=self.cv_total)
 
-        print(performance)
+        round_print(performance)
         return performance
 
 

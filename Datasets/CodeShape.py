@@ -10,6 +10,22 @@ from anytree import Node, RenderTree
 from tqdm import tqdm
 
 # This class represents a directed graph using corresponding json code
+
+system_values = ["yPosition", "xPosition", "direction", "random position", "mouse-pointer", "center", "any key", "up arrow",
+                 "down arrow", "right arrow", "left arrow", "space", "clicked", "pressed", "dropped", "mouse-entered", "mouse-departed",
+                 "scrolled-up", "scrolled-down", "stopped", "any message", "message", "Sprite", "myself", "name", "width", "height",
+                 "pixels", "current", "color", "saturation", "brightness", "ghost", "fisheye", "whirl", "pixelate", "mosaic",
+                 "negative", "size", "front", "back", "edge", "pen trails", "answer", "space", "Stage", "Sprite", "dangling?", "rotation x",
+                 "rotation y", "center x", "center y", "distance", "hue", "saturation", "brightness", "transparency", "r-g-b-a", "sprites",
+                 "neighbors", "self", "other sprites", "clones", "other clones", "parts", "anchor", "children", "parent",
+                 "temporary?", "name", "costume", "costumes", "sounds", "draggable?", "left", "right", "top", "bottom", "rotation style",
+                 "volume", "note", "frequency", "samples", "sample rate", "spectrum", "resolution", "snap", "motion", "turbo mode",
+                 "flat line ends", "long pen vectors", "video capture", "mirror video", "year", "month", "date", "day of week",
+                 "hour", "minute", "second", "time in milliseconds", "duration", "number of channels", "tempo", "volume", "balance",
+                 "abs", "neg", "ceiling", "floor", "sqrt", "sin", "cos", "tan", "asin", "acos", "atan", "ln", "log", "lg", "e^", "10^", "2^",
+                 "number", "text", "Boolean", "list", "sprite", "costume", "sound", "command", "reporter", "predicate", "item", "thing"]
+
+
 class CodeGraph:
 
     # Constructor
@@ -24,13 +40,20 @@ class CodeGraph:
             order: str. Stroring the current order of this node with other childrens.
             """
             # Record current node, children order.
-            node = Node(json_code['type'], parent=parent_node, order=order)
+            try:
+                value = json_code['value']
+                if value in system_values:
+                    node = Node(json_code['type'] + "_" + json_code['value'], parent=parent_node, order=order)
+                else:
+                    node = Node(json_code['type'], parent=parent_node, order=order)
+            except:
+                node = Node(json_code['type'], parent=parent_node, order=order)
 
             # If current json part doesn't have a child, return.
             if not json_code.get('childrenOrder'):
                 return
 
-            # Recursion for every child under current node.
+            # Recursion for every child under current node
             for child_order in json_code['childrenOrder']:
                 converting_trees(json_code['children'][child_order], node, child_order)
 
@@ -45,10 +68,11 @@ class CodeGraph:
 
         # Recursively construct AST tree.
         for child_order in json_code['childrenOrder']:
+            print("child_order:", child_order)
             converting_trees(json_code['children'][child_order], self.head, child_order)
         # data = self.collect_all_pqgrams(code_shape_p_q_list)
-        # r = RenderTree(self.head)
-        # print(r)
+        r = RenderTree(self.head)
+        print(r)
 
     def dfs_visit_node(self, node, p, q):
         gram_list = ["empty"] * (p + q)
@@ -102,6 +126,7 @@ class PQGram():
         self.p = p
         self.q = q
         self.grams = "|".join(gram_list)
+        self.grams = str(p) + str(q) + "|" + self.grams
         self.count = 1
 
 class PQGramSet():
@@ -128,11 +153,10 @@ def get_json():
 
 
 
-# json_file = "170315872.xml.json"
-# codegraph = CodeGraph("/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets/data/SnapJSON_413/104765718.xml.json", [[2,3], [2,1]])
-# for pqgram in (codegraph.pqgram_set.pqgram_set):
-#     print(pqgram.grams)
-#     print(pqgram.count)
+json_file = "170315872.xml.json"
+codegraph = CodeGraph("/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets/data/SnapJSON_413/177246730.xml.json", [[2,3], [2,1]])
+# data = codegraph.collect_all_pqgrams( [[2,3], [2,1]])
+# print(data)
 
 
 # get_json()

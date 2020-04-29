@@ -10,3 +10,5 @@ Datasets/data/PaperSubmission/*
 *.ipynb_checkpoints*
 *.vscode*
 .Rproj.user
+*.RData
+*.Rhistory

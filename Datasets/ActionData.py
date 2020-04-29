@@ -108,7 +108,7 @@ class ActionData:
 
             full_pattern_set = sorted(full_pattern_set)
             print(full_pattern_set)
-            save_obj(full_pattern_set, "full_patterns", base_dir, "xy_0heldout/code_state" + str(self.selected_p_q_list))
+            save_obj(full_pattern_set, "full_patterns", base_dir, "xy_0heldout/code_state_with_value" + str(self.selected_p_q_list))
             return full_pattern_set
 
         else:
@@ -132,9 +132,9 @@ class ActionData:
         self.get_pattern_statistics(train_pid, baseline)
 
 
-    def save_x_y_train_test(self,train_pid, test_pid, x_save_dir, save_dir,reduce_size = True, baseline = True):
+    def save_x_y_train_test(self,train_pid, test_pid, x_save_dir, save_dir,reduce_size = False, baseline = True):
         # significant_patterns = self.get_pattern_statistics(train_pid, baseline)
-        significant_patterns = load_obj( "full_patterns", base_dir, "xy_0heldout/code_state" + str(self.selected_p_q_list))
+        significant_patterns = load_obj( "full_patterns", base_dir, "xy_0heldout/code_state_with_value" + str(self.selected_p_q_list))
         num_patterns = len(significant_patterns)
         train_df = self.game_label[self.game_label.pid.isin(train_pid)].reset_index(drop = True)
         if not test_pid:

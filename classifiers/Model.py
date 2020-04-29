@@ -76,6 +76,7 @@ class Model:
             f1 = 2 * (precision) * (recall) / (precision + recall)
         perf = {"tp": tp, "tn": tn, "fp": fp, "fn": fn, "accuracy": accuracy, "precision": precision, "recall": recall,
                 "f1": f1, "auc": roc_auc}
+        print(perf)
         return perf
 
     def get_and_save_performance(self,X_train, X_test, y_train, y_test, save_dir, test_size, cv):

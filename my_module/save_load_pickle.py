@@ -324,6 +324,10 @@ def get_x_y_train_test(get_dir):
 
 
 
+def round_print(dict):
+    for k in dict:
+        dict[k] = round(dict[k], 2)
+    print(dict)
 
 
 def combine_code_state():

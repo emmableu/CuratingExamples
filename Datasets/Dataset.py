@@ -130,15 +130,15 @@ class Dataset:
             code_state = load_obj( "code_state" + str(self.code_shape_p_q_list), base_dir, "CodeState")
         else:
             code_state = load_obj( "code_state" + str(self.code_shape_p_q_list), base_dir, "CodeState")
-        action_name_s = ['keymove', 'jump', 'cochangescore', 'movetomouse', 'moveanimate', 'costopall']
-        # action_name_s = ['costopall']
+        # action_name_s = ['keymove', 'jump', 'cochangescore', 'movetomouse', 'moveanimate', 'costopall']
+        action_name_s = ['costopall']
         game_label = pd.read_csv(base_dir + "/game_label_415.csv")
         test_size = 0
         fold = 0
-        x_save_dir = base_dir + "/xy_0heldout/code_state" + str(selected_p_q_list)
+        x_save_dir = base_dir + "/xy_0heldout/code_state_with_value" + str(selected_p_q_list)
         for action_name in tqdm(action_name_s):
             action_data = ActionData(code_state=code_state, game_label=game_label, action_name=action_name, selected_p_q_list=selected_p_q_list)
-            save_dir = base_dir + "/xy_0heldout/code_state" + str(selected_p_q_list)  + "/" + action_name
+            save_dir = x_save_dir + "/" + action_name
             # train_pid, test_pid = get_train_test_pid(test_size,fold)
             train_pid = load_obj('pid', base_dir)
             for p in train_pid:

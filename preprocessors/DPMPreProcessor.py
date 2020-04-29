@@ -29,7 +29,7 @@ def select_feature(x, y, jaccard):
 
 
     if not jaccard:
-        return np.array([92, 93])
+        # return np.array([92, 93])
         return selected_patterns
     else:
         keep = jaccard_select(selected_patterns, x)
