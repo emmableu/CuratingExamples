@@ -1,5 +1,6 @@
 .DS_STORE
 Datasets/data/*
+!Datasets/data/SnapPQGram_413/
 !Datasets/data/PaperSubmission/
 Datasets/data/PaperSubmission/*
 !Datasets/data/PaperSubmission/Simulation/
