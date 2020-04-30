@@ -153,8 +153,8 @@ def get_json():
 
 
 
-json_file = "170315872.xml.json"
-codegraph = CodeGraph("/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets/data/SnapJSON_413/177246730.xml.json", [[2,3], [2,1]])
+# json_file = "170315872.xml.json"
+# codegraph = CodeGraph("/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets/data/SnapJSON_413/177246730.xml.json", [[2,3], [2,1]])
 # data = codegraph.collect_all_pqgrams( [[2,3], [2,1]])
 # print(data)
 

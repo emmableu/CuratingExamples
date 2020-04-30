@@ -7,6 +7,14 @@ root_dir = "/Users/wwang33/Documents/IJAIED20/CuratingExamples/"
 from tqdm import tqdm
 from alms_helper import *
 class ActionData:
+
+    def __init__(self, game_label , action_name):
+        self.snaphints_pqgram = False
+        self.game_label = game_label
+        self.action_name = action_name
+        self.pid_list = load_obj('pid', submission_dir, "")
+
+
     def __init__(self, code_state, game_label , action_name, selected_p_q_list):
         self.code_state = code_state
         self.game_label = game_label

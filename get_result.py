@@ -5,6 +5,14 @@ sys.setrecursionlimit(10**8)
 
 
 if __name__=='__main__':
+    dataset = Dataset(snaphints_pqgram = True)
+    dataset.get_snaphints_pqgram_pattern_keys()
+    # dataset.save_snaphints_pqgram_to_hard_drive()
+
+
+
+
+def get_result_from_python_created_pqgrams():
     # code_shape_p_q_list = [[1, 0], [2, 0], [3, 0], [4, 0], [5, 0], [6, 0], [7, 0], [8, 0], [9, 0]]
     # code_shape_p_q_list = [[1, 0], [1, 1], [1, 2], [1, 3], [1, 4], [2, 0], [2, 1], [2, 2], [2, 3], [2, 4]]
     # code_shape_p_q_list2 = [[1, 0], [1, 1], [1, 2], [1, 3], [2, 3]]

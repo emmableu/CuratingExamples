@@ -84,14 +84,15 @@ class LabelData(object):
 
 class Dataset:
 
-    def __init__(self, code_shape_p_q_list, embedding_param = None, allow_gap = False):
+    def __init__(self, snaphints_pqgram = False, code_shape_p_q_list = None, embedding_param = None, allow_gap = False):
+        self.snaphints_pqgram = snaphints_pqgram
         self.code_shape_p_q_list = code_shape_p_q_list
         self.embedding_param = embedding_param
         # self.file_path = self.root_dir + "Datasets/data/SnapASTData/game_label_" + str(total) + ".csv"
         # self.data = pd.read_csv(self.file_path)
         # self.data = self.data[self.data.good == True].reset_index(drop = True)
         # print(self.data)
-        self.pid_list = load_obj('pid', base_dir, "")
+        self.pid_list = load_obj('pid', submission_dir)
         self.allow_gap = allow_gap
 
 
@@ -125,6 +126,26 @@ class Dataset:
         print(all_pattern_keys)
         save_pickle(all_pattern_keys,  "pattern_set" + str(self.code_shape_p_q_list),  base_dir, "CodeState")
 
+
+    def get_snaphints_pqgram_pattern_keys(self):
+        pid_list = load_obj('pid', submission_dir)
+        pattern_set = set()
+        for pid in pid_list:
+            pid_data = pd.read_csv(root_dir + "/Datasets/data/SnapPQGram_413/" + pid + ".csv")
+            # code_shape = code_state.at[pid, "code_state" + str(code_shape_p_q)]
+            new_pattern_s = pid_data['PQGram']
+            # print(new_pattern_s)
+            pattern_set = atomic_add(pattern_set, new_pattern_s)
+        # all_pattern_keys["code_state" + str(code_shape_p_q)] = pattern_set
+        pattern_set = list(pattern_set)
+        (pattern_set).sort()
+        print(pattern_set[:10])
+        save_obj(pattern_set,  "full_pattern",  base_dir)
+
+
+    # def inspect_occurance(self, pattern):
+
+
     def submission_save_x_y_to_hard_drive(self, selected_p_q_list):
         if base_dir.split("/")[-1]== 'ScratchASTData':
             code_state = load_obj( "code_state" + str(self.code_shape_p_q_list), base_dir, "CodeState")
@@ -148,6 +169,28 @@ class Dataset:
             test_pid = []
             action_data.save_x_y_train_test(train_pid, test_pid, x_save_dir, save_dir, reduce_size = False, baseline = True)
             # action_data.save_reduced_size_x_y_train_test(train_pid, test_pid, save_dir)
+
+    def save_snaphints_pqgram_to_hard_drive(self):
+        action_name_s = ['keymove', 'jump', 'cochangescore', 'movetomouse', 'moveanimate', 'costopall']
+        game_label = pd.read_csv(base_dir + "/game_label_415.csv")
+        test_size = 0
+        fold = 0
+        x_save_dir = base_dir + "/xy_0heldout/code_state"
+        for action_name in tqdm(action_name_s):
+            action_data = ActionData(code_state=code_state, game_label=game_label, action_name=action_name, selected_p_q_list=selected_p_q_list)
+            save_dir = x_save_dir + "/" + action_name
+            # train_pid, test_pid = get_train_test_pid(test_size,fold)
+            train_pid = load_obj('pid', base_dir)
+            for p in train_pid:
+                if p not in self.pid_list:
+                    print("pid not in pid_list!", p)
+            action_data.submission_get_pattern_statistics(train_pid, True)
+            test_pid = []
+            action_data.save_x_y_train_test(train_pid, test_pid, x_save_dir, save_dir, reduce_size = False, baseline = True)
+            # action_data.save_reduced_size_x_y_train_test(train_pid, test_pid, save_dir)
+
+
+
 
     def save_x_y_to_hard_drive(self, selected_p_q_list, baseline = True):
         code_state = load_obj("code_state", base_dir, "code_state" + str(self.code_shape_p_q_list))
