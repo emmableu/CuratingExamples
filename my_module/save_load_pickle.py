@@ -76,6 +76,29 @@ def get_data(code_shape_p_q_list, digit01, action_name, datafolder):
 
     return x_train, y_train, x_test, y_test, pattern_orig
 
+
+
+
+
+
+def save_digitized():
+    # code_shape_p_q_list = [[1, 0], [1, 1], [1, 2], [1, 3], [2, 3]]
+    # code_shape_p_q_list = [[1, 0]]
+    # action_name = 'cochangescore'
+    orig_dir = base_dir + "/xy_0heldout/code_state_orig"
+    x_train_orig = load_obj('X_train', orig_dir, "")
+
+    x_train = np.digitize(x_train_orig, bins=[1])
+    save_obj(x_train, "X_train", base_dir + "/xy_0heldout/digitized_01")
+
+    x_train = median_digitize(x_train_orig)
+    save_obj(x_train, "X_train", base_dir + "/xy_0heldout/digitized_medium")
+
+
+
+
+
+
 def save_pickle(obj, name, dir, sub_dir = ""):
     if sub_dir:
         csv_dir = dir +"/"+ sub_dir
@@ -483,3 +506,5 @@ def get_pattern_df(x, y, pattern):
 
 
 # x_y_to_r_dataframe()
+
+# save_digitized()

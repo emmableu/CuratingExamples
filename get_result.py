@@ -6,8 +6,8 @@ sys.setrecursionlimit(10**8)
 
 if __name__=='__main__':
     dataset = Dataset(snaphints_pqgram = True)
-    dataset.get_snaphints_pqgram_pattern_keys()
-    # dataset.save_snaphints_pqgram_to_hard_drive()
+    # dataset.get_snaphints_pqgram_pattern_keys()
+    dataset.save_snaphints_pqgram_x_y_to_hard_drive()
 
 
 

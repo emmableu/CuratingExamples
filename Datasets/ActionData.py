@@ -8,19 +8,15 @@ from tqdm import tqdm
 from alms_helper import *
 class ActionData:
 
-    def __init__(self, game_label , action_name):
-        self.snaphints_pqgram = False
-        self.game_label = game_label
-        self.action_name = action_name
-        self.pid_list = load_obj('pid', submission_dir, "")
 
 
-    def __init__(self, code_state, game_label , action_name, selected_p_q_list):
+    def __init__(self,  game_label , action_name, code_state = None, selected_p_q_list = None):
+        self.snaphints_pqgram = True
         self.code_state = code_state
         self.game_label = game_label
         self.action_name = action_name
         self.selected_p_q_list = selected_p_q_list
-        self.pid_list = load_obj('pid', base_dir, "")
+        self.pid_list = load_obj('pid', submission_dir, "")
 
     def memory_get_code_shape_from_pid(self,pid):
         code_shape_dict = {}
@@ -140,9 +136,18 @@ class ActionData:
         self.get_pattern_statistics(train_pid, baseline)
 
 
+    def snaphints_pqgram_get_code_shape_from_pid(self, pid):
+        # code_shape_dict = {}
+        pid_data = pd.read_csv(root_dir + "/Datasets/data/SnapPQGram_413/" + str(pid) + ".csv", index_col=0)
+        code_shape_dict = pid_data.to_dict()['Count']
+        # print(code_shape_dict)
+        return code_shape_dict
+
+
+
     def save_x_y_train_test(self,train_pid, test_pid, x_save_dir, save_dir,reduce_size = False, baseline = True):
         # significant_patterns = self.get_pattern_statistics(train_pid, baseline)
-        significant_patterns = load_obj( "full_patterns", base_dir, "xy_0heldout/code_state_with_value" + str(self.selected_p_q_list))
+        significant_patterns = load_obj( "full_pattern", base_dir)
         num_patterns = len(significant_patterns)
         train_df = self.game_label[self.game_label.pid.isin(train_pid)].reset_index(drop = True)
         if not test_pid:
@@ -154,7 +159,7 @@ class ActionData:
             x = np.empty((len(df.index), num_patterns))
             for game_index, i in enumerate(df.index):
                 pid = df.at[i, 'pid']
-                code_shape = self.memory_get_code_shape_from_pid(pid)
+                code_shape = self.snaphints_pqgram_get_code_shape_from_pid(pid)
                 for pattern_index, p in enumerate(significant_patterns):
                     if p in code_shape.keys():
                         occurance = code_shape[p]

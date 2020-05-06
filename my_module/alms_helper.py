@@ -69,8 +69,7 @@ def jaccard_select(selected_patterns, x):
     # code_shape_p_q_list =  [[1, 0]]
     #ATTENTION! Below IS by default from the full codestate, not the one hot!
     #need to change if running this!
-    pattern_dir = base_dir + "/xy_0.3heldout/code_state" + str(code_shape_p_q_list)
-    patterns = load_obj("full_patterns", pattern_dir, "")
+    patterns = load_obj("full_pattern", base_dir)
     pattern_orig = np.array(patterns)
     print("start jaccard reduction")
     # p_pair_list = list(combinations(selected_patterns, 2))
@@ -95,7 +94,8 @@ def jaccard_keep(c1, selected_patterns, pattern_orig, x):
         if len(union_set) == 0:
             continue
         j = len(joint_set)/len(union_set)
-        if j >= 0.975*0.975:
+        if j == 1:
+        # if j >= 0.975*0.975:
             # print("j >= 0.95^2, c1, c2 name are: ", c1_name, c2_name)
             # print('union_set: ', union_set)
             # print('joint_set: ', joint_set)

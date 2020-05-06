@@ -170,25 +170,16 @@ class Dataset:
             action_data.save_x_y_train_test(train_pid, test_pid, x_save_dir, save_dir, reduce_size = False, baseline = True)
             # action_data.save_reduced_size_x_y_train_test(train_pid, test_pid, save_dir)
 
-    def save_snaphints_pqgram_to_hard_drive(self):
+    def save_snaphints_pqgram_x_y_to_hard_drive(self):
         action_name_s = ['keymove', 'jump', 'cochangescore', 'movetomouse', 'moveanimate', 'costopall']
-        game_label = pd.read_csv(base_dir + "/game_label_415.csv")
-        test_size = 0
-        fold = 0
+        game_label = pd.read_csv(submission_dir + "/game_label_415.csv")
         x_save_dir = base_dir + "/xy_0heldout/code_state"
         for action_name in tqdm(action_name_s):
-            action_data = ActionData(code_state=code_state, game_label=game_label, action_name=action_name, selected_p_q_list=selected_p_q_list)
+            action_data = ActionData(game_label=game_label, action_name=action_name)
             save_dir = x_save_dir + "/" + action_name
-            # train_pid, test_pid = get_train_test_pid(test_size,fold)
-            train_pid = load_obj('pid', base_dir)
-            for p in train_pid:
-                if p not in self.pid_list:
-                    print("pid not in pid_list!", p)
-            action_data.submission_get_pattern_statistics(train_pid, True)
+            train_pid = self.pid_list
             test_pid = []
-            action_data.save_x_y_train_test(train_pid, test_pid, x_save_dir, save_dir, reduce_size = False, baseline = True)
-            # action_data.save_reduced_size_x_y_train_test(train_pid, test_pid, save_dir)
-
+            action_data.save_x_y_train_test(train_pid, test_pid, x_save_dir, save_dir, reduce_size = True, baseline = True)
 
 
 
