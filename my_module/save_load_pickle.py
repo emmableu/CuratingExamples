@@ -330,6 +330,8 @@ def yes_no_convert(i):
 
 def get_dict_average(dict_name, cv_total):
     for i in dict_name.keys():
+        if i  in ["tp", 'tn', 'fp', 'fn']:
+            continue
         dict_name[i] = dict_name[i] / cv_total
     return dict_name
 
@@ -353,6 +355,10 @@ def round_print(dict):
         dict[k] = round(dict[k], 2)
     print(dict)
 
+def round_return(dict):
+    for k in dict:
+        dict[k] = round(dict[k], 2)
+    return (dict)
 
 def combine_code_state():
 
