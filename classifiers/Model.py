@@ -1,6 +1,8 @@
 from sklearn.metrics import confusion_matrix, roc_curve, auc
 from sklearn.model_selection import cross_val_predict
 import sys
+from matplotlib import pyplot
+
 sys.path.append("/Users/wwang33/Documents/IJAIED20/CuratingExamples/my_module")
 from save_load_pickle import *
 from sklearn.model_selection import KFold, cross_val_score, LeaveOneOut
@@ -42,17 +44,30 @@ class Model:
     def get_performance(self,X_train, X_test, y_train, y_test):
         self.model.fit(X_train, y_train)
         y_pred = self.model.predict(X_test)
-        # es = linear_model.LogisticRegression(penalty='l2', fit_intercept=True)
-        # es.fit(prob[all], y0[all])
-        # pos_at = list(self.model.classes_)
-        # print(pos_at)
-        # print(self.model.__class__)
-        # y_1_prob = self.model.predict_proba(X_test)[1]
-        # y_pred = [int(ele>=0.5) for ele in y_1_prob]
-        # y_pred = np.array(y_pred)
-        # print("y_pred: ", y_pred)
-        # print("y_1_prob: ", y_1_prob)
+        print(y_pred)
+        return self.get_matrix(y_test, y_pred)
+
+
+
+    def get_y_pred(self,X_train, X_test, y_train):
+        # print(X_train)
+        # print(y_train)
+        self.model.fit(X_train, y_train)
+        # importance = (self.model.coef_)[0]
+        # for i, v in enumerate(importance):
+        #     print('Feature: %0d, Score: %.5f' % (i, v))
+        # # plot feature importance
+        # pyplot.bar([x for x in range(len(importance))], importance)
+        # pyplot.show()
+        # sorted
+        # print(coef)
+        # print([round(c,2) for c in coef[0]])
+        y_pred = self.model.predict(X_test)
+        return (y_pred)
+
+    def get_matrix(self, y_test, y_pred):
         self.confusion_matrix = confusion_matrix(y_test, y_pred)
+        print("confusion_matrix: ", self.confusion_matrix)
         fpr, tpr, threshold = roc_curve(y_test, y_pred)
         roc_auc = auc(fpr, tpr)
         # print(self.confusion_matrix)
@@ -60,7 +75,7 @@ class Model:
             tn, fp, fn, tp = self.confusion_matrix.ravel()
         except ValueError:
             return {"tp": 0, "tn": 0, "fp": 0, "fn": 0, "accuracy": 0, "precision": 0, "recall": 0,
-                "f1": 0, "auc": 0}
+                    "f1": 0, "auc": 0}
         accuracy = (tp + tn) / (tp + tn + fp + fn)
         if tp == 0 and fp == 0 and fn == 0:
             precision = 1

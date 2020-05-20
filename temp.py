@@ -46,35 +46,45 @@ def get_tp_fn(pattern_name):
     # y_true = np.
 
 
+
+
+game_label = pd.read_csv(submission_dir + "/game_label_413_original.csv")
+pid_list = load_obj("pid", submission_dir)
+pid_list = [str(pid) for pid in pid_list]
+
+count = 0
+print(game_label.columns)
+
+new_game_label = pd.DataFrame(columns = ['pid', 'keymove', 'jump', 'costopall', 'wrap',  'cochangescore', 'movetomouse', 'moveanimate'])
+for id in game_label.index:
+    data_pid = str(game_label.at[id, 'pid'])
+    if game_label.ix[id, "good"] == True:
+        count += 1
+        if data_pid not in pid_list:
+            continue
+        else:
+            new_row = {
+                        "pid": data_pid,
+                        "keymove": int(game_label.at[id, 'keymove']),
+                       "jump": int(game_label.at[id, 'jump']),
+                       "costopall": int(game_label.at[id, 'costopall']),
+                       "wrap": int(game_label.at[id, 'wrap']),
+                       "cochangescore": int(game_label.at[id, 'cochangescore']),
+                       "movetomouse": int(game_label.at[id, 'movetomouse']),
+                       "moveanimate": int(game_label.at[id, "moveanimate"])}
+
+            new_game_label.loc[len(new_game_label)] = new_row
+
+
+save_obj(new_game_label, "game_label_413", submission_dir)
+
+
+
 game_label_csv = pd.read_csv(submission_dir + "/game_label_413.csv")
 pid_list = load_obj("pid", submission_dir)
 pid_list = [str(pid) for pid in pid_list]
 
-# count = 0
-# print(game_label.columns)
 
-# new_game_label = pd.DataFrame(columns = ['pid', 'keymove', 'jump', 'costopall', 'wrap',  'cochangescore', 'movetomouse', 'moveanimate'])
-# game_label_names = ['keymove', 'jump', 'costopall', 'wrap',  'cochangescore', 'movetomouse', 'moveanimate']
-# for id in game_label.index:
-#     data_pid = str(game_label.at[id, 'pid'])
-#     if data_pid not in pid_list:
-#         continue
-#     else:
-#         for label_name in game_label_names:
-#             file_name = data_pid + ".xml"
-#             # source = os.path.join(snaphints_data_dir, "/project1/", file_name)
-#             source = snaphints_data_dir + "/project1/" + file_name
-#             if game_label.at[id, label_name] == 1:
-#
-#                 yes_dir  = snaphints_data_dir + "/" + label_name + "/yes_xml/"
-#                 atom_mkdir(yes_dir)
-#                 target = yes_dir + file_name
-#                 shutil.copy(source, target)
-#             else:
-#                 no_dir = snaphints_data_dir + "/" + label_name + "/no_xml/"
-#                 atom_mkdir(no_dir)
-#                 target = no_dir + file_name
-#                 shutil.copy(source, target)
 
 
 game_label_names = ['keymove', 'jump', 'costopall', 'wrap',  'cochangescore', 'movetomouse', 'moveanimate']
@@ -106,54 +116,6 @@ for game_label in game_label_names:
         yes_no_train_test_pid.index.name = 'partition'
         save_obj(yes_no_train_test_pid, "yes_no_train_test_pid", write_fold)
 
-
-
-
-
-
-#
-# save_obj(new_game_label, "game_label_413", base_dir)
-
-
-
-
-
-
-# get_tp_fn("script|setYPosition|{reportSum}|var:userDef|yPosition")
-# print(x.shape)
-# print(x[:10])
-# print(np.where(x[:10] > 2))
-
-# x = np.zeros([5, 6])
-# for i in range(5):
-#     x[i, 0] = 1
-# # x[1, 3] = 1
-# for i in range(2, 5):
-#     x[i, 1] = 1
-#
-# x[3, 1] = 1
-# print(x)
-# x = x[:,[1,2]]
-#
-# # x = np.array(x)
-#
-# y = np.zeros(5)
-# y[2] = 1
-# y[3] = 1
-# y[4] = 1
-# y = np.array(y).transpose()
-# save_obj(x, 'X_train_manual', save_dir_x)
-# save_obj(x, 'y_train_manual', save_dir_y)
-#
-# # trainer = DPMCrossValidationTrainer()
-# # trainer = CrossValidationTrainer()
-# # trainer.populate(x, y)
-# # trainer.cross_val_get_score()
-#
-#
-#
-# pid = load_obj()
-#
 
 
 
