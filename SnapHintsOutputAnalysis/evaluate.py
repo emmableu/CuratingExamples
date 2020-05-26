@@ -14,20 +14,60 @@ def get_yes_no(data, yes_no_group):
     yes_x = np.array(yes_x).transpose()
     return yes_x
 
-def get_x_y_snaphints(snaphints_dir, partition):
-    data = pd.read_csv(snaphints_dir + partition + ".csv", index_col = 0)
+def get_x_y_train_snaphints(snaphints_dir, select = True):
+    data = pd.read_csv(snaphints_dir + "train.csv", index_col = 0)
     yes_x = get_yes_no(data, "yes")
     no_x = get_yes_no(data, "no")
-    # print("yes and no " , no_x)
     x = np.vstack((yes_x, no_x))
     y = np.hstack((np.array([1]*yes_x.shape[0]), np.array([0]*no_x.shape[0])))
-    # print(x, y)
+    if select:
+        selected_features = get_selected_feature_index(snaphints_dir, 0.3, 0.3, 0.8)
+        # selected_features = get_selected_feature_index(snaphints_dir, jd_diff, jd_yes, confidence)
+        x = x[:,selected_features]
+    return x, y
+
+
+def get_x_y_test_snaphints(snaphints_dir, selected_features):
+    data = pd.read_csv(snaphints_dir + "test.csv", index_col = 0)
+    yes_x = get_yes_no(data, "yes")
+    no_x = get_yes_no(data, "no")
+    x = np.vstack((yes_x, no_x))
+    y = np.hstack((np.array([1]*yes_x.shape[0]), np.array([0]*no_x.shape[0])))
+    x = x[:,selected_features]
     return x, y
 
 
 
-methods = ['AndAll','DPM', 'All', 'And']
-# methods = ['AndArchive']
+def get_selected_feature_index(snaphints_dir, jd_diff, jd_yes_bar, confidence_bar):
+    features = pd.read_csv(snaphints_dir + "/features.csv")
+    selected_features = []
+    for fid in features.index:
+        jd_yes = features.at[fid, 'jdYes']
+        jd_no = features.at[fid, 'jdNo']
+        confidence = features.at[fid, 'confidenceYes']
+        if jd_yes - jd_no >= jd_diff:
+            if jd_yes >= jd_yes_bar:
+                selected_features.append(fid)
+            elif confidence >= confidence_bar:
+                selected_features.append(fid)
+        elif jd_yes == -1:
+            selected_features.append(fid)
+    return np.array(selected_features)
+
+
+
+
+
+
+
+
+
+
+
+
+
+# methods = ['Neighbor', 'AndAllFull', 'AndAll','DPM', 'All', 'And']
+methods = ['AndAllComplete']
 
 
 
@@ -39,7 +79,7 @@ def snaphints_crossvalidation():
         for method in methods:
             y_test_total = []
             y_pred_total = []
-        # try:
+            # try:
             for fold in range(10):
                 snaphints_dir = "/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/submitted/" \
                                 + behavior + "/cv/fold" + str(fold) + "/SnapHints" + method + "/"
@@ -66,7 +106,7 @@ def snaphints_crossvalidation():
             print(behavior_results)
 
 
-    save_obj(behavior_results, "svm_behaviors", root_dir, "SnapHintsOutputAnalysis")
+    save_obj(behavior_results, "svm_behaviors4", root_dir, "SnapHintsOutputAnalysis")
 
 
 
