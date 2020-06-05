@@ -2,10 +2,13 @@ import sys
 sys.path.append('/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets')
 from Dataset import *
 import copy
+import matplotlib.pyplot as plt
+plt.rcParams["font.family"] ="Times New Roman"
+plt.rcParams["font.size"] = 22
+plt.figure(figsize=(10,10))
 
-
-# behavior_labels = ["keymove", "jump", "cochangescore", "movetomouse", "moveanimate", "costopall"]
-behavior_labels = ["jump"]
+behavior_labels = ["keymove", "jump", "cochangescore", "movetomouse", "moveanimate", "costopall"]
+# behavior_labels = ["jump"]
 # behavior_labels = ["costopall", "movetomouse",  "jump", "cochangescore","keymove"]
 
 def get_yes_no(data, yes_no_group):
@@ -51,6 +54,15 @@ def get_x_y_test_snaphints(snaphints_dir, selected_features):
     return x, y
 
 
+def get_x_y_snaphints(snaphints_dir, partition):
+    data = pd.read_csv(snaphints_dir + partition + ".csv", index_col = 0)
+    yes_x = get_yes_no(data, "yes")
+    no_x = get_yes_no(data, "no")
+    x = np.vstack((yes_x, no_x))
+    y = np.hstack((np.array([1]*yes_x.shape[0]), np.array([0]*no_x.shape[0])))
+    return x, y
+
+
 
 def get_selected_feature_index(snaphints_dir, jd_diff, jd_yes_bar, confidence_bar):
     features = pd.read_csv(snaphints_dir + "/features.csv")
@@ -81,7 +93,8 @@ def get_selected_feature_index(snaphints_dir, jd_diff, jd_yes_bar, confidence_ba
 
 
 # methods = ['Neighbor', 'AndAllFull', 'AndAll','DPM', 'All', 'And']
-methods = ['AndAllComplete']
+methods = ['AllOneHot', 'Neighbor', 'All', 'DPM', "AndAllFull", "AndAll"]
+# methods = ['AllOneHot', 'Neighbor']
 
 
 
@@ -97,23 +110,30 @@ def snaphints_crossvalidation():
             for fold in range(10):
                 snaphints_dir = "/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/submitted/" \
                                 + behavior + "/cv/fold" + str(fold) + "/SnapHints" + method + "/"
-                X_train, y_train, best_features, best_grid, best_f1 = get_x_y_train_snaphints(snaphints_dir)
-                X_test, y_test = get_x_y_test_snaphints(snaphints_dir, best_features)
-                print("bestfeature: ", best_features)
-                print("bestf1: ", best_f1)
-                y_test_total.extend(y_test)
-                y_pred  = lr.get_y_pred(X_train,  X_test, y_train)
-                print(y_pred)
-                for i, y in enumerate(y_pred):
-                    if y_pred[i] != y_test[i]:
-                        print(i - Counter(y_test)[1]+1)
+                # X_train, y_train, best_features, best_grid, best_f1 = get_x_y_train_snaphints(snaphints_dir)
+                # X_test, y_test = get_x_y_test_snaphints(snaphints_dir, best_features)
+                # print("bestfeature: ", best_features)
+                # print("bestf1: ", best_f1)
+
+
+                X_train, y_train = get_x_y_snaphints(snaphints_dir, "train")
+                X_test, y_test = get_x_y_snaphints(snaphints_dir, "test")
+                # y_test_total.extend(y_test)
+                y_test_total.extend(y_train)
+                y_pred  = svm_linear.get_y_pred(X_train,  X_train, y_train)
+                # y_pred  = svm_linear.get_y_pred(X_train,  X_test, y_train)
+                # print(y_pred)
+                # for i, y in enumerate(y_pred):
+                #     if y_pred[i] != y_test[i]:
+                #         print(i - Counter(y_test)[1]+1)
                 y_pred_total.extend(y_pred)
-                performance_temp = svm_linear.get_matrix(np.array(y_test_total), np.array(y_pred_total))
+                # performance_temp = svm_linear.get_matrix(np.array(y_test_total), np.array(y_pred_total))
             # except:
             #     continue
                 # print(performance_temp)
             y_pred_total = np.array(y_pred_total)
             y_test_total = np.array(y_test_total)
+            print(y_pred_total.shape)
             # print(y_pred_total, y_test_total)
             performance = svm_linear.get_matrix(y_test_total, y_pred_total)
             performance = round_return(performance)
@@ -122,24 +142,114 @@ def snaphints_crossvalidation():
             print(behavior_results)
 
 
-    save_obj(behavior_results, "svm_behaviors4", root_dir, "SnapHintsOutputAnalysis")
+    save_obj(behavior_results, "training_scores_svm_behaviors9", root_dir, "SnapHintsOutputAnalysis")
+    return behavior_results
 
 
 
-snaphints_crossvalidation()
 
 
-# sklearn.feature_selection.f_regression(X, y, center=True)
-
-#
-#
-# snaphints_dir = "/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/submitted/" \
-#                 + behavior + "/cv/fold" + str(fold) + "/SnapHintsArchive/"
-#
-# X_train, y_train = get_x_y_snaphints(snaphints_dir, "train")
-# X_test, y_test = get_x_y_snaphints(snaphints_dir, "test")
-# y_pred = svm_linear.get_y_pred(X_train, X_test, y_train)
-# performance_temp = svm_linear.get_matrix(np.array(y_test), np.array(y_pred
-#                                                                     ))
 
 
+# snaphints_crossvalidation()
+
+behavior_labels_to_show = ["keymove", "jump", "cochangescore", "movetomouse", "moveanimate", "costopall"]
+# behavior_labels_to_show = ["keymove", "jump", "cochangescore", "movetomouse", "moveanimate"]
+behavior_labels_to_show = list(reversed(behavior_labels_to_show))
+methods_to_show = ['All', 'DPM', "AndAllFull", "AndAll"]
+# methods_to_show = ['AllOneHot', 'Neighbor', 'All']
+methods_to_show = list(reversed(methods_to_show))
+label_dict = {'AllOneHot': "One-hot encoding",
+            'Neighbor': 'Neighborhood',
+                'All': 'All PQGrams',
+              'DPM': 'PQGram DPM',
+              'AndAllFull': 'All-based Conjunctions',
+              'AndAll': 'DPM-based Conjunctions'}
+
+if len(methods_to_show) == 3:
+    label_dict = {'AllOneHot': "One-hot encoding",
+                  'Neighbor': 'Neighborhood',
+                  'All': 'PQGrams',
+                  'DPM': 'PQGram DPM',
+                  'AndAllFull': 'All-based Conjunctions',
+                  'AndAll': 'DPM-based Conjunctions'}
+
+color_dict = { 'AllOneHot': "#D9AE80",
+            'Neighbor': '#F2B6BC',
+            'All': '#D6F2C2',
+              'DPM': '#8BD9C3',
+              'AndAllFull': '#45B3BF',
+              'AndAll': '#1FA2BF'}
+
+
+def grouped_bar_chart():
+    # set width of bar
+    # behavior_results = load_obj("svm_behaviors9", root_dir, "SnapHintsOutputAnalysis")
+    behavior_results = load_obj("training_scores_svm_behaviors9", root_dir, "SnapHintsOutputAnalysis")
+    barWidth = 0.13
+    # print(behavior_results)
+    def get_bar(index):
+        bars = []
+        for behavior in behavior_labels_to_show:
+            bars.append(behavior_results.at[(behavior, methods_to_show[index]), "f1"])
+        return bars
+
+    bars = []
+    for i in range(len(methods_to_show)):
+        bars.append(get_bar(i))
+
+    print("bars: ", bars)
+    # Set position of bar on X axis
+    r = [np.arange(len(bars[0]))]
+
+    for i in range(1, len(methods_to_show)):
+        r_prev = r[i - 1]
+        r.append([x + barWidth + 0.03 for x in r_prev])
+
+    # Make the plot
+    # fig, ax = plt.subplot()
+    ax = plt.axes()
+    bar_plots = []
+    for i in range(len(methods_to_show)):
+        rects = ax.barh(r[i], bars[i], color=color_dict[methods_to_show[i]], height=barWidth, edgecolor=color_dict[methods_to_show[i]], label=label_dict[methods_to_show[i]], zorder = 3)
+        bar_plots.append(rects)
+
+    # csfont = {"font}
+    def autolabel(rects):
+        """Attach a text label above each bar in *rects*, displaying its height."""
+        for rect in rects:
+            height = rect.get_width()
+            # print("height: ", height)
+            ax.annotate('{}'.format(height),
+                        xy=(height, rect.get_y() + rect.get_height() / 2),
+                        xytext=(20, -9),  # 3 points vertical offset
+                        textcoords="offset points",
+                        ha='center', va='bottom', fontsize=15)
+
+    for i in range(len(methods_to_show)):
+        autolabel(bar_plots[i])
+    plt.ylabel('programming behaviors')
+    plt.yticks([r + barWidth for r in range(len(bars[0]))],  (behavior_labels_to_show))
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    start, end = ax.get_xlim()
+    ax.xaxis.set_ticks(np.arange(start, end, 0.1))
+    ax.xaxis.grid(zorder=0, color="#F2F2F2", linestyle='dashed', linewidth=1)
+    current_handles, current_labels = plt.gca().get_legend_handles_labels()
+
+    # sort or reorder the labels and handles
+    reversed_handles = list(reversed(current_handles))
+    reversed_labels = list(reversed(current_labels))
+
+    # for i, v in enumerate(x):
+
+    ax.legend(reversed_handles, reversed_labels, loc='upper center', bbox_to_anchor=(0.5, -0.05), ncol = 2)
+
+    # Create legend & Show graphic
+    plt.title("Training F1")
+    # fig.tight_layout()
+    plt.savefig("behaviors_3")
+    plt.show()
+
+
+grouped_bar_chart()

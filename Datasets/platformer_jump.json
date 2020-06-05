@@ -1,0 +1,2212 @@
+{
+    "type": "snapshot",
+    "id": "",
+    "children": {
+        "0": {
+            "type": "stage",
+            "value": "Stage",
+            "id": "stage",
+            "children": {
+                "0": {
+                    "type": "script",
+                    "children": {
+                        "0": {
+                            "type": "receiveGo"
+                        },
+                        "1": {
+                            "type": "doForever",
+                            "children": {
+                                "0": {
+                                    "type": "script",
+                                    "children": {
+                                        "0": {
+                                            "type": "doPlaySoundUntilDone",
+                                            "children": {
+                                                "0": {
+                                                    "type": "literal"
+                                                }
+                                            },
+                                            "childrenOrder": [
+                                                "0"
+                                            ]
+                                        }
+                                    },
+                                    "childrenOrder": [
+                                        "0"
+                                    ]
+                                }
+                            },
+                            "childrenOrder": [
+                                "0"
+                            ]
+                        }
+                    },
+                    "childrenOrder": [
+                        "0",
+                        "1"
+                    ]
+                },
+                "1": {
+                    "type": "sprite",
+                    "value": "Level",
+                    "id": "Level",
+                    "children": {
+                        "0": {
+                            "type": "script",
+                            "children": {
+                                "0": {
+                                    "type": "receiveGo"
+                                },
+                                "1": {
+                                    "type": "doForever",
+                                    "children": {
+                                        "0": {
+                                            "type": "script",
+                                            "children": {
+                                                "0": {
+                                                    "type": "doSwitchToCostume",
+                                                    "children": {
+                                                        "0": {
+                                                            "type": "var",
+                                                            "value": "Level"
+                                                        }
+                                                    },
+                                                    "childrenOrder": [
+                                                        "0"
+                                                    ]
+                                                }
+                                            },
+                                            "childrenOrder": [
+                                                "0"
+                                            ]
+                                        }
+                                    },
+                                    "childrenOrder": [
+                                        "0"
+                                    ]
+                                }
+                            },
+                            "childrenOrder": [
+                                "0",
+                                "1"
+                            ]
+                        },
+                        "1": {
+                            "type": "script",
+                            "children": {
+                                "0": {
+                                    "type": "receiveGo"
+                                },
+                                "1": {
+                                    "type": "doSetVar",
+                                    "children": {
+                                        "0": {
+                                            "type": "varMenu",
+                                            "value": "Level"
+                                        },
+                                        "1": {
+                                            "type": "literal",
+                                            "value": "1"
+                                        }
+                                    },
+                                    "childrenOrder": [
+                                        "0",
+                                        "1"
+                                    ]
+                                }
+                            },
+                            "childrenOrder": [
+                                "0",
+                                "1"
+                            ]
+                        },
+                        "2": {
+                            "type": "script",
+                            "children": {
+                                "0": {
+                                    "type": "receiveGo"
+                                },
+                                "1": {
+                                    "type": "gotoXY",
+                                    "children": {
+                                        "0": {
+                                            "type": "literal",
+                                            "value": "0"
+                                        },
+                                        "1": {
+                                            "type": "literal",
+                                            "value": "0"
+                                        }
+                                    },
+                                    "childrenOrder": [
+                                        "0",
+                                        "1"
+                                    ]
+                                }
+                            },
+                            "childrenOrder": [
+                                "0",
+                                "1"
+                            ]
+                        },
+                        "3": {
+                            "type": "script",
+                            "children": {
+                                "0": {
+                                    "type": "receiveGo"
+                                },
+                                "1": {
+                                    "type": "show"
+                                }
+                            },
+                            "childrenOrder": [
+                                "0",
+                                "1"
+                            ]
+                        },
+                        "4": {
+                            "type": "script",
+                            "children": {
+                                "0": {
+                                    "type": "hide"
+                                }
+                            },
+                            "childrenOrder": [
+                                "0"
+                            ]
+                        },
+                        "5": {
+                            "type": "script",
+                            "children": {
+                                "0": {
+                                    "type": "doGlide",
+                                    "children": {
+                                        "0": {
+                                            "type": "literal",
+                                            "value": "1"
+                                        },
+                                        "1": {
+                                            "type": "reportRandom",
+                                            "children": {
+                                                "0": {
+                                                    "type": "reportAttributeOf",
+                                                    "children": {
+                                                        "0": {
+                                                            "type": "literal",
+                                                            "value": "left"
+                                                        },
+                                                        "1": {
+                                                            "type": "literal"
+                                                        }
+                                                    },
+                                                    "childrenOrder": [
+                                                        "0",
+                                                        "1"
+                                                    ]
+                                                },
+                                                "1": {
+                                                    "type": "reportAttributeOf",
+                                                    "children": {
+                                                        "0": {
+                                                            "type": "literal",
+                                                            "value": "right"
+                                                        },
+                                                        "1": {
+                                                            "type": "literal"
+                                                        }
+                                                    },
+                                                    "childrenOrder": [
+                                                        "0",
+                                                        "1"
+                                                    ]
+                                                }
+                                            },
+                                            "childrenOrder": [
+                                                "0",
+                                                "1"
+                                            ]
+                                        },
+                                        "2": {
+                                            "type": "reportRandom",
+                                            "children": {
+                                                "0": {
+                                                    "type": "reportAttributeOf",
+                                                    "children": {
+                                                        "0": {
+                                                            "type": "literal",
+                                                            "value": "bottom"
+                                                        },
+                                                        "1": {
+                                                            "type": "literal"
+                                                        }
+                                                    },
+                                                    "childrenOrder": [
+                                                        "0",
+                                                        "1"
+                                                    ]
+                                                },
+                                                "1": {
+                                                    "type": "reportAttributeOf",
+                                                    "children": {
+                                                        "0": {
+                                                            "type": "literal",
+                                                            "value": "top"
+                                                        },
+                                                        "1": {
+                                                            "type": "literal"
+                                                        }
+                                                    },
+                                                    "childrenOrder": [
+                                                        "0",
+                                                        "1"
+                                                    ]
+                                                }
+                                            },
+                                            "childrenOrder": [
+                                                "0",
+                                                "1"
+                                            ]
+                                        }
+                                    },
+                                    "childrenOrder": [
+                                        "0",
+                                        "1",
+                                        "2"
+                                    ]
+                                }
+                            },
+                            "childrenOrder": [
+                                "0"
+                            ]
+                        },
+                        "6": {
+                            "type": "script",
+                            "children": {
+                                "0": {
+                                    "type": "hide"
+                                }
+                            },
+                            "childrenOrder": [
+                                "0"
+                            ]
+                        }
+                    },
+                    "childrenOrder": [
+                        "0",
+                        "1",
+                        "2",
+                        "3",
+                        "4",
+                        "5",
+                        "6"
+                    ]
+                },
+                "2": {
+                    "type": "sprite",
+                    "value": "Spikes",
+                    "id": "Spikes",
+                    "children": {
+                        "0": {
+                            "type": "script",
+                            "children": {
+                                "0": {
+                                    "type": "receiveGo"
+                                },
+                                "1": {
+                                    "type": "gotoXY",
+                                    "children": {
+                                        "0": {
+                                            "type": "literal",
+                                            "value": "0"
+                                        },
+                                        "1": {
+                                            "type": "literal",
+                                            "value": "0"
+                                        }
+                                    },
+                                    "childrenOrder": [
+                                        "0",
+                                        "1"
+                                    ]
+                                }
+                            },
+                            "childrenOrder": [
+                                "0",
+                                "1"
+                            ]
+                        },
+                        "1": {
+                            "type": "script",
+                            "children": {
+                                "0": {
+                                    "type": "receiveGo"
+                                },
+                                "1": {
+                                    "type": "doForever",
+                                    "children": {
+                                        "0": {
+                                            "type": "script",
+                                            "children": {
+                                                "0": {
+                                                    "type": "doSwitchToCostume",
+                                                    "children": {
+                                                        "0": {
+                                                            "type": "var",
+                                                            "value": "Level"
+                                                        }
+                                                    },
+                                                    "childrenOrder": [
+                                                        "0"
+                                                    ]
+                                                }
+                                            },
+                                            "childrenOrder": [
+                                                "0"
+                                            ]
+                                        }
+                                    },
+                                    "childrenOrder": [
+                                        "0"
+                                    ]
+                                }
+                            },
+                            "childrenOrder": [
+                                "0",
+                                "1"
+                            ]
+                        },
+                        "2": {
+                            "type": "script",
+                            "children": {
+                                "0": {
+                                    "type": "hide"
+                                }
+                            },
+                            "childrenOrder": [
+                                "0"
+                            ]
+                        },
+                        "3": {
+                            "type": "script",
+                            "children": {
+                                "0": {
+                                    "type": "receiveGo"
+                                },
+                                "1": {
+                                    "type": "show"
+                                }
+                            },
+                            "childrenOrder": [
+                                "0",
+                                "1"
+                            ]
+                        },
+                        "4": {
+                            "type": "script",
+                            "children": {
+                                "0": {
+                                    "type": "hide"
+                                }
+                            },
+                            "childrenOrder": [
+                                "0"
+                            ]
+                        }
+                    },
+                    "childrenOrder": [
+                        "0",
+                        "1",
+                        "2",
+                        "3",
+                        "4"
+                    ]
+                },
+                "3": {
+                    "type": "sprite",
+                    "value": "Sprite1",
+                    "id": "Sprite1",
+                    "children": {
+                        "0": {
+                            "type": "script",
+                            "children": {
+                                "0": {
+                                    "type": "receiveGo"
+                                },
+                                "1": {
+                                    "type": "doSetVar",
+                                    "children": {
+                                        "0": {
+                                            "type": "varMenu",
+                                            "value": "Xv"
+                                        },
+                                        "1": {
+                                            "type": "literal",
+                                            "value": "0"
+                                        }
+                                    },
+                                    "childrenOrder": [
+                                        "0",
+                                        "1"
+                                    ]
+                                },
+                                "2": {
+                                    "type": "doSetVar",
+                                    "children": {
+                                        "0": {
+                                            "type": "varMenu",
+                                            "value": "Yv"
+                                        },
+                                        "1": {
+                                            "type": "literal",
+                                            "value": "0"
+                                        }
+                                    },
+                                    "childrenOrder": [
+                                        "0",
+                                        "1"
+                                    ]
+                                },
+                                "3": {
+                                    "type": "gotoXY",
+                                    "children": {
+                                        "0": {
+                                            "type": "literal",
+                                            "value": "-150"
+                                        },
+                                        "1": {
+                                            "type": "literal",
+                                            "value": "5"
+                                        }
+                                    },
+                                    "childrenOrder": [
+                                        "0",
+                                        "1"
+                                    ]
+                                },
+                                "4": {
+                                    "type": "show"
+                                },
+                                "5": {
+                                    "type": "doTellTo",
+                                    "children": {
+                                        "0": {
+                                            "type": "literal"
+                                        },
+                                        "1": {
+                                            "type": "reifyScript",
+                                            "children": {
+                                                "0": {
+                                                    "type": "list"
+                                                },
+                                                "1": {
+                                                    "type": "script",
+                                                    "children": {
+                                                        "0": {
+                                                            "type": "doSwitchToCostume",
+                                                            "children": {
+                                                                "0": {
+                                                                    "type": "literal"
+                                                                }
+                                                            },
+                                                            "childrenOrder": [
+                                                                "0"
+                                                            ]
+                                                        }
+                                                    },
+                                                    "childrenOrder": [
+                                                        "0"
+                                                    ]
+                                                }
+                                            },
+                                            "childrenOrder": [
+                                                "0",
+                                                "1"
+                                            ]
+                                        },
+                                        "2": {
+                                            "type": "list"
+                                        }
+                                    },
+                                    "childrenOrder": [
+                                        "0",
+                                        "1",
+                                        "2"
+                                    ]
+                                },
+                                "6": {
+                                    "type": "doForever",
+                                    "children": {
+                                        "0": {
+                                            "type": "script",
+                                            "children": {
+                                                "0": {
+                                                    "type": "doIf",
+                                                    "children": {
+                                                        "0": {
+                                                            "type": "reportNot",
+                                                            "children": {
+                                                                "0": {
+                                                                    "type": "reportTouchingObject",
+                                                                    "children": {
+                                                                        "0": {
+                                                                            "type": "literal"
+                                                                        }
+                                                                    },
+                                                                    "childrenOrder": [
+                                                                        "0"
+                                                                    ]
+                                                                }
+                                                            },
+                                                            "childrenOrder": [
+                                                                "0"
+                                                            ]
+                                                        },
+                                                        "1": {
+                                                            "type": "script",
+                                                            "children": {
+                                                                "0": {
+                                                                    "type": "doChangeVar",
+                                                                    "children": {
+                                                                        "0": {
+                                                                            "type": "varMenu",
+                                                                            "value": "Yv"
+                                                                        },
+                                                                        "1": {
+                                                                            "type": "literal",
+                                                                            "value": "-0.72"
+                                                                        }
+                                                                    },
+                                                                    "childrenOrder": [
+                                                                        "0",
+                                                                        "1"
+                                                                    ]
+                                                                },
+                                                                "1": {
+                                                                    "type": "doIf",
+                                                                    "children": {
+                                                                        "0": {
+                                                                            "type": "reportKeyPressed",
+                                                                            "children": {
+                                                                                "0": {
+                                                                                    "type": "literal",
+                                                                                    "value": "left arrow"
+                                                                                }
+                                                                            },
+                                                                            "childrenOrder": [
+                                                                                "0"
+                                                                            ]
+                                                                        },
+                                                                        "1": {
+                                                                            "type": "script",
+                                                                            "children": {
+                                                                                "0": {
+                                                                                    "type": "doChangeVar",
+                                                                                    "children": {
+                                                                                        "0": {
+                                                                                            "type": "varMenu",
+                                                                                            "value": "Xv"
+                                                                                        },
+                                                                                        "1": {
+                                                                                            "type": "literal",
+                                                                                            "value": "-0.7"
+                                                                                        }
+                                                                                    },
+                                                                                    "childrenOrder": [
+                                                                                        "0",
+                                                                                        "1"
+                                                                                    ]
+                                                                                }
+                                                                            },
+                                                                            "childrenOrder": [
+                                                                                "0"
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                    "childrenOrder": [
+                                                                        "0",
+                                                                        "1"
+                                                                    ]
+                                                                },
+                                                                "2": {
+                                                                    "type": "doIf",
+                                                                    "children": {
+                                                                        "0": {
+                                                                            "type": "reportKeyPressed",
+                                                                            "children": {
+                                                                                "0": {
+                                                                                    "type": "literal",
+                                                                                    "value": "right arrow"
+                                                                                }
+                                                                            },
+                                                                            "childrenOrder": [
+                                                                                "0"
+                                                                            ]
+                                                                        },
+                                                                        "1": {
+                                                                            "type": "script",
+                                                                            "children": {
+                                                                                "0": {
+                                                                                    "type": "doChangeVar",
+                                                                                    "children": {
+                                                                                        "0": {
+                                                                                            "type": "varMenu",
+                                                                                            "value": "Xv"
+                                                                                        },
+                                                                                        "1": {
+                                                                                            "type": "literal",
+                                                                                            "value": "0.7"
+                                                                                        }
+                                                                                    },
+                                                                                    "childrenOrder": [
+                                                                                        "0",
+                                                                                        "1"
+                                                                                    ]
+                                                                                }
+                                                                            },
+                                                                            "childrenOrder": [
+                                                                                "0"
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                    "childrenOrder": [
+                                                                        "0",
+                                                                        "1"
+                                                                    ]
+                                                                },
+                                                                "3": {
+                                                                    "type": "doSetVar",
+                                                                    "children": {
+                                                                        "0": {
+                                                                            "type": "varMenu",
+                                                                            "value": "Xv"
+                                                                        },
+                                                                        "1": {
+                                                                            "type": "reportProduct",
+                                                                            "children": {
+                                                                                "0": {
+                                                                                    "type": "var",
+                                                                                    "value": "Xv"
+                                                                                },
+                                                                                "1": {
+                                                                                    "type": "literal",
+                                                                                    "value": "0.9"
+                                                                                }
+                                                                            },
+                                                                            "childrenOrder": [
+                                                                                "0",
+                                                                                "1"
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                    "childrenOrder": [
+                                                                        "0",
+                                                                        "1"
+                                                                    ]
+                                                                },
+                                                                "4": {
+                                                                    "type": "changeXPosition",
+                                                                    "children": {
+                                                                        "0": {
+                                                                            "type": "var",
+                                                                            "value": "Xv"
+                                                                        }
+                                                                    },
+                                                                    "childrenOrder": [
+                                                                        "0"
+                                                                    ]
+                                                                },
+                                                                "5": {
+                                                                    "type": "changeYPosition",
+                                                                    "children": {
+                                                                        "0": {
+                                                                            "type": "var",
+                                                                            "value": "Yv"
+                                                                        }
+                                                                    },
+                                                                    "childrenOrder": [
+                                                                        "0"
+                                                                    ]
+                                                                },
+                                                                "6": {
+                                                                    "type": "doIf",
+                                                                    "children": {
+                                                                        "0": {
+                                                                            "type": "reportTouchingColor",
+                                                                            "children": {
+                                                                                "0": {
+                                                                                    "type": "literal"
+                                                                                }
+                                                                            },
+                                                                            "childrenOrder": [
+                                                                                "0"
+                                                                            ]
+                                                                        },
+                                                                        "1": {
+                                                                            "type": "script",
+                                                                            "children": {
+                                                                                "0": {
+                                                                                    "type": "changeYPosition",
+                                                                                    "children": {
+                                                                                        "0": {
+                                                                                            "type": "reportProduct",
+                                                                                            "children": {
+                                                                                                "0": {
+                                                                                                    "type": "var",
+                                                                                                    "value": "Yv"
+                                                                                                },
+                                                                                                "1": {
+                                                                                                    "type": "literal",
+                                                                                                    "value": "-1"
+                                                                                                }
+                                                                                            },
+                                                                                            "childrenOrder": [
+                                                                                                "0",
+                                                                                                "1"
+                                                                                            ]
+                                                                                        }
+                                                                                    },
+                                                                                    "childrenOrder": [
+                                                                                        "0"
+                                                                                    ]
+                                                                                },
+                                                                                "1": {
+                                                                                    "type": "doSetVar",
+                                                                                    "children": {
+                                                                                        "0": {
+                                                                                            "type": "varMenu",
+                                                                                            "value": "Yv"
+                                                                                        },
+                                                                                        "1": {
+                                                                                            "type": "literal",
+                                                                                            "value": "0"
+                                                                                        }
+                                                                                    },
+                                                                                    "childrenOrder": [
+                                                                                        "0",
+                                                                                        "1"
+                                                                                    ]
+                                                                                }
+                                                                            },
+                                                                            "childrenOrder": [
+                                                                                "0",
+                                                                                "1"
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                    "childrenOrder": [
+                                                                        "0",
+                                                                        "1"
+                                                                    ]
+                                                                },
+                                                                "7": {
+                                                                    "type": "doUntil",
+                                                                    "children": {
+                                                                        "0": {
+                                                                            "type": "reportNot",
+                                                                            "children": {
+                                                                                "0": {
+                                                                                    "type": "reportTouchingColor",
+                                                                                    "children": {
+                                                                                        "0": {
+                                                                                            "type": "literal"
+                                                                                        }
+                                                                                    },
+                                                                                    "childrenOrder": [
+                                                                                        "0"
+                                                                                    ]
+                                                                                }
+                                                                            },
+                                                                            "childrenOrder": [
+                                                                                "0"
+                                                                            ]
+                                                                        },
+                                                                        "1": {
+                                                                            "type": "script",
+                                                                            "children": {
+                                                                                "0": {
+                                                                                    "type": "changeXPosition",
+                                                                                    "children": {
+                                                                                        "0": {
+                                                                                            "type": "reportProduct",
+                                                                                            "children": {
+                                                                                                "0": {
+                                                                                                    "type": "var",
+                                                                                                    "value": "Xv"
+                                                                                                },
+                                                                                                "1": {
+                                                                                                    "type": "literal",
+                                                                                                    "value": "-1"
+                                                                                                }
+                                                                                            },
+                                                                                            "childrenOrder": [
+                                                                                                "0",
+                                                                                                "1"
+                                                                                            ]
+                                                                                        }
+                                                                                    },
+                                                                                    "childrenOrder": [
+                                                                                        "0"
+                                                                                    ]
+                                                                                },
+                                                                                "1": {
+                                                                                    "type": "changeXPosition",
+                                                                                    "children": {
+                                                                                        "0": {
+                                                                                            "type": "literal",
+                                                                                            "value": "-1"
+                                                                                        }
+                                                                                    },
+                                                                                    "childrenOrder": [
+                                                                                        "0"
+                                                                                    ]
+                                                                                },
+                                                                                "2": {
+                                                                                    "type": "changeYPosition",
+                                                                                    "children": {
+                                                                                        "0": {
+                                                                                            "type": "literal",
+                                                                                            "value": "1"
+                                                                                        }
+                                                                                    },
+                                                                                    "childrenOrder": [
+                                                                                        "0"
+                                                                                    ]
+                                                                                },
+                                                                                "3": {
+                                                                                    "type": "changeXPosition",
+                                                                                    "children": {
+                                                                                        "0": {
+                                                                                            "type": "literal",
+                                                                                            "value": "1"
+                                                                                        }
+                                                                                    },
+                                                                                    "childrenOrder": [
+                                                                                        "0"
+                                                                                    ]
+                                                                                },
+                                                                                "4": {
+                                                                                    "type": "doIfElse",
+                                                                                    "children": {
+                                                                                        "0": {
+                                                                                            "type": "reportKeyPressed",
+                                                                                            "children": {
+                                                                                                "0": {
+                                                                                                    "type": "literal",
+                                                                                                    "value": "up arrow"
+                                                                                                }
+                                                                                            },
+                                                                                            "childrenOrder": [
+                                                                                                "0"
+                                                                                            ]
+                                                                                        },
+                                                                                        "1": {
+                                                                                            "type": "script",
+                                                                                            "children": {
+                                                                                                "0": {
+                                                                                                    "type": "doIfElse",
+                                                                                                    "children": {
+                                                                                                        "0": {
+                                                                                                            "type": "reportGreaterThan",
+                                                                                                            "children": {
+                                                                                                                "0": {
+                                                                                                                    "type": "var",
+                                                                                                                    "value": "Xv"
+                                                                                                                },
+                                                                                                                "1": {
+                                                                                                                    "type": "literal",
+                                                                                                                    "value": "0"
+                                                                                                                }
+                                                                                                            },
+                                                                                                            "childrenOrder": [
+                                                                                                                "0",
+                                                                                                                "1"
+                                                                                                            ]
+                                                                                                        },
+                                                                                                        "1": {
+                                                                                                            "type": "script",
+                                                                                                            "children": {
+                                                                                                                "0": {
+                                                                                                                    "type": "doSetVar",
+                                                                                                                    "children": {
+                                                                                                                        "0": {
+                                                                                                                            "type": "varMenu",
+                                                                                                                            "value": "Xv"
+                                                                                                                        },
+                                                                                                                        "1": {
+                                                                                                                            "type": "literal",
+                                                                                                                            "value": "-8"
+                                                                                                                        }
+                                                                                                                    },
+                                                                                                                    "childrenOrder": [
+                                                                                                                        "0",
+                                                                                                                        "1"
+                                                                                                                    ]
+                                                                                                                }
+                                                                                                            },
+                                                                                                            "childrenOrder": [
+                                                                                                                "0"
+                                                                                                            ]
+                                                                                                        },
+                                                                                                        "2": {
+                                                                                                            "type": "script",
+                                                                                                            "children": {
+                                                                                                                "0": {
+                                                                                                                    "type": "doSetVar",
+                                                                                                                    "children": {
+                                                                                                                        "0": {
+                                                                                                                            "type": "varMenu",
+                                                                                                                            "value": "Xv"
+                                                                                                                        },
+                                                                                                                        "1": {
+                                                                                                                            "type": "literal",
+                                                                                                                            "value": "8"
+                                                                                                                        }
+                                                                                                                    },
+                                                                                                                    "childrenOrder": [
+                                                                                                                        "0",
+                                                                                                                        "1"
+                                                                                                                    ]
+                                                                                                                }
+                                                                                                            },
+                                                                                                            "childrenOrder": [
+                                                                                                                "0"
+                                                                                                            ]
+                                                                                                        }
+                                                                                                    },
+                                                                                                    "childrenOrder": [
+                                                                                                        "0",
+                                                                                                        "1",
+                                                                                                        "2"
+                                                                                                    ]
+                                                                                                },
+                                                                                                "1": {
+                                                                                                    "type": "doSetVar",
+                                                                                                    "children": {
+                                                                                                        "0": {
+                                                                                                            "type": "varMenu",
+                                                                                                            "value": "Yv"
+                                                                                                        },
+                                                                                                        "1": {
+                                                                                                            "type": "literal",
+                                                                                                            "value": "10"
+                                                                                                        }
+                                                                                                    },
+                                                                                                    "childrenOrder": [
+                                                                                                        "0",
+                                                                                                        "1"
+                                                                                                    ]
+                                                                                                }
+                                                                                            },
+                                                                                            "childrenOrder": [
+                                                                                                "0",
+                                                                                                "1"
+                                                                                            ]
+                                                                                        },
+                                                                                        "2": {
+                                                                                            "type": "script",
+                                                                                            "children": {
+                                                                                                "0": {
+                                                                                                    "type": "doSetVar",
+                                                                                                    "children": {
+                                                                                                        "0": {
+                                                                                                            "type": "varMenu",
+                                                                                                            "value": "Xv"
+                                                                                                        },
+                                                                                                        "1": {
+                                                                                                            "type": "literal",
+                                                                                                            "value": "0"
+                                                                                                        }
+                                                                                                    },
+                                                                                                    "childrenOrder": [
+                                                                                                        "0",
+                                                                                                        "1"
+                                                                                                    ]
+                                                                                                }
+                                                                                            },
+                                                                                            "childrenOrder": [
+                                                                                                "0"
+                                                                                            ]
+                                                                                        }
+                                                                                    },
+                                                                                    "childrenOrder": [
+                                                                                        "0",
+                                                                                        "1",
+                                                                                        "2"
+                                                                                    ]
+                                                                                }
+                                                                            },
+                                                                            "childrenOrder": [
+                                                                                "0",
+                                                                                "1",
+                                                                                "2",
+                                                                                "3",
+                                                                                "4"
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                    "childrenOrder": [
+                                                                        "0",
+                                                                        "1"
+                                                                    ]
+                                                                },
+                                                                "8": {
+                                                                    "type": "changeYPosition",
+                                                                    "children": {
+                                                                        "0": {
+                                                                            "type": "literal",
+                                                                            "value": "-1"
+                                                                        }
+                                                                    },
+                                                                    "childrenOrder": [
+                                                                        "0"
+                                                                    ]
+                                                                },
+                                                                "9": {
+                                                                    "type": "doIf",
+                                                                    "children": {
+                                                                        "0": {
+                                                                            "type": "reportTouchingColor",
+                                                                            "children": {
+                                                                                "0": {
+                                                                                    "type": "literal"
+                                                                                }
+                                                                            },
+                                                                            "childrenOrder": [
+                                                                                "0"
+                                                                            ]
+                                                                        },
+                                                                        "1": {
+                                                                            "type": "script",
+                                                                            "children": {
+                                                                                "0": {
+                                                                                    "type": "doIf",
+                                                                                    "children": {
+                                                                                        "0": {
+                                                                                            "type": "reportKeyPressed",
+                                                                                            "children": {
+                                                                                                "0": {
+                                                                                                    "type": "literal",
+                                                                                                    "value": "up arrow"
+                                                                                                }
+                                                                                            },
+                                                                                            "childrenOrder": [
+                                                                                                "0"
+                                                                                            ]
+                                                                                        },
+                                                                                        "1": {
+                                                                                            "type": "script",
+                                                                                            "children": {
+                                                                                                "0": {
+                                                                                                    "type": "doSetVar",
+                                                                                                    "children": {
+                                                                                                        "0": {
+                                                                                                            "type": "varMenu",
+                                                                                                            "value": "Yv"
+                                                                                                        },
+                                                                                                        "1": {
+                                                                                                            "type": "literal",
+                                                                                                            "value": "11.5"
+                                                                                                        }
+                                                                                                    },
+                                                                                                    "childrenOrder": [
+                                                                                                        "0",
+                                                                                                        "1"
+                                                                                                    ]
+                                                                                                }
+                                                                                            },
+                                                                                            "childrenOrder": [
+                                                                                                "0"
+                                                                                            ]
+                                                                                        }
+                                                                                    },
+                                                                                    "childrenOrder": [
+                                                                                        "0",
+                                                                                        "1"
+                                                                                    ]
+                                                                                }
+                                                                            },
+                                                                            "childrenOrder": [
+                                                                                "0"
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                    "childrenOrder": [
+                                                                        "0",
+                                                                        "1"
+                                                                    ]
+                                                                }
+                                                            },
+                                                            "childrenOrder": [
+                                                                "0",
+                                                                "1",
+                                                                "2",
+                                                                "3",
+                                                                "4",
+                                                                "5",
+                                                                "6",
+                                                                "7",
+                                                                "8",
+                                                                "9"
+                                                            ]
+                                                        }
+                                                    },
+                                                    "childrenOrder": [
+                                                        "0",
+                                                        "1"
+                                                    ]
+                                                }
+                                            },
+                                            "childrenOrder": [
+                                                "0"
+                                            ]
+                                        }
+                                    },
+                                    "childrenOrder": [
+                                        "0"
+                                    ]
+                                }
+                            },
+                            "childrenOrder": [
+                                "0",
+                                "1",
+                                "2",
+                                "3",
+                                "4",
+                                "5",
+                                "6"
+                            ]
+                        },
+                        "1": {
+                            "type": "script",
+                            "children": {
+                                "0": {
+                                    "type": "receiveGo"
+                                },
+                                "1": {
+                                    "type": "doForever",
+                                    "children": {
+                                        "0": {
+                                            "type": "script",
+                                            "children": {
+                                                "0": {
+                                                    "type": "doIf",
+                                                    "children": {
+                                                        "0": {
+                                                            "type": "reportTouchingObject",
+                                                            "children": {
+                                                                "0": {
+                                                                    "type": "literal"
+                                                                }
+                                                            },
+                                                            "childrenOrder": [
+                                                                "0"
+                                                            ]
+                                                        },
+                                                        "1": {
+                                                            "type": "script",
+                                                            "children": {
+                                                                "0": {
+                                                                    "type": "doRepeat",
+                                                                    "children": {
+                                                                        "0": {
+                                                                            "type": "literal",
+                                                                            "value": "10"
+                                                                        },
+                                                                        "1": {
+                                                                            "type": "script",
+                                                                            "children": {
+                                                                                "0": {
+                                                                                    "type": "changeEffect",
+                                                                                    "children": {
+                                                                                        "0": {
+                                                                                            "type": "literal",
+                                                                                            "value": "ghost"
+                                                                                        },
+                                                                                        "1": {
+                                                                                            "type": "literal",
+                                                                                            "value": "10"
+                                                                                        }
+                                                                                    },
+                                                                                    "childrenOrder": [
+                                                                                        "0",
+                                                                                        "1"
+                                                                                    ]
+                                                                                }
+                                                                            },
+                                                                            "childrenOrder": [
+                                                                                "0"
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                    "childrenOrder": [
+                                                                        "0",
+                                                                        "1"
+                                                                    ]
+                                                                },
+                                                                "1": {
+                                                                    "type": "doSetVar",
+                                                                    "children": {
+                                                                        "0": {
+                                                                            "type": "varMenu",
+                                                                            "value": "Xv"
+                                                                        },
+                                                                        "1": {
+                                                                            "type": "literal",
+                                                                            "value": "0"
+                                                                        }
+                                                                    },
+                                                                    "childrenOrder": [
+                                                                        "0",
+                                                                        "1"
+                                                                    ]
+                                                                },
+                                                                "2": {
+                                                                    "type": "doSetVar",
+                                                                    "children": {
+                                                                        "0": {
+                                                                            "type": "varMenu",
+                                                                            "value": "Yv"
+                                                                        },
+                                                                        "1": {
+                                                                            "type": "literal",
+                                                                            "value": "0"
+                                                                        }
+                                                                    },
+                                                                    "childrenOrder": [
+                                                                        "0",
+                                                                        "1"
+                                                                    ]
+                                                                },
+                                                                "3": {
+                                                                    "type": "gotoXY",
+                                                                    "children": {
+                                                                        "0": {
+                                                                            "type": "literal",
+                                                                            "value": "-150"
+                                                                        },
+                                                                        "1": {
+                                                                            "type": "literal",
+                                                                            "value": "5"
+                                                                        }
+                                                                    },
+                                                                    "childrenOrder": [
+                                                                        "0",
+                                                                        "1"
+                                                                    ]
+                                                                },
+                                                                "4": {
+                                                                    "type": "show"
+                                                                },
+                                                                "5": {
+                                                                    "type": "doRepeat",
+                                                                    "children": {
+                                                                        "0": {
+                                                                            "type": "literal",
+                                                                            "value": "10"
+                                                                        },
+                                                                        "1": {
+                                                                            "type": "script",
+                                                                            "children": {
+                                                                                "0": {
+                                                                                    "type": "changeEffect",
+                                                                                    "children": {
+                                                                                        "0": {
+                                                                                            "type": "literal",
+                                                                                            "value": "ghost"
+                                                                                        },
+                                                                                        "1": {
+                                                                                            "type": "literal",
+                                                                                            "value": "-10"
+                                                                                        }
+                                                                                    },
+                                                                                    "childrenOrder": [
+                                                                                        "0",
+                                                                                        "1"
+                                                                                    ]
+                                                                                }
+                                                                            },
+                                                                            "childrenOrder": [
+                                                                                "0"
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                    "childrenOrder": [
+                                                                        "0",
+                                                                        "1"
+                                                                    ]
+                                                                }
+                                                            },
+                                                            "childrenOrder": [
+                                                                "0",
+                                                                "1",
+                                                                "2",
+                                                                "3",
+                                                                "4",
+                                                                "5"
+                                                            ]
+                                                        }
+                                                    },
+                                                    "childrenOrder": [
+                                                        "0",
+                                                        "1"
+                                                    ]
+                                                }
+                                            },
+                                            "childrenOrder": [
+                                                "0"
+                                            ]
+                                        }
+                                    },
+                                    "childrenOrder": [
+                                        "0"
+                                    ]
+                                }
+                            },
+                            "childrenOrder": [
+                                "0",
+                                "1"
+                            ]
+                        },
+                        "2": {
+                            "type": "script",
+                            "children": {
+                                "0": {
+                                    "type": "receiveGo"
+                                },
+                                "1": {
+                                    "type": "doForever",
+                                    "children": {
+                                        "0": {
+                                            "type": "script",
+                                            "children": {
+                                                "0": {
+                                                    "type": "doIf",
+                                                    "children": {
+                                                        "0": {
+                                                            "type": "reportAnd",
+                                                            "children": {
+                                                                "0": {
+                                                                    "type": "reportTouchingObject",
+                                                                    "children": {
+                                                                        "0": {
+                                                                            "type": "literal",
+                                                                            "value": "edge"
+                                                                        }
+                                                                    },
+                                                                    "childrenOrder": [
+                                                                        "0"
+                                                                    ]
+                                                                },
+                                                                "1": {
+                                                                    "type": "reportGreaterThan",
+                                                                    "children": {
+                                                                        "0": {
+                                                                            "type": "xPosition"
+                                                                        },
+                                                                        "1": {
+                                                                            "type": "literal",
+                                                                            "value": "230"
+                                                                        }
+                                                                    },
+                                                                    "childrenOrder": [
+                                                                        "0",
+                                                                        "1"
+                                                                    ]
+                                                                }
+                                                            },
+                                                            "childrenOrder": [
+                                                                "0",
+                                                                "1"
+                                                            ]
+                                                        },
+                                                        "1": {
+                                                            "type": "script",
+                                                            "children": {
+                                                                "0": {
+                                                                    "type": "doRepeat",
+                                                                    "children": {
+                                                                        "0": {
+                                                                            "type": "literal",
+                                                                            "value": "10"
+                                                                        },
+                                                                        "1": {
+                                                                            "type": "script",
+                                                                            "children": {
+                                                                                "0": {
+                                                                                    "type": "changeEffect",
+                                                                                    "children": {
+                                                                                        "0": {
+                                                                                            "type": "literal",
+                                                                                            "value": "ghost"
+                                                                                        },
+                                                                                        "1": {
+                                                                                            "type": "literal",
+                                                                                            "value": "10"
+                                                                                        }
+                                                                                    },
+                                                                                    "childrenOrder": [
+                                                                                        "0",
+                                                                                        "1"
+                                                                                    ]
+                                                                                }
+                                                                            },
+                                                                            "childrenOrder": [
+                                                                                "0"
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                    "childrenOrder": [
+                                                                        "0",
+                                                                        "1"
+                                                                    ]
+                                                                },
+                                                                "1": {
+                                                                    "type": "doChangeVar",
+                                                                    "children": {
+                                                                        "0": {
+                                                                            "type": "varMenu",
+                                                                            "value": "Level"
+                                                                        },
+                                                                        "1": {
+                                                                            "type": "literal",
+                                                                            "value": "1"
+                                                                        }
+                                                                    },
+                                                                    "childrenOrder": [
+                                                                        "0",
+                                                                        "1"
+                                                                    ]
+                                                                },
+                                                                "2": {
+                                                                    "type": "doSetVar",
+                                                                    "children": {
+                                                                        "0": {
+                                                                            "type": "varMenu",
+                                                                            "value": "Xv"
+                                                                        },
+                                                                        "1": {
+                                                                            "type": "literal",
+                                                                            "value": "0"
+                                                                        }
+                                                                    },
+                                                                    "childrenOrder": [
+                                                                        "0",
+                                                                        "1"
+                                                                    ]
+                                                                },
+                                                                "3": {
+                                                                    "type": "doSetVar",
+                                                                    "children": {
+                                                                        "0": {
+                                                                            "type": "varMenu",
+                                                                            "value": "Yv"
+                                                                        },
+                                                                        "1": {
+                                                                            "type": "literal",
+                                                                            "value": "0"
+                                                                        }
+                                                                    },
+                                                                    "childrenOrder": [
+                                                                        "0",
+                                                                        "1"
+                                                                    ]
+                                                                },
+                                                                "4": {
+                                                                    "type": "gotoXY",
+                                                                    "children": {
+                                                                        "0": {
+                                                                            "type": "literal",
+                                                                            "value": "-150"
+                                                                        },
+                                                                        "1": {
+                                                                            "type": "literal",
+                                                                            "value": "5"
+                                                                        }
+                                                                    },
+                                                                    "childrenOrder": [
+                                                                        "0",
+                                                                        "1"
+                                                                    ]
+                                                                },
+                                                                "5": {
+                                                                    "type": "show"
+                                                                },
+                                                                "6": {
+                                                                    "type": "doRepeat",
+                                                                    "children": {
+                                                                        "0": {
+                                                                            "type": "literal",
+                                                                            "value": "10"
+                                                                        },
+                                                                        "1": {
+                                                                            "type": "script",
+                                                                            "children": {
+                                                                                "0": {
+                                                                                    "type": "changeEffect",
+                                                                                    "children": {
+                                                                                        "0": {
+                                                                                            "type": "literal",
+                                                                                            "value": "ghost"
+                                                                                        },
+                                                                                        "1": {
+                                                                                            "type": "literal",
+                                                                                            "value": "-10"
+                                                                                        }
+                                                                                    },
+                                                                                    "childrenOrder": [
+                                                                                        "0",
+                                                                                        "1"
+                                                                                    ]
+                                                                                }
+                                                                            },
+                                                                            "childrenOrder": [
+                                                                                "0"
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                    "childrenOrder": [
+                                                                        "0",
+                                                                        "1"
+                                                                    ]
+                                                                }
+                                                            },
+                                                            "childrenOrder": [
+                                                                "0",
+                                                                "1",
+                                                                "2",
+                                                                "3",
+                                                                "4",
+                                                                "5",
+                                                                "6"
+                                                            ]
+                                                        }
+                                                    },
+                                                    "childrenOrder": [
+                                                        "0",
+                                                        "1"
+                                                    ]
+                                                }
+                                            },
+                                            "childrenOrder": [
+                                                "0"
+                                            ]
+                                        }
+                                    },
+                                    "childrenOrder": [
+                                        "0"
+                                    ]
+                                }
+                            },
+                            "childrenOrder": [
+                                "0",
+                                "1"
+                            ]
+                        },
+                        "3": {
+                            "type": "script",
+                            "children": {
+                                "0": {
+                                    "type": "receiveGo"
+                                },
+                                "1": {
+                                    "type": "doForever",
+                                    "children": {
+                                        "0": {
+                                            "type": "script",
+                                            "children": {
+                                                "0": {
+                                                    "type": "doIf",
+                                                    "children": {
+                                                        "0": {
+                                                            "type": "reportLessThan",
+                                                            "children": {
+                                                                "0": {
+                                                                    "type": "yPosition"
+                                                                },
+                                                                "1": {
+                                                                    "type": "literal",
+                                                                    "value": "-187"
+                                                                }
+                                                            },
+                                                            "childrenOrder": [
+                                                                "0",
+                                                                "1"
+                                                            ]
+                                                        },
+                                                        "1": {
+                                                            "type": "script",
+                                                            "children": {
+                                                                "0": {
+                                                                    "type": "doRepeat",
+                                                                    "children": {
+                                                                        "0": {
+                                                                            "type": "literal",
+                                                                            "value": "10"
+                                                                        },
+                                                                        "1": {
+                                                                            "type": "script",
+                                                                            "children": {
+                                                                                "0": {
+                                                                                    "type": "changeEffect",
+                                                                                    "children": {
+                                                                                        "0": {
+                                                                                            "type": "literal",
+                                                                                            "value": "ghost"
+                                                                                        },
+                                                                                        "1": {
+                                                                                            "type": "literal",
+                                                                                            "value": "10"
+                                                                                        }
+                                                                                    },
+                                                                                    "childrenOrder": [
+                                                                                        "0",
+                                                                                        "1"
+                                                                                    ]
+                                                                                }
+                                                                            },
+                                                                            "childrenOrder": [
+                                                                                "0"
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                    "childrenOrder": [
+                                                                        "0",
+                                                                        "1"
+                                                                    ]
+                                                                },
+                                                                "1": {
+                                                                    "type": "doSetVar",
+                                                                    "children": {
+                                                                        "0": {
+                                                                            "type": "varMenu",
+                                                                            "value": "Xv"
+                                                                        },
+                                                                        "1": {
+                                                                            "type": "literal",
+                                                                            "value": "0"
+                                                                        }
+                                                                    },
+                                                                    "childrenOrder": [
+                                                                        "0",
+                                                                        "1"
+                                                                    ]
+                                                                },
+                                                                "2": {
+                                                                    "type": "doSetVar",
+                                                                    "children": {
+                                                                        "0": {
+                                                                            "type": "varMenu",
+                                                                            "value": "Yv"
+                                                                        },
+                                                                        "1": {
+                                                                            "type": "literal",
+                                                                            "value": "0"
+                                                                        }
+                                                                    },
+                                                                    "childrenOrder": [
+                                                                        "0",
+                                                                        "1"
+                                                                    ]
+                                                                },
+                                                                "3": {
+                                                                    "type": "gotoXY",
+                                                                    "children": {
+                                                                        "0": {
+                                                                            "type": "literal",
+                                                                            "value": "-150"
+                                                                        },
+                                                                        "1": {
+                                                                            "type": "literal",
+                                                                            "value": "5"
+                                                                        }
+                                                                    },
+                                                                    "childrenOrder": [
+                                                                        "0",
+                                                                        "1"
+                                                                    ]
+                                                                },
+                                                                "4": {
+                                                                    "type": "show"
+                                                                },
+                                                                "5": {
+                                                                    "type": "doRepeat",
+                                                                    "children": {
+                                                                        "0": {
+                                                                            "type": "literal",
+                                                                            "value": "10"
+                                                                        },
+                                                                        "1": {
+                                                                            "type": "script",
+                                                                            "children": {
+                                                                                "0": {
+                                                                                    "type": "changeEffect",
+                                                                                    "children": {
+                                                                                        "0": {
+                                                                                            "type": "literal",
+                                                                                            "value": "ghost"
+                                                                                        },
+                                                                                        "1": {
+                                                                                            "type": "literal",
+                                                                                            "value": "-10"
+                                                                                        }
+                                                                                    },
+                                                                                    "childrenOrder": [
+                                                                                        "0",
+                                                                                        "1"
+                                                                                    ]
+                                                                                }
+                                                                            },
+                                                                            "childrenOrder": [
+                                                                                "0"
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                    "childrenOrder": [
+                                                                        "0",
+                                                                        "1"
+                                                                    ]
+                                                                }
+                                                            },
+                                                            "childrenOrder": [
+                                                                "0",
+                                                                "1",
+                                                                "2",
+                                                                "3",
+                                                                "4",
+                                                                "5"
+                                                            ]
+                                                        }
+                                                    },
+                                                    "childrenOrder": [
+                                                        "0",
+                                                        "1"
+                                                    ]
+                                                }
+                                            },
+                                            "childrenOrder": [
+                                                "0"
+                                            ]
+                                        }
+                                    },
+                                    "childrenOrder": [
+                                        "0"
+                                    ]
+                                }
+                            },
+                            "childrenOrder": [
+                                "0",
+                                "1"
+                            ]
+                        },
+                        "4": {
+                            "type": "script",
+                            "children": {
+                                "0": {
+                                    "type": "receiveGo"
+                                },
+                                "1": {
+                                    "type": "doForever",
+                                    "children": {
+                                        "0": {
+                                            "type": "script",
+                                            "children": {
+                                                "0": {
+                                                    "type": "doIf",
+                                                    "children": {
+                                                        "0": {
+                                                            "type": "reportOr",
+                                                            "children": {
+                                                                "0": {
+                                                                    "type": "reportTouchingColor",
+                                                                    "children": {
+                                                                        "0": {
+                                                                            "type": "literal"
+                                                                        }
+                                                                    },
+                                                                    "childrenOrder": [
+                                                                        "0"
+                                                                    ]
+                                                                },
+                                                                "1": {
+                                                                    "type": "reportTouchingColor",
+                                                                    "children": {
+                                                                        "0": {
+                                                                            "type": "literal"
+                                                                        }
+                                                                    },
+                                                                    "childrenOrder": [
+                                                                        "0"
+                                                                    ]
+                                                                }
+                                                            },
+                                                            "childrenOrder": [
+                                                                "0",
+                                                                "1"
+                                                            ]
+                                                        },
+                                                        "1": {
+                                                            "type": "script",
+                                                            "children": {
+                                                                "0": {
+                                                                    "type": "doSetVar",
+                                                                    "children": {
+                                                                        "0": {
+                                                                            "type": "varMenu",
+                                                                            "value": "Yv"
+                                                                        },
+                                                                        "1": {
+                                                                            "type": "literal",
+                                                                            "value": "20"
+                                                                        }
+                                                                    },
+                                                                    "childrenOrder": [
+                                                                        "0",
+                                                                        "1"
+                                                                    ]
+                                                                }
+                                                            },
+                                                            "childrenOrder": [
+                                                                "0"
+                                                            ]
+                                                        }
+                                                    },
+                                                    "childrenOrder": [
+                                                        "0",
+                                                        "1"
+                                                    ]
+                                                }
+                                            },
+                                            "childrenOrder": [
+                                                "0"
+                                            ]
+                                        }
+                                    },
+                                    "childrenOrder": [
+                                        "0"
+                                    ]
+                                }
+                            },
+                            "childrenOrder": [
+                                "0",
+                                "1"
+                            ]
+                        },
+                        "5": {
+                            "type": "script",
+                            "children": {
+                                "0": {
+                                    "type": "receiveGo"
+                                },
+                                "1": {
+                                    "type": "show"
+                                }
+                            },
+                            "childrenOrder": [
+                                "0",
+                                "1"
+                            ]
+                        },
+                        "6": {
+                            "type": "script",
+                            "children": {
+                                "0": {
+                                    "type": "hide"
+                                }
+                            },
+                            "childrenOrder": [
+                                "0"
+                            ]
+                        },
+                        "7": {
+                            "type": "script",
+                            "children": {
+                                "0": {
+                                    "type": "hide"
+                                }
+                            },
+                            "childrenOrder": [
+                                "0"
+                            ]
+                        },
+                        "8": {
+                            "type": "script",
+                            "children": {
+                                "0": {
+                                    "type": "doIf",
+                                    "children": {
+                                        "0": {
+                                            "type": "reportTouchingColor",
+                                            "children": {
+                                                "0": {
+                                                    "type": "literal"
+                                                }
+                                            },
+                                            "childrenOrder": [
+                                                "0"
+                                            ]
+                                        },
+                                        "1": {
+                                            "type": "script",
+                                            "children": {
+                                                "0": {
+                                                    "type": "changeYPosition",
+                                                    "children": {
+                                                        "0": {
+                                                            "type": "literal",
+                                                            "value": "1"
+                                                        }
+                                                    },
+                                                    "childrenOrder": [
+                                                        "0"
+                                                    ]
+                                                },
+                                                "1": {
+                                                    "type": "doIf",
+                                                    "children": {
+                                                        "0": {
+                                                            "type": "reportTouchingColor",
+                                                            "children": {
+                                                                "0": {
+                                                                    "type": "literal"
+                                                                }
+                                                            },
+                                                            "childrenOrder": [
+                                                                "0"
+                                                            ]
+                                                        },
+                                                        "1": {
+                                                            "type": "script",
+                                                            "children": {
+                                                                "0": {
+                                                                    "type": "changeYPosition",
+                                                                    "children": {
+                                                                        "0": {
+                                                                            "type": "literal",
+                                                                            "value": "1"
+                                                                        }
+                                                                    },
+                                                                    "childrenOrder": [
+                                                                        "0"
+                                                                    ]
+                                                                },
+                                                                "1": {
+                                                                    "type": "doIf",
+                                                                    "children": {
+                                                                        "0": {
+                                                                            "type": "reportTouchingColor",
+                                                                            "children": {
+                                                                                "0": {
+                                                                                    "type": "literal"
+                                                                                }
+                                                                            },
+                                                                            "childrenOrder": [
+                                                                                "0"
+                                                                            ]
+                                                                        },
+                                                                        "1": {
+                                                                            "type": "script",
+                                                                            "children": {
+                                                                                "0": {
+                                                                                    "type": "changeYPosition",
+                                                                                    "children": {
+                                                                                        "0": {
+                                                                                            "type": "literal",
+                                                                                            "value": "1"
+                                                                                        }
+                                                                                    },
+                                                                                    "childrenOrder": [
+                                                                                        "0"
+                                                                                    ]
+                                                                                },
+                                                                                "1": {
+                                                                                    "type": "doIf",
+                                                                                    "children": {
+                                                                                        "0": {
+                                                                                            "type": "reportTouchingColor",
+                                                                                            "children": {
+                                                                                                "0": {
+                                                                                                    "type": "literal"
+                                                                                                }
+                                                                                            },
+                                                                                            "childrenOrder": [
+                                                                                                "0"
+                                                                                            ]
+                                                                                        },
+                                                                                        "1": {
+                                                                                            "type": "script",
+                                                                                            "children": {
+                                                                                                "0": {
+                                                                                                    "type": "changeYPosition",
+                                                                                                    "children": {
+                                                                                                        "0": {
+                                                                                                            "type": "literal",
+                                                                                                            "value": "1"
+                                                                                                        }
+                                                                                                    },
+                                                                                                    "childrenOrder": [
+                                                                                                        "0"
+                                                                                                    ]
+                                                                                                },
+                                                                                                "1": {
+                                                                                                    "type": "doIf",
+                                                                                                    "children": {
+                                                                                                        "0": {
+                                                                                                            "type": "reportTouchingColor",
+                                                                                                            "children": {
+                                                                                                                "0": {
+                                                                                                                    "type": "literal"
+                                                                                                                }
+                                                                                                            },
+                                                                                                            "childrenOrder": [
+                                                                                                                "0"
+                                                                                                            ]
+                                                                                                        },
+                                                                                                        "1": {
+                                                                                                            "type": "script",
+                                                                                                            "children": {
+                                                                                                                "0": {
+                                                                                                                    "type": "changeYPosition",
+                                                                                                                    "children": {
+                                                                                                                        "0": {
+                                                                                                                            "type": "literal",
+                                                                                                                            "value": "1"
+                                                                                                                        }
+                                                                                                                    },
+                                                                                                                    "childrenOrder": [
+                                                                                                                        "0"
+                                                                                                                    ]
+                                                                                                                }
+                                                                                                            },
+                                                                                                            "childrenOrder": [
+                                                                                                                "0"
+                                                                                                            ]
+                                                                                                        }
+                                                                                                    },
+                                                                                                    "childrenOrder": [
+                                                                                                        "0",
+                                                                                                        "1"
+                                                                                                    ]
+                                                                                                }
+                                                                                            },
+                                                                                            "childrenOrder": [
+                                                                                                "0",
+                                                                                                "1"
+                                                                                            ]
+                                                                                        }
+                                                                                    },
+                                                                                    "childrenOrder": [
+                                                                                        "0",
+                                                                                        "1"
+                                                                                    ]
+                                                                                }
+                                                                            },
+                                                                            "childrenOrder": [
+                                                                                "0",
+                                                                                "1"
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                    "childrenOrder": [
+                                                                        "0",
+                                                                        "1"
+                                                                    ]
+                                                                }
+                                                            },
+                                                            "childrenOrder": [
+                                                                "0",
+                                                                "1"
+                                                            ]
+                                                        }
+                                                    },
+                                                    "childrenOrder": [
+                                                        "0",
+                                                        "1"
+                                                    ]
+                                                }
+                                            },
+                                            "childrenOrder": [
+                                                "0",
+                                                "1"
+                                            ]
+                                        }
+                                    },
+                                    "childrenOrder": [
+                                        "0",
+                                        "1"
+                                    ]
+                                }
+                            },
+                            "childrenOrder": [
+                                "0"
+                            ]
+                        },
+                        "9": {
+                            "type": "script",
+                            "children": {
+                                "0": {
+                                    "type": "doIf",
+                                    "children": {
+                                        "0": {
+                                            "type": "literal"
+                                        },
+                                        "1": {
+                                            "type": "script"
+                                        }
+                                    },
+                                    "childrenOrder": [
+                                        "0",
+                                        "1"
+                                    ]
+                                }
+                            },
+                            "childrenOrder": [
+                                "0"
+                            ]
+                        }
+                    },
+                    "childrenOrder": [
+                        "0",
+                        "1",
+                        "2",
+                        "3",
+                        "4",
+                        "5",
+                        "6",
+                        "7",
+                        "8",
+                        "9"
+                    ]
+                }
+            },
+            "childrenOrder": [
+                "0",
+                "1",
+                "2",
+                "3"
+            ]
+        },
+        "1": {
+            "type": "varDec",
+            "value": "my variable"
+        },
+        "2": {
+            "type": "varDec",
+            "value": "Xv"
+        },
+        "3": {
+            "type": "varDec",
+            "value": "Yv"
+        },
+        "4": {
+            "type": "varDec",
+            "value": "Level"
+        }
+    },
+    "childrenOrder": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4"
+    ]
+}

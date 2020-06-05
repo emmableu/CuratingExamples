@@ -42,10 +42,10 @@ class CodeGraph:
             # Record current node, children order.
             try:
                 value = json_code['value']
-                if value in system_values:
-                    node = Node(json_code['type'] + "_" + json_code['value'], parent=parent_node, order=order)
-                else:
-                    node = Node(json_code['type'], parent=parent_node, order=order)
+                # if value in system_values:
+                node = Node(json_code['type'] + "_" + json_code['value'], parent=parent_node, order=order)
+                # else:
+                #     node = Node(json_code['type'], parent=parent_node, order=order)
             except:
                 node = Node(json_code['type'], parent=parent_node, order=order)
 
@@ -154,7 +154,7 @@ def get_json():
 
 
 # json_file = "170315872.xml.json"
-# codegraph = CodeGraph("/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets/data/SnapJSON_413/177246730.xml.json", [[2,3], [2,1]])
+codegraph = CodeGraph("/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets/platformer_jump.json", [[2,3], [2,1]])
 # data = codegraph.collect_all_pqgrams( [[2,3], [2,1]])
 # print(data)
 
