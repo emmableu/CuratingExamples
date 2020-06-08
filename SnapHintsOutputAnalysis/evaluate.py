@@ -5,11 +5,11 @@ import copy
 import matplotlib.pyplot as plt
 plt.rcParams["font.family"] ="Times New Roman"
 plt.rcParams["font.size"] = 22
-plt.figure(figsize=(10,10))
+plt.figure(figsize=(12,10))
 
 behavior_labels = ["keymove", "jump", "cochangescore", "movetomouse", "costopall"]
 # behavior_labels = ["cochangescore", "keymove", "jump",  "movetomouse", "costopall"]
-# behavior_labels = ["cochangescore"]
+behavior_labels = ["costopall"]
 # behavior_labels = ["jump"]
 # behavior_labels = ["keymove", "movetomouse", "moveanimate", "costopall", "jump"]
 # behavior_labels = ["costopall", "movetomouse",  "jump", "cochangescore","keymove"]
@@ -216,7 +216,7 @@ def snaphints_crossvalidation():
 
 
     # save_obj(behavior_results, "svm_behaviors13_34gram_moveanimate", root_dir, "SnapHintsOutputAnalysis")
-    save_obj(behavior_results, "svm_behaviors15_conjunction_DPM1", root_dir, "SnapHintsOutputAnalysis")
+    save_obj(behavior_results, "svm_behaviors15_conjunction_DPM2", root_dir, "SnapHintsOutputAnalysis")
     return behavior_results
 
 
@@ -225,28 +225,29 @@ def snaphints_crossvalidation():
 
 
 
-snaphints_crossvalidation()
+# snaphints_crossvalidation()
 
 behavior_labels_to_show = ["keymove", "jump", "cochangescore", "movetomouse", "costopall"]
 # behavior_labels_to_show = ["keymove", "jump", "cochangescore", "movetomouse", "moveanimate"]
 behavior_labels_to_show = list(reversed(behavior_labels_to_show))
-methods_to_show = ['All', 'DPM', "AndAllFull", "AndAll"]
+# methods_to_show = ['All', 'AndAllComplete-3-4Gram']
 # methods_to_show = ['PQGra', 'DPM', "AndAllFull", "AndAll"]
-# methods_to_show = ['OneHot2', 'Neighbor', 'All']
+methods_to_show = ['OneHot2', 'Neighbor', 'All']
 methods_to_show = list(reversed(methods_to_show))
 label_dict = {'AllOneHot': "One-hot encoding",
-              'OneHot2': "One-hot encoding",
+              'OneHot2': "Bag Of Words",
             'Neighbor': 'Neighborhood',
-                'All': 'All PQGrams',
+                'All': 'pq-Gram',
+                'AndAllComplete-3-4Gram': 'pq-Gram Operator',
                 'All-6-3': 'PQGrams 6-3',
               'DPM': 'PQGram DPM',
               'AndAllFull': 'All-based Conjunctions',
               'AndAll': 'DPM-based Conjunctions'}
 
 if len(methods_to_show) == 3:
-    label_dict = {'OneHot2': "One-hot encoding",
+    label_dict = {'OneHot2': "Bag Of Words",
                   'Neighbor': 'Neighborhood',
-                  'All': 'PQGrams',
+                  'All': 'pq-Grams',
                   'All-6-3': 'PQGrams 6-3',
                   'DPM': 'PQGram DPM',
                   'AndAllFull': 'All-based Conjunctions',
@@ -258,7 +259,8 @@ color_dict = { 'AllOneHot': "#D9AE80",
                'OneHot2': '#D9AE80',
                'DPM': '#8BD9C3',
               'AndAllFull': '#45B3BF',
-              'AndAll': '#1FA2BF'}
+              'AndAll': '#1FA2BF',
+               'AndAllComplete-3-4Gram': '#1FA2BF'}
 
 behavior_dict = {
     "keymove": "KeyboardMove (#n = 190/413)",
@@ -272,13 +274,13 @@ behavior_dict = {
 def grouped_bar_chart():
     # set width of bar
     # behavior_results = load_obj("svm_behaviors9", root_dir, "SnapHintsOutputAnalysis")
-    behavior_results = load_obj("svm_behaviors10", root_dir, "SnapHintsOutputAnalysis")
+    behavior_results = load_obj("svm_behaviors15_conjunction_DPM1", root_dir, "SnapHintsOutputAnalysis")
     barWidth = 0.13
     # print(behavior_results)
     def get_bar(index):
         bars = []
         for behavior in behavior_labels_to_show:
-            if methods_to_show[index] == "OneHot2" or methods_to_show[index]== "Neighbor":
+            if methods_to_show[index] == "OneHot2" or methods_to_show[index]== "Neighbor" or methods_to_show[index] == "All":
                 behavior_results2 = load_obj("svm_behaviors10", root_dir, "SnapHintsOutputAnalysis")
                 bars.append(behavior_results2.at[(behavior, methods_to_show[index]), "f1"])
             else:
@@ -339,8 +341,8 @@ def grouped_bar_chart():
     # Create legend & Show graphic
     plt.title("F1 Scores")
     # fig.tight_layout()
-    plt.savefig("behaviors_5")
+    plt.savefig("f1_grams")
     plt.show()
 
 
-# grouped_bar_chart()
+grouped_bar_chart()
