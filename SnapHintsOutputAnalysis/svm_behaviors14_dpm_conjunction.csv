@@ -1,0 +1,5 @@
+,,tp,tn,fp,fn,accuracy,precision,recall,f1,auc
+movetomouse,AndAllComplete-3-4Gram,40.0,390.0,2.0,8.0,0.98,0.95,0.83,0.89,0.91
+moveanimate,AndAllComplete-3-4Gram,40.0,358.0,29.0,13.0,0.9,0.58,0.75,0.66,0.84
+costopall,AndAllComplete-3-4Gram,19.0,418.0,0.0,3.0,0.99,1.0,0.86,0.93,0.93
+jump,AndAllComplete-3-4Gram,75.0,359.0,3.0,3.0,0.99,0.96,0.96,0.96,0.98

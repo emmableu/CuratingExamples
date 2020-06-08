@@ -1,0 +1,6 @@
+,,tp,tn,fp,fn,accuracy,precision,recall,f1,auc
+keymove,AndAllComplete-3-4Gram,190.0,220.0,30.0,0.0,0.93,0.86,1.0,0.93,0.94
+jump,AndAllComplete-3-4Gram,75.0,360.0,2.0,3.0,0.99,0.97,0.96,0.97,0.98
+cochangescore,AndAllComplete-3-4Gram,96.0,236.0,88.0,20.0,0.75,0.52,0.83,0.64,0.78
+movetomouse,AndAllComplete-3-4Gram,40.0,389.0,3.0,8.0,0.98,0.93,0.83,0.88,0.91
+costopall,AndAllComplete-3-4Gram,16.0,418.0,0.0,6.0,0.99,1.0,0.73,0.84,0.86

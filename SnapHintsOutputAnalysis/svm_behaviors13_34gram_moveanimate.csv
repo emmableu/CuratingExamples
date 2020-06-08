@@ -1,0 +1,2 @@
+,,tp,tn,fp,fn,accuracy,precision,recall,f1,auc
+jump,AndAllComplete-3-4Gram,75.0,359.0,3.0,3.0,0.99,0.96,0.96,0.96,0.98
