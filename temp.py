@@ -77,8 +77,8 @@ for id in game_label.index:
 
 
 save_obj(new_game_label, "game_label_413", submission_dir)
-
-
+#
+#
 
 game_label_csv = pd.read_csv(submission_dir + "/game_label_413.csv")
 pid_list = load_obj("pid", submission_dir)
@@ -90,7 +90,7 @@ pid_list = [str(pid) for pid in pid_list]
 game_label_names = ['keymove', 'jump', 'costopall', 'wrap',  'cochangescore', 'movetomouse', 'moveanimate']
 for game_label in game_label_names:
     pid_folder = root_dir + "/Datasets/data/SnapASTData/Data_413/cv/test_size0.1/"
-    write_folder = "/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/submitted/" + game_label + "/cv/"
+    write_folder = "/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/csedm20/" + game_label + "/cv/"
     for i in range(10):
         pid_fold = pid_folder + "fold" + str(i)
         write_fold = write_folder + "fold" + str(i)
@@ -115,6 +115,9 @@ for game_label in game_label_names:
                     yes_no_train_test_pid.at['test', 'no'].append(data_pid)
         yes_no_train_test_pid.index.name = 'partition'
         save_obj(yes_no_train_test_pid, "yes_no_train_test_pid", write_fold)
+
+
+
 
 
 

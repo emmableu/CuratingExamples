@@ -7,9 +7,9 @@ plt.rcParams["font.family"] ="Times New Roman"
 plt.rcParams["font.size"] = 22
 plt.figure(figsize=(12,10))
 
-behavior_labels = ["keymove", "jump", "cochangescore", "movetomouse", "costopall"]
+behavior_labels = [ "jump"]
 # behavior_labels = ["cochangescore", "keymove", "jump",  "movetomouse", "costopall"]
-behavior_labels = ["costopall"]
+# behavior_labels = ["cochangescore"]
 # behavior_labels = ["jump"]
 # behavior_labels = ["keymove", "movetomouse", "moveanimate", "costopall", "jump"]
 # behavior_labels = ["costopall", "movetomouse",  "jump", "cochangescore","keymove"]
@@ -155,7 +155,7 @@ def get_support_based_selected_feature_index(snaphints_dir, support_diff):
 # methods = ['Neighbor', 'AndAllFull', 'AndAll','DPM', 'All', 'And']
 # methods = ['AllOneHot', "OneHot2", 'Neighbor', 'All', 'DPM', "AndAllFull", "AndAll", "All-6-3"]
 # methods = ['AllOneHot', 'Neighbor']
-methods = ['AndAllComplete-3-4Gram']
+# methods = ['AndAllComplete-3-4GramCSEDM']
 
 
 # def visualize_conjunction():
@@ -181,7 +181,7 @@ def snaphints_crossvalidation():
             y_test_total = []
             y_pred_total = []
             for fold in range(10):
-                snaphints_dir = "/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/submitted/" \
+                snaphints_dir = "/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/csedm20/" \
                                 + behavior + "/cv/fold" + str(fold) + "/SnapHints" + method+ "/"
 
                 feature_select = True
@@ -216,7 +216,7 @@ def snaphints_crossvalidation():
 
 
     # save_obj(behavior_results, "svm_behaviors13_34gram_moveanimate", root_dir, "SnapHintsOutputAnalysis")
-    save_obj(behavior_results, "svm_behaviors15_conjunction_DPM2", root_dir, "SnapHintsOutputAnalysis")
+    save_obj(behavior_results, "svm_behaviors17_conjunction", root_dir, "SnapHintsOutputAnalysis")
     return behavior_results
 
 
@@ -227,12 +227,12 @@ def snaphints_crossvalidation():
 
 # snaphints_crossvalidation()
 
-behavior_labels_to_show = ["keymove", "jump", "cochangescore", "movetomouse", "costopall"]
+behavior_labels_to_show = ["keymove", "cochangescore", "jump",  "movetomouse", "costopall"]
 # behavior_labels_to_show = ["keymove", "jump", "cochangescore", "movetomouse", "moveanimate"]
 behavior_labels_to_show = list(reversed(behavior_labels_to_show))
-# methods_to_show = ['All', 'AndAllComplete-3-4Gram']
+methods_to_show = ['All', 'AndAllComplete-3-4Gram']
 # methods_to_show = ['PQGra', 'DPM', "AndAllFull", "AndAll"]
-methods_to_show = ['OneHot2', 'Neighbor', 'All']
+# methods_to_show = ['OneHot2', 'Neighbor', 'All']
 methods_to_show = list(reversed(methods_to_show))
 label_dict = {'AllOneHot': "One-hot encoding",
               'OneHot2': "Bag Of Words",
@@ -264,7 +264,7 @@ color_dict = { 'AllOneHot': "#D9AE80",
 
 behavior_dict = {
     "keymove": "KeyboardMove (#n = 190/413)",
-    "cochangescore": "CollisionChangeVar (#n = 117/413)",
+    "cochangescore": "CollisionChangeVar (#n = 116/413)",
     "jump":"PlatformerJump (#n = 78/413)",
     "movetomouse":"MoveWithMouse (#n = 48/413)",
     "costopall":"CollisionStopGame (#n = 22/413)",
@@ -321,7 +321,7 @@ def grouped_bar_chart():
 
     for i in range(len(methods_to_show)):
         autolabel(bar_plots[i])
-    plt.ylabel('programming behaviors')
+    plt.ylabel('Game Behaviors')
     plt.yticks([r + barWidth for r in range(len(bars[0]))],  ([behavior_dict[i] for i in behavior_labels_to_show]))
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
@@ -341,7 +341,7 @@ def grouped_bar_chart():
     # Create legend & Show graphic
     plt.title("F1 Scores")
     # fig.tight_layout()
-    plt.savefig("f1_grams")
+    plt.savefig("f1_operators")
     plt.show()
 
 
