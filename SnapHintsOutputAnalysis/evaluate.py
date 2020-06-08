@@ -7,8 +7,9 @@ plt.rcParams["font.family"] ="Times New Roman"
 plt.rcParams["font.size"] = 22
 plt.figure(figsize=(10,10))
 
-behavior_labels = ["keymove", "jump", "cochangescore", "movetomouse", "moveanimate", "costopall"]
+# behavior_labels = ["keymove", "jump", "cochangescore", "movetomouse", "moveanimate", "costopall"]
 # behavior_labels = ["jump"]
+behavior_labels = ["cochangescore"]
 # behavior_labels = ["costopall", "movetomouse",  "jump", "cochangescore","keymove"]
 
 def get_yes_no(data, yes_no_group):
@@ -17,31 +18,45 @@ def get_yes_no(data, yes_no_group):
     yes_x = np.array(yes_x).transpose()
     return yes_x
 
-def get_x_y_train_snaphints(snaphints_dir):
+def get_x_y_train_snaphints(snaphints_dir, support_based_only = False):
     data = pd.read_csv(snaphints_dir + "train.csv", index_col = 0)
     yes_x = get_yes_no(data, "yes")
     no_x = get_yes_no(data, "no")
     x = np.vstack((yes_x, no_x))
     y = np.hstack((np.array([1]*yes_x.shape[0]), np.array([0]*no_x.shape[0])))
+    if not support_based_only:
+        # diff_params = [0.1, 0.2, 0.25, 0.3, 0.35, 0.4, 0.5]
+        support_diffs = [0.3]
+        diff_params = [0.4]
+        # yes_params = [0.3, 0.4, 0.5]
+        yes_params = [0.3]
+        # confidence_params = [0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95]
+        confidence_params = [0.8]
+        # feature_grids = [(x, y, z) for x in diff_params for y in yes_params for z in confidence_params]
+        max_f1 = 0
+        x_orig = copy.deepcopy(x)
+        for support_diff in support_diffs:
+            for diff_param in diff_params:
+                for yes_param in yes_params:
+                    for confidence_param in confidence_params:
+                        feature_grid = [support_diff, diff_param, yes_param, confidence_param]
+                        print(feature_grid)
+                        selected_features = get_selected_feature_index(snaphints_dir, feature_grid[0], feature_grid[1], feature_grid[2], feature_grids[3])
+                        x = x_orig[:,selected_features]
+                        f1 = svm_linear.model_cross_val_predict(x, y)['f1']
+                        if f1 >= max_f1:
+                            best_selected_features = selected_features
+                            selected_feature_grid = feature_grid
+                            max_f1 = f1
+                            if f1 > 0.9:
+                                break
+        return x_orig[:, best_selected_features], y, best_selected_features, selected_feature_grid, max_f1
 
-    diff_params = [0.1, 0.2, 0.25, 0.3, 0.35, 0.4, 0.5]
-    yes_params = [0.3, 0.4, 0.5]
-    yes_params = [0.3]
-    confidence_params = [0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95]
-    confidence_params = [0.6]
-    feature_grids = [(x, y, z) for x in diff_params for y in yes_params for z in confidence_params]
-    max_f1 = 0
-    x_orig = copy.deepcopy(x)
-    for feature_grid in feature_grids:
-        print(feature_grid)
-        selected_features = get_selected_feature_index(snaphints_dir, feature_grid[0], feature_grid[1], feature_grid[2])
-        x = x_orig[:,selected_features]
-        f1 = svm_linear.model_cross_val_predict(x, y)['f1']
-        if f1 >= max_f1:
-            best_selected_features = selected_features
-            selected_feature_grid = feature_grid
-            max_f1 = f1
-    return x_orig[:,best_selected_features], y, best_selected_features, selected_feature_grid, max_f1
+    else:
+        support_diff = 0.4
+        selected_features = get_support_based_selected_feature_index(snaphints_dir, support_diff)
+        return x[:, selected_features], y, selected_features
+
 
 
 def get_x_y_test_snaphints(snaphints_dir, selected_features):
@@ -54,6 +69,17 @@ def get_x_y_test_snaphints(snaphints_dir, selected_features):
     return x, y
 
 
+
+def get_x_y_split_snaphints(snaphints_dir, selected_features, train_data = False):
+    data = pd.read_csv(snaphints_dir + "train.csv", index_col = 0)
+    yes_x = get_yes_no(data, "yes")
+    no_x = get_yes_no(data, "no")
+    yes_x = yes_x[:,selected_features]
+    no_x = no_x[:, selected_features]
+    return yes_x, no_x
+
+
+
 def get_x_y_snaphints(snaphints_dir, partition):
     data = pd.read_csv(snaphints_dir + partition + ".csv", index_col = 0)
     yes_x = get_yes_no(data, "yes")
@@ -64,19 +90,43 @@ def get_x_y_snaphints(snaphints_dir, partition):
 
 
 
-def get_selected_feature_index(snaphints_dir, jd_diff, jd_yes_bar, confidence_bar):
+def get_selected_feature_index(snaphints_dir, support_diff, jd_diff, jd_yes_bar, confidence_bar):
     features = pd.read_csv(snaphints_dir + "/features.csv")
     selected_features = []
-    for fid in features.index:
+    for fid in tqdm(features.index):
         jd_yes = features.at[fid, 'jdYes']
         jd_no = features.at[fid, 'jdNo']
         confidence = features.at[fid, 'confidenceYes']
-        if jd_yes - jd_no >= jd_diff:
+        support_yes = features.at[fid, 'supportA']
+        support_no = features.at[fid, 'supportB']
+        # if jd_yes == -1:
+        #     selected_features.append(fid)
+        if support_yes - support_no >= support_diff:
+            # print("support_yes - support_no > 0.3")
+            # print(features.at[fid, "name"])
+            selected_features.append(fid)
+        elif jd_yes - jd_no >= jd_diff:
             if jd_yes >= jd_yes_bar:
+                # print("jd_yes - jd_no >= jd_diff and jd_yes >= jd_yes_bar")
+                # print("jd_yes: ", jd_yes, "jd_no", jd_no, features.at[fid, "name"])
                 selected_features.append(fid)
             elif confidence >= confidence_bar:
                 selected_features.append(fid)
-        elif jd_yes == -1:
+
+    return np.array(selected_features)
+
+
+
+
+
+
+def get_support_based_selected_feature_index(snaphints_dir, support_diff):
+    features = pd.read_csv(snaphints_dir + "/features.csv")
+    selected_features = []
+    for fid in tqdm(features.index):
+        support_yes = features.at[fid, 'supportA']
+        support_no = features.at[fid, 'supportB']
+        if support_yes - support_no >= support_diff:
             selected_features.append(fid)
     return np.array(selected_features)
 
@@ -89,12 +139,23 @@ def get_selected_feature_index(snaphints_dir, jd_diff, jd_yes_bar, confidence_ba
 
 
 
-
-
-
 # methods = ['Neighbor', 'AndAllFull', 'AndAll','DPM', 'All', 'And']
-methods = ['AllOneHot', 'Neighbor', 'All', 'DPM', "AndAllFull", "AndAll"]
+# methods = ['AllOneHot', "OneHot2", 'Neighbor', 'All', 'DPM', "AndAllFull", "AndAll", "All-6-3"]
 # methods = ['AllOneHot', 'Neighbor']
+methods = ['AndAllComplete2']
+
+
+# def visualize_conjunction():
+#     snaphints_dir = "/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/submitted/cochangescore/cv/fold1/SnapHintsAndAllComplete2/"
+#     yes_x, no_x = get_x_y_split_snaphints(snaphints_dir, [21450, 48436, 48394])
+#     # print(x.shape)
+#     # print(y.shape)
+#     save_obj(yes_x, "yes_x", root_dir)
+#     save_obj(no_x, "no_x", root_dir)
+#
+#
+# visualize_conjunction()
+
 
 
 
@@ -106,31 +167,30 @@ def snaphints_crossvalidation():
         for method in methods:
             y_test_total = []
             y_pred_total = []
-            # try:
             for fold in range(10):
                 snaphints_dir = "/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/submitted/" \
                                 + behavior + "/cv/fold" + str(fold) + "/SnapHints" + method + "/"
-                # X_train, y_train, best_features, best_grid, best_f1 = get_x_y_train_snaphints(snaphints_dir)
-                # X_test, y_test = get_x_y_test_snaphints(snaphints_dir, best_features)
-                # print("bestfeature: ", best_features)
-                # print("bestf1: ", best_f1)
 
 
-                X_train, y_train = get_x_y_snaphints(snaphints_dir, "train")
-                X_test, y_test = get_x_y_snaphints(snaphints_dir, "test")
-                # y_test_total.extend(y_test)
-                y_test_total.extend(y_train)
-                y_pred  = svm_linear.get_y_pred(X_train,  X_train, y_train)
-                # y_pred  = svm_linear.get_y_pred(X_train,  X_test, y_train)
-                # print(y_pred)
-                # for i, y in enumerate(y_pred):
-                #     if y_pred[i] != y_test[i]:
-                #         print(i - Counter(y_test)[1]+1)
+                feature_select = True
+                if feature_select:
+                    X_train, y_train, best_features, best_grid, best_f1 = get_x_y_train_snaphints(snaphints_dir, support_based_only = False)
+                    # X_train, y_train, best_features = get_x_y_train_snaphints(snaphints_dir, support_based=True)
+                    X_test, y_test = get_x_y_test_snaphints(snaphints_dir, best_features)
+                    # print("bestfeature: ", best_features)
+                    # print("x_train shape: ", X_train.shape)
+                    # print("bestf1: ", best_f1)
+                else:
+                    X_train, y_train = get_x_y_snaphints(snaphints_dir, "train")
+                    X_test, y_test = get_x_y_snaphints(snaphints_dir, "test")
+                y_test_total.extend(y_test)
+                print(len(y_test_total))
+                # y_test_total.extend(y_train)
+                # y_pred  = svm_linear.get_y_pred(X_train,  X_train, y_train)
+                y_pred  = svm_linear.get_y_pred(X_train,  X_test, y_train)
                 y_pred_total.extend(y_pred)
-                # performance_temp = svm_linear.get_matrix(np.array(y_test_total), np.array(y_pred_total))
-            # except:
-            #     continue
-                # print(performance_temp)
+                performance_temp = svm_linear.get_matrix(y_test_total, y_pred_total)
+
             y_pred_total = np.array(y_pred_total)
             y_test_total = np.array(y_test_total)
             print(y_pred_total.shape)
@@ -142,7 +202,7 @@ def snaphints_crossvalidation():
             print(behavior_results)
 
 
-    save_obj(behavior_results, "training_scores_svm_behaviors9", root_dir, "SnapHintsOutputAnalysis")
+    save_obj(behavior_results, "svm_behaviors11_cochangescore", root_dir, "SnapHintsOutputAnalysis")
     return behavior_results
 
 
@@ -157,19 +217,23 @@ behavior_labels_to_show = ["keymove", "jump", "cochangescore", "movetomouse", "m
 # behavior_labels_to_show = ["keymove", "jump", "cochangescore", "movetomouse", "moveanimate"]
 behavior_labels_to_show = list(reversed(behavior_labels_to_show))
 methods_to_show = ['All', 'DPM', "AndAllFull", "AndAll"]
-# methods_to_show = ['AllOneHot', 'Neighbor', 'All']
+# methods_to_show = ['PQGra', 'DPM', "AndAllFull", "AndAll"]
+methods_to_show = ['OneHot2', 'Neighbor', 'All']
 methods_to_show = list(reversed(methods_to_show))
 label_dict = {'AllOneHot': "One-hot encoding",
+              'OneHot2': "One-hot encoding",
             'Neighbor': 'Neighborhood',
                 'All': 'All PQGrams',
+                'All-6-3': 'PQGrams 6-3',
               'DPM': 'PQGram DPM',
               'AndAllFull': 'All-based Conjunctions',
               'AndAll': 'DPM-based Conjunctions'}
 
 if len(methods_to_show) == 3:
-    label_dict = {'AllOneHot': "One-hot encoding",
+    label_dict = {'OneHot2': "One-hot encoding",
                   'Neighbor': 'Neighborhood',
                   'All': 'PQGrams',
+                  'All-6-3': 'PQGrams 6-3',
                   'DPM': 'PQGram DPM',
                   'AndAllFull': 'All-based Conjunctions',
                   'AndAll': 'DPM-based Conjunctions'}
@@ -177,7 +241,8 @@ if len(methods_to_show) == 3:
 color_dict = { 'AllOneHot': "#D9AE80",
             'Neighbor': '#F2B6BC',
             'All': '#D6F2C2',
-              'DPM': '#8BD9C3',
+               'OneHot2': '#D9AE80',
+               'DPM': '#8BD9C3',
               'AndAllFull': '#45B3BF',
               'AndAll': '#1FA2BF'}
 
@@ -185,13 +250,17 @@ color_dict = { 'AllOneHot': "#D9AE80",
 def grouped_bar_chart():
     # set width of bar
     # behavior_results = load_obj("svm_behaviors9", root_dir, "SnapHintsOutputAnalysis")
-    behavior_results = load_obj("training_scores_svm_behaviors9", root_dir, "SnapHintsOutputAnalysis")
+    behavior_results = load_obj("svm_behaviors8", root_dir, "SnapHintsOutputAnalysis")
     barWidth = 0.13
     # print(behavior_results)
     def get_bar(index):
         bars = []
         for behavior in behavior_labels_to_show:
-            bars.append(behavior_results.at[(behavior, methods_to_show[index]), "f1"])
+            if methods_to_show[index] == "OneHot2" or methods_to_show[index]== "Neighbor":
+                behavior_results2 = load_obj("svm_behaviors10", root_dir, "SnapHintsOutputAnalysis")
+                bars.append(behavior_results2.at[(behavior, methods_to_show[index]), "f1"])
+            else:
+                bars.append(behavior_results.at[(behavior, methods_to_show[index]), "f1"])
         return bars
 
     bars = []
@@ -246,9 +315,9 @@ def grouped_bar_chart():
     ax.legend(reversed_handles, reversed_labels, loc='upper center', bbox_to_anchor=(0.5, -0.05), ncol = 2)
 
     # Create legend & Show graphic
-    plt.title("Training F1")
+    plt.title("F1 Scores")
     # fig.tight_layout()
-    plt.savefig("behaviors_3")
+    plt.savefig("behaviors_4")
     plt.show()
 
 

@@ -154,7 +154,7 @@ def get_json():
 
 
 # json_file = "170315872.xml.json"
-codegraph = CodeGraph("/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets/platformer_jump.json", [[2,3], [2,1]])
+# codegraph = CodeGraph("/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets/keymove.json", [[2,3], [2,1]])
 # data = codegraph.collect_all_pqgrams( [[2,3], [2,1]])
 # print(data)
 
