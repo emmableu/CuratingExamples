@@ -181,7 +181,7 @@ def snaphints_crossvalidation():
             y_test_total = []
             y_pred_total = []
             for fold in range(10):
-                snaphints_dir = "/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/csedm20/" \
+                snaphints_dir = "/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/submitted/" \
                                 + behavior + "/cv/fold" + str(fold) + "/SnapHints" + method+ "/"
 
                 feature_select = True
