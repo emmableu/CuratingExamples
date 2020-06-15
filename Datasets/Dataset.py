@@ -1,5 +1,5 @@
 import sys
-sys.path.append("/Users/wwang33/Documents/IJAIED20/CuratingExamples/my_module")
+sys.path.append("../../my_module")
 from save_load_pickle import *
 from translation_dict import *
 import pandas as pd
@@ -15,7 +15,7 @@ sys.path.append(root)
 # from ActiveLearnActionData import *
 import pickle
 import os
-sys.path.append('/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets')
+sys.path.append('..')
 from Dataset import *
 
 import pandas as pd
