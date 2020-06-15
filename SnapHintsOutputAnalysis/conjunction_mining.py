@@ -79,7 +79,7 @@ def main():
             behavior_results.loc[(behavior, method)] = performance
             print(behavior_results)
 
-            save_obj(behavior_results, "NestedCVResult3", root_dir, "SnapHintsOutputAnalysis")
+            save_obj(behavior_results, "NestedCVResult3", ".")
     return behavior_results
 
 
