@@ -30,7 +30,7 @@ def main():
                 X_all, y_all = get_x_y_snaphints(snaphints_dir, "train")
                 X_test, y_test = get_x_y_snaphints(snaphints_dir, "test")
                 simple_thres_grid = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
-                # simple_thres_grid = [0]
+                # simple_thres_grid = [0.2]
                 max_f1_simple = 0
                 best_thres_simple = -1
                 for s_thres in simple_thres_grid:
