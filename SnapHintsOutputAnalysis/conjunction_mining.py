@@ -18,7 +18,7 @@ def main():
             y_pred_total = []
 
             for fold in range(10):
-                snaphints_dir = '../../Datasets/data/SnapHintsData/submitted/'\
+                snaphints_dir = '../Datasets/data/SnapHintsData/submitted/'\
                                 + behavior + "/cv/fold" + str(fold) + "/SnapHintsAllAllFinalSupportOver0/"
                 X_all, y_all = get_x_y_snaphints(snaphints_dir, "train")
                 X_test, y_test = get_x_y_snaphints(snaphints_dir, "test")
