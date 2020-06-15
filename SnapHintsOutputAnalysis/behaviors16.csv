@@ -1,6 +1,6 @@
 ,,tp,tn,fp,fn,accuracy,precision,recall,f1,auc
-cochangescore,AndAllComplete,44.0,235.0,89.0,72.0,0.63,0.33,0.38,0.35,0.55
-keymove,AndAllComplete,163.0,95.0,155.0,27.0,0.59,0.51,0.86,0.64,0.62
-jump,AndAllComplete,78.0,292.0,70.0,0.0,0.84,0.53,1.0,0.69,0.9
-movetomouse,AndAllComplete,36.0,332.0,60.0,12.0,0.84,0.38,0.75,0.5,0.8
-costopall,AndAllComplete,18.0,418.0,0.0,4.0,0.99,1.0,0.82,0.9,0.91
+cochangescore,AllAllFinalSupportOver0,82.0,252.0,72.0,34.0,0.76,0.53,0.71,0.61,0.74
+keymove,AllAllFinalSupportOver0,177.0,209.0,41.0,13.0,0.88,0.81,0.93,0.87,0.88
+jump,AllAllFinalSupportOver0,64.0,335.0,27.0,14.0,0.91,0.7,0.82,0.76,0.87
+movetomouse,AllAllFinalSupportOver0,38.0,385.0,7.0,10.0,0.96,0.84,0.79,0.82,0.89
+costopall,AllAllFinalSupportOver0,21.0,418.0,0.0,1.0,1.0,1.0,0.95,0.98,0.98

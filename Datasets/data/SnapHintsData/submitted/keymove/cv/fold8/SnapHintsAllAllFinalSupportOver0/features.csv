@@ -1,0 +1,270 @@
+name,id,supportA,supportB,jdYes,jdNo,confidenceYes
+"0.57: [{evaluateCustomBlock:userDef}, *]",0,0.5689655172413793,0.46153846153846156,-1.0,-1.0,-1.0
+"0.25: [{getCostumeIdx}, *]",1,0.25287356321839083,0.18974358974358974,-1.0,-1.0,-1.0
+"0.49: [{literal:Stage}, *]",2,0.4885057471264368,0.39487179487179486,-1.0,-1.0,-1.0
+"0.46: [{literal:all}, *]",3,0.45977011494252873,0.29743589743589743,-1.0,-1.0,-1.0
+"0.23: [{literal:back}, *]",4,0.22988505747126436,0.2153846153846154,-1.0,-1.0,-1.0
+"0.19: [{literal:brightness}, *]",5,0.1896551724137931,0.15384615384615385,-1.0,-1.0,-1.0
+"0.22: [{literal:color}, *]",6,0.21839080459770116,0.20512820512820512,-1.0,-1.0,-1.0
+"0.55: [{literal:down arrow}, *]",7,0.5459770114942529,0.11794871794871795,-1.0,-1.0,-1.0
+"0.45: [{literal:ghost}, *]",8,0.4540229885057471,0.29743589743589743,-1.0,-1.0,-1.0
+"0.89: [{literal:left arrow}, *]",9,0.8850574712643678,0.15384615384615385,-1.0,-1.0,-1.0
+"0.29: [{literal:mouse-pointer}, *]",10,0.28735632183908044,0.3128205128205128,-1.0,-1.0,-1.0
+"0.89: [{literal:right arrow}, *]",11,0.8850574712643678,0.15897435897435896,-1.0,-1.0,-1.0
+"0.53: [{literal:space}, *]",12,0.5344827586206896,0.3076923076923077,-1.0,-1.0,-1.0
+"0.79: [{literal:up arrow}, *]",13,0.7873563218390804,0.14358974358974358,-1.0,-1.0,-1.0
+"1.00: [{literal:userDef}, *]",14,1.0,0.9897435897435898,-1.0,-1.0,-1.0
+"0.21: [{reportMouseDown}, *]",15,0.20689655172413793,0.14871794871794872,-1.0,-1.0,-1.0
+"0.14: [{reportMouseX}, *]",16,0.13793103448275862,0.14871794871794872,-1.0,-1.0,-1.0
+"0.12: [{reportMouseY}, *]",17,0.1206896551724138,0.10256410256410256,-1.0,-1.0,-1.0
+"0.51: [{script}, *]",18,0.5114942528735632,0.48717948717948717,-1.0,-1.0,-1.0
+"0.78: [{var:userDef}, *]",19,0.7758620689655172,0.5230769230769231,-1.0,-1.0,-1.0
+"0.97: [{varDec:userDef}, *]",20,0.9712643678160919,0.8974358974358975,-1.0,-1.0,-1.0
+"0.86: [{varMenu:userDef}, *]",21,0.8620689655172413,0.6205128205128205,-1.0,-1.0,-1.0
+"0.42: [{xPosition}, *]",22,0.41954022988505746,0.21025641025641026,-1.0,-1.0,-1.0
+"0.40: [{yPosition}, *]",23,0.40229885057471265,0.19487179487179487,-1.0,-1.0,-1.0
+"0.17: [script, {bounceOffEdge}, *]",24,0.16666666666666666,0.17435897435897435,-1.0,-1.0,-1.0
+"0.17: [script, {clearEffects}, *]",25,0.1724137931034483,0.16923076923076924,-1.0,-1.0,-1.0
+"0.15: [script, {doResetTimer}, *]",26,0.14942528735632185,0,-1.0,-1.0,-1.0
+"0.24: [script, {doStopAllSounds}, *]",27,0.23563218390804597,0.1794871794871795,-1.0,-1.0,-1.0
+"0.52: [script, {doWearNextCostume}, *]",28,0.5172413793103449,0.4307692307692308,-1.0,-1.0,-1.0
+"0.54: [script, {evaluateCustomBlock:userDef}, *]",29,0.5402298850574713,0.4256410256410256,-1.0,-1.0,-1.0
+"0.20: [reportEquals, {getCostumeIdx}, *]",30,0.20114942528735633,0.15384615384615385,-1.0,-1.0,-1.0
+"0.85: [script, {hide}, *]",31,0.8505747126436781,0.7384615384615385,-1.0,-1.0,-1.0
+"0.18: [reportAttributeOf, {literal:Stage}, *]",32,0.1839080459770115,0,-1.0,-1.0,-1.0
+"0.43: [reportKeyPressed, {literal:down arrow}, *]",33,0.42528735632183906,0,-1.0,-1.0,-1.0
+"0.37: [reportTouchingObject, {literal:edge}, *]",34,0.367816091954023,0.11282051282051282,-1.0,-1.0,-1.0
+"0.74: [reportKeyPressed, {literal:left arrow}, *]",35,0.7413793103448276,0,-1.0,-1.0,-1.0
+"0.22: [reportTouchingObject, {literal:mouse-pointer}, *]",36,0.22413793103448276,0.19487179487179487,-1.0,-1.0,-1.0
+"0.74: [reportKeyPressed, {literal:right arrow}, *]",37,0.735632183908046,0.10256410256410256,-1.0,-1.0,-1.0
+"0.36: [reportKeyPressed, {literal:space}, *]",38,0.3620689655172414,0.13333333333333333,-1.0,-1.0,-1.0
+"0.65: [reportKeyPressed, {literal:up arrow}, *]",39,0.6494252873563219,0,-1.0,-1.0,-1.0
+"0.82: [reportTouchingObject, {literal:userDef}, *]",40,0.8218390804597702,0.358974358974359,-1.0,-1.0,-1.0
+"0.57: [reportRandom, {literal:userDef}, *]",41,0.5747126436781609,0.4461538461538462,-1.0,-1.0,-1.0
+"0.66: [reportLessThan, {literal:userDef}, *]",42,0.6551724137931034,0.3384615384615385,-1.0,-1.0,-1.0
+"0.39: [reportTouchingColor, {literal:userDef}, *]",43,0.3850574712643678,0.1794871794871795,-1.0,-1.0,-1.0
+"0.47: [reportKeyPressed, {literal:userDef}, *]",44,0.47126436781609193,0.13333333333333333,-1.0,-1.0,-1.0
+"0.24: [reportSum, {literal:userDef}, *]",45,0.23563218390804597,0.17435897435897435,-1.0,-1.0,-1.0
+"0.21: [reportQuotient, {literal:userDef}, *]",46,0.21264367816091953,0.16923076923076924,-1.0,-1.0,-1.0
+"0.43: [reportProduct, {literal:userDef}, *]",47,0.43103448275862066,0.23076923076923078,-1.0,-1.0,-1.0
+"0.35: [reportAttributeOf, {literal:userDef}, *]",48,0.3505747126436782,0.23076923076923078,-1.0,-1.0,-1.0
+"0.28: [reportDifference, {literal:userDef}, *]",49,0.28160919540229884,0.2205128205128205,-1.0,-1.0,-1.0
+"0.67: [reportEquals, {literal:userDef}, *]",50,0.6724137931034483,0.4512820512820513,-1.0,-1.0,-1.0
+"0.99: [script, {receiveGo}, *]",51,0.9885057471264368,0.958974358974359,-1.0,-1.0,-1.0
+"0.48: [script, {removeClone}, *]",52,0.47701149425287354,0.27692307692307694,-1.0,-1.0,-1.0
+"0.17: [reportAnd, {reportMouseDown}, *]",53,0.16666666666666666,0,-1.0,-1.0,-1.0
+"0.45: [customBlock:userDef, {script}, *]",54,0.4482758620689655,0.4205128205128205,-1.0,-1.0,-1.0
+"0.83: [script, {show}, *]",55,0.8333333333333334,0.717948717948718,-1.0,-1.0,-1.0
+"0.60: [reportEquals, {var:userDef}, *]",56,0.603448275862069,0.3641025641025641,-1.0,-1.0,-1.0
+"0.19: [reportDifference, {var:userDef}, *]",57,0.1896551724137931,0.13333333333333333,-1.0,-1.0,-1.0
+"0.10: [reportLetter, {var:userDef}, *]",58,0.10344827586206896,0,-1.0,-1.0,-1.0
+"0.59: [reportLessThan, {var:userDef}, *]",59,0.5862068965517241,0.31794871794871793,-1.0,-1.0,-1.0
+"0.19: [reportSum, {var:userDef}, *]",60,0.1896551724137931,0.1076923076923077,-1.0,-1.0,-1.0
+"0.18: [reportQuotient, {var:userDef}, *]",61,0.1839080459770115,0.1282051282051282,-1.0,-1.0,-1.0
+"0.40: [reportProduct, {var:userDef}, *]",62,0.39655172413793105,0.1794871794871795,-1.0,-1.0,-1.0
+"0.32: [reportLessThan, {xPosition}, *]",63,0.3160919540229885,0,-1.0,-1.0,-1.0
+"0.29: [reportLessThan, {yPosition}, *]",64,0.29310344827586204,0.11282051282051282,-1.0,-1.0,-1.0
+"0.16: [sprite:userDef, script, {clearEffects}, *]",65,0.15517241379310345,0.15897435897435896,-1.0,-1.0,-1.0
+"0.14: [sprite:userDef, script, {doStopAllSounds}, *]",66,0.13793103448275862,0.11794871794871795,-1.0,-1.0,-1.0
+"0.16: [doForever, script, {doWearNextCostume}, *]",67,0.15517241379310345,0.12307692307692308,-1.0,-1.0,-1.0
+"0.21: [doRepeat, script, {doWearNextCostume}, *]",68,0.20689655172413793,0.20512820512820512,-1.0,-1.0,-1.0
+"0.11: [reifyScript, script, {doWearNextCostume}, *]",69,0.11494252873563218,0,-1.0,-1.0,-1.0
+"0.18: [sprite:userDef, script, {doWearNextCostume}, *]",70,0.1839080459770115,0.17435897435897435,-1.0,-1.0,-1.0
+"0.43: [sprite:userDef, script, {evaluateCustomBlock:userDef}, *]",71,0.42528735632183906,0.358974358974359,-1.0,-1.0,-1.0
+"0.13: [doForever, script, {evaluateCustomBlock:userDef}, *]",72,0.13218390804597702,0,-1.0,-1.0,-1.0
+"0.11: [doIfElse, script, {evaluateCustomBlock:userDef}, *]",73,0.10919540229885058,0,-1.0,-1.0,-1.0
+"0.13: [stage:Stage, script, {evaluateCustomBlock:userDef}, *]",74,0.13218390804597702,0,-1.0,-1.0,-1.0
+"0.16: [doIf, script, {evaluateCustomBlock:userDef}, *]",75,0.16091954022988506,0,-1.0,-1.0,-1.0
+"0.11: [doIf, reportEquals, {getCostumeIdx}, *]",76,0.10919540229885058,0.10256410256410256,-1.0,-1.0,-1.0
+"0.80: [sprite:userDef, script, {hide}, *]",77,0.8045977011494253,0.7076923076923077,-1.0,-1.0,-1.0
+"0.48: [doIf, script, {hide}, *]",78,0.4827586206896552,0.27692307692307694,-1.0,-1.0,-1.0
+"0.17: [doForever, script, {hide}, *]",79,0.1724137931034483,0.11282051282051282,-1.0,-1.0,-1.0
+"0.26: [doIfElse, script, {hide}, *]",80,0.25862068965517243,0.13333333333333333,-1.0,-1.0,-1.0
+"0.43: [script, doTellTo, {list}, *]",81,0.43103448275862066,0.36923076923076925,-1.0,-1.0,-1.0
+"0.43: [doTellTo, reifyScript, {list}, *]",82,0.43103448275862066,0.36923076923076925,-1.0,-1.0,-1.0
+"0.43: [script, doTellTo, {literal:Stage}, *]",83,0.43103448275862066,0.36923076923076925,-1.0,-1.0,-1.0
+"0.10: [script, doDeleteFromList, {literal:all}, *]",84,0.10344827586206896,0.1076923076923077,-1.0,-1.0,-1.0
+"0.37: [script, doStopThis, {literal:all}, *]",85,0.3735632183908046,0.22564102564102564,-1.0,-1.0,-1.0
+"0.22: [script, goToLayer, {literal:back}, *]",86,0.21839080459770116,0.20512820512820512,-1.0,-1.0,-1.0
+"0.17: [script, setEffect, {literal:brightness}, *]",87,0.1724137931034483,0,-1.0,-1.0,-1.0
+"0.14: [script, changeEffect, {literal:color}, *]",88,0.14367816091954022,0.15384615384615385,-1.0,-1.0,-1.0
+"0.12: [script, setEffect, {literal:color}, *]",89,0.1206896551724138,0,-1.0,-1.0,-1.0
+"0.13: [script, receiveKey, {literal:down arrow}, *]",90,0.13218390804597702,0,-1.0,-1.0,-1.0
+"0.28: [doIf, reportKeyPressed, {literal:down arrow}, *]",91,0.27586206896551724,0,-1.0,-1.0,-1.0
+"0.13: [doUntil, reportTouchingObject, {literal:edge}, *]",92,0.13218390804597702,0,-1.0,-1.0,-1.0
+"0.10: [reportOr, reportTouchingObject, {literal:edge}, *]",93,0.10344827586206896,0,-1.0,-1.0,-1.0
+"0.16: [doIf, reportTouchingObject, {literal:edge}, *]",94,0.16091954022988506,0,-1.0,-1.0,-1.0
+"0.48: [script, goToLayer, {literal:front}, *]",95,0.47701149425287354,0.38974358974358975,-1.0,-1.0,-1.0
+"0.34: [script, changeEffect, {literal:ghost}, *]",96,0.3390804597701149,0.23076923076923078,-1.0,-1.0,-1.0
+"0.40: [script, setEffect, {literal:ghost}, *]",97,0.40229885057471265,0.2512820512820513,-1.0,-1.0,-1.0
+"0.28: [reportOr, reportKeyPressed, {literal:left arrow}, *]",98,0.28160919540229884,0,-1.0,-1.0,-1.0
+"0.51: [doIf, reportKeyPressed, {literal:left arrow}, *]",99,0.5114942528735632,0,-1.0,-1.0,-1.0
+"0.16: [script, receiveKey, {literal:left arrow}, *]",100,0.15517241379310345,0,-1.0,-1.0,-1.0
+"0.14: [doIfElse, reportTouchingObject, {literal:mouse-pointer}, *]",101,0.14367816091954022,0.11282051282051282,-1.0,-1.0,-1.0
+"0.10: [reportAnd, reportTouchingObject, {literal:mouse-pointer}, *]",102,0.10344827586206896,0,-1.0,-1.0,-1.0
+"0.46: [script, createClone, {literal:myself}, *]",103,0.45977011494252873,0.29743589743589743,-1.0,-1.0,-1.0
+"0.34: [script, doStopThis, {literal:other scripts in sprite}, *]",104,0.3448275862068966,0.17435897435897435,-1.0,-1.0,-1.0
+"0.34: [script, receiveInteraction, {literal:pressed}, *]",105,0.3448275862068966,0.38974358974358975,-1.0,-1.0,-1.0
+"0.11: [script, doGotoObject, {literal:random position}, *]",106,0.11494252873563218,0.11794871794871795,-1.0,-1.0,-1.0
+"0.28: [reportOr, reportKeyPressed, {literal:right arrow}, *]",107,0.28160919540229884,0,-1.0,-1.0,-1.0
+"0.16: [script, receiveKey, {literal:right arrow}, *]",108,0.16091954022988506,0,-1.0,-1.0,-1.0
+"0.49: [doIf, reportKeyPressed, {literal:right arrow}, *]",109,0.4942528735632184,0,-1.0,-1.0,-1.0
+"0.22: [script, receiveKey, {literal:space}, *]",110,0.21839080459770116,0.2,-1.0,-1.0,-1.0
+"0.21: [doIf, reportKeyPressed, {literal:space}, *]",111,0.21264367816091953,0,-1.0,-1.0,-1.0
+"0.25: [script, doStopThis, {literal:this script}, *]",112,0.2471264367816092,0.2,-1.0,-1.0,-1.0
+"0.12: [reportAnd, reportKeyPressed, {literal:up arrow}, *]",113,0.1206896551724138,0,-1.0,-1.0,-1.0
+"0.16: [script, receiveKey, {literal:up arrow}, *]",114,0.16091954022988506,0,-1.0,-1.0,-1.0
+"0.34: [doIf, reportKeyPressed, {literal:up arrow}, *]",115,0.3448275862068966,0,-1.0,-1.0,-1.0
+"0.15: [doIfElse, reportKeyPressed, {literal:up arrow}, *]",116,0.14942528735632185,0,-1.0,-1.0,-1.0
+"0.24: [reportOr, reportKeyPressed, {literal:up arrow}, *]",117,0.23563218390804597,0,-1.0,-1.0,-1.0
+"0.16: [doWaitUntil, reportEquals, {literal:userDef}, *]",118,0.16091954022988506,0.15897435897435896,-1.0,-1.0,-1.0
+"0.62: [script, doPlaySoundUntilDone, {literal:userDef}, *]",119,0.6206896551724138,0.49743589743589745,-1.0,-1.0,-1.0
+"0.20: [script, setXPosition, {literal:userDef}, *]",120,0.19540229885057472,0.11794871794871795,-1.0,-1.0,-1.0
+"0.28: [gotoXY, reportRandom, {literal:userDef}, *]",121,0.27586206896551724,0.15897435897435896,-1.0,-1.0,-1.0
+"0.10: [reportEquals, reportRandom, {literal:userDef}, *]",122,0.10344827586206896,0,-1.0,-1.0,-1.0
+"0.51: [script, playSound, {literal:userDef}, *]",123,0.5114942528735632,0.46153846153846156,-1.0,-1.0,-1.0
+"0.34: [doIf, reportTouchingColor, {literal:userDef}, *]",124,0.3390804597701149,0.13333333333333333,-1.0,-1.0,-1.0
+"0.52: [script, forward, {literal:userDef}, *]",125,0.5229885057471264,0.3230769230769231,-1.0,-1.0,-1.0
+"0.22: [script, doFaceTowards, {literal:userDef}, *]",126,0.22413793103448276,0.11794871794871795,-1.0,-1.0,-1.0
+"0.30: [doUntil, reportEquals, {literal:userDef}, *]",127,0.2988505747126437,0.18461538461538463,-1.0,-1.0,-1.0
+"0.22: [reportOr, reportKeyPressed, {literal:userDef}, *]",128,0.22413793103448276,0,-1.0,-1.0,-1.0
+"0.25: [changeXPosition, reportProduct, {literal:userDef}, *]",129,0.2471264367816092,0,-1.0,-1.0,-1.0
+"0.17: [script, evaluateCustomBlock:userDef, {literal:userDef}, *]",130,0.16666666666666666,0.11282051282051282,-1.0,-1.0,-1.0
+"0.27: [reportOr, reportEquals, {literal:userDef}, *]",131,0.27011494252873564,0.1641025641025641,-1.0,-1.0,-1.0
+"0.14: [script, createClone, {literal:userDef}, *]",132,0.13793103448275862,0,-1.0,-1.0,-1.0
+"0.24: [script, receiveKey, {literal:userDef}, *]",133,0.2413793103448276,0.13333333333333333,-1.0,-1.0,-1.0
+"0.80: [script, doWait, {literal:userDef}, *]",134,0.8045977011494253,0.7846153846153846,-1.0,-1.0,-1.0
+"0.20: [script, setYPosition, {literal:userDef}, *]",135,0.19540229885057472,0.10256410256410256,-1.0,-1.0,-1.0
+"0.33: [script, doGotoObject, {literal:userDef}, *]",136,0.3333333333333333,0.11794871794871795,-1.0,-1.0,-1.0
+"0.55: [script, setScale, {literal:userDef}, *]",137,0.5459770114942529,0.4256410256410256,-1.0,-1.0,-1.0
+"0.15: [script, doIf, {literal:userDef}, *]",138,0.14942528735632185,0,-1.0,-1.0,-1.0
+"0.25: [reportAnd, reportEquals, {literal:userDef}, *]",139,0.25287356321839083,0.14871794871794872,-1.0,-1.0,-1.0
+"0.26: [doIf, reportKeyPressed, {literal:userDef}, *]",140,0.25862068965517243,0,-1.0,-1.0,-1.0
+"0.17: [reportNot, reportTouchingObject, {literal:userDef}, *]",141,0.16666666666666666,0,-1.0,-1.0,-1.0
+"0.40: [doIfElse, reportLessThan, {literal:userDef}, *]",142,0.39655172413793105,0.14871794871794872,-1.0,-1.0,-1.0
+"0.87: [script, doSwitchToCostume, {literal:userDef}, *]",143,0.867816091954023,0.7743589743589744,-1.0,-1.0,-1.0
+"0.26: [script, doSayFor, {literal:userDef}, *]",144,0.26436781609195403,0.3076923076923077,-1.0,-1.0,-1.0
+"0.14: [reportSum, reportProduct, {literal:userDef}, *]",145,0.13793103448275862,0.11282051282051282,-1.0,-1.0,-1.0
+"0.15: [doIfElse, reportTouchingObject, {literal:userDef}, *]",146,0.14942528735632185,0,-1.0,-1.0,-1.0
+"0.39: [script, doGlide, {literal:userDef}, *]",147,0.39080459770114945,0.30256410256410254,-1.0,-1.0,-1.0
+"0.17: [script, goBack, {literal:userDef}, *]",148,0.16666666666666666,0,-1.0,-1.0,-1.0
+"0.18: [doSetVar, reportRandom, {literal:userDef}, *]",149,0.1781609195402299,0.11794871794871795,-1.0,-1.0,-1.0
+"0.20: [reportEquals, reportAttributeOf, {literal:userDef}, *]",150,0.19540229885057472,0.14871794871794872,-1.0,-1.0,-1.0
+"0.17: [doUntil, reportLessThan, {literal:userDef}, *]",151,0.16666666666666666,0.1076923076923077,-1.0,-1.0,-1.0
+"0.11: [doWaitUntil, reportTouchingObject, {literal:userDef}, *]",152,0.11494252873563218,0,-1.0,-1.0,-1.0
+"0.11: [script, doAddToList, {literal:userDef}, *]",153,0.10919540229885058,0,-1.0,-1.0,-1.0
+"0.14: [script, turnLeft, {literal:userDef}, *]",154,0.13793103448275862,0.13333333333333333,-1.0,-1.0,-1.0
+"0.58: [doIf, reportEquals, {literal:userDef}, *]",155,0.5804597701149425,0.3487179487179487,-1.0,-1.0,-1.0
+"0.12: [doUntil, reportTouchingObject, {literal:userDef}, *]",156,0.1206896551724138,0,-1.0,-1.0,-1.0
+"0.18: [reportJoinWords, list, {literal:userDef}, *]",157,0.1781609195402299,0.10256410256410256,-1.0,-1.0,-1.0
+"0.89: [script, gotoXY, {literal:userDef}, *]",158,0.8908045977011494,0.6923076923076923,-1.0,-1.0,-1.0
+"0.71: [script, receiveMessage, {literal:userDef}, *]",159,0.7126436781609196,0.5743589743589743,-1.0,-1.0,-1.0
+"0.32: [reportOr, reportTouchingObject, {literal:userDef}, *]",160,0.3218390804597701,0,-1.0,-1.0,-1.0
+"0.43: [script, setEffect, {literal:userDef}, *]",161,0.42528735632183906,0.3076923076923077,-1.0,-1.0,-1.0
+"0.22: [script, setVolume, {literal:userDef}, *]",162,0.22413793103448276,0.13333333333333333,-1.0,-1.0,-1.0
+"0.86: [script, doSetVar, {literal:userDef}, *]",163,0.8620689655172413,0.5794871794871795,-1.0,-1.0,-1.0
+"0.44: [script, changeEffect, {literal:userDef}, *]",164,0.4425287356321839,0.37435897435897436,-1.0,-1.0,-1.0
+"0.22: [reportOr, reportLessThan, {literal:userDef}, *]",165,0.22413793103448276,0.12307692307692308,-1.0,-1.0,-1.0
+"0.23: [script, doBroadcastAndWait, {literal:userDef}, *]",166,0.22988505747126436,0.12307692307692308,-1.0,-1.0,-1.0
+"0.23: [reportAnd, reportLessThan, {literal:userDef}, *]",167,0.22988505747126436,0.11282051282051282,-1.0,-1.0,-1.0
+"0.61: [script, doRepeat, {literal:userDef}, *]",168,0.6149425287356322,0.5230769230769231,-1.0,-1.0,-1.0
+"0.29: [doSetVar, reportProduct, {literal:userDef}, *]",169,0.28735632183908044,0,-1.0,-1.0,-1.0
+"0.11: [setHeading, reportRandom, {literal:userDef}, *]",170,0.11494252873563218,0,-1.0,-1.0,-1.0
+"0.82: [script, doChangeVar, {literal:userDef}, *]",171,0.8218390804597702,0.5538461538461539,-1.0,-1.0,-1.0
+"0.59: [script, setHeading, {literal:userDef}, *]",172,0.5919540229885057,0.39487179487179486,-1.0,-1.0,-1.0
+"0.16: [reportAnd, reportTouchingObject, {literal:userDef}, *]",173,0.16091954022988506,0,-1.0,-1.0,-1.0
+"0.64: [script, changeXPosition, {literal:userDef}, *]",174,0.6379310344827587,0.2153846153846154,-1.0,-1.0,-1.0
+"0.71: [doIf, reportTouchingObject, {literal:userDef}, *]",175,0.7068965517241379,0.28205128205128205,-1.0,-1.0,-1.0
+"0.28: [script, changeScale, {literal:userDef}, *]",176,0.27586206896551724,0.26666666666666666,-1.0,-1.0,-1.0
+"0.23: [doWait, reportRandom, {literal:userDef}, *]",177,0.22988505747126436,0.1076923076923077,-1.0,-1.0,-1.0
+"0.76: [script, changeYPosition, {literal:userDef}, *]",178,0.7586206896551724,0.22564102564102564,-1.0,-1.0,-1.0
+"0.47: [doIf, reportLessThan, {literal:userDef}, *]",179,0.46551724137931033,0.2358974358974359,-1.0,-1.0,-1.0
+"0.32: [script, turn, {literal:userDef}, *]",180,0.3160919540229885,0.26153846153846155,-1.0,-1.0,-1.0
+"0.71: [script, doBroadcast, {literal:userDef}, *]",181,0.7126436781609196,0.5692307692307692,-1.0,-1.0,-1.0
+"0.20: [reportNot, reportEquals, {literal:userDef}, *]",182,0.20114942528735633,0.11794871794871795,-1.0,-1.0,-1.0
+"0.36: [doIfElse, reportEquals, {literal:userDef}, *]",183,0.3563218390804598,0.28205128205128205,-1.0,-1.0,-1.0
+"0.24: [changeYPosition, reportProduct, {literal:userDef}, *]",184,0.23563218390804597,0,-1.0,-1.0,-1.0
+"0.61: [stage:Stage, script, {receiveGo}, *]",185,0.6149425287356322,0.5025641025641026,-1.0,-1.0,-1.0
+"0.98: [sprite:userDef, script, {receiveGo}, *]",186,0.9770114942528736,0.9487179487179487,-1.0,-1.0,-1.0
+"0.48: [sprite:userDef, script, {receiveOnClone}, *]",187,0.4827586206896552,0.29743589743589743,-1.0,-1.0,-1.0
+"0.31: [doIf, script, {removeClone}, *]",188,0.3103448275862069,0.17435897435897435,-1.0,-1.0,-1.0
+"0.40: [sprite:userDef, script, {removeClone}, *]",189,0.40229885057471265,0.2205128205128205,-1.0,-1.0,-1.0
+"0.11: [doIfElse, script, {removeClone}, *]",190,0.10919540229885058,0,-1.0,-1.0,-1.0
+"0.17: [script, doIfElse, {script}, *]",191,0.1724137931034483,0.11794871794871795,-1.0,-1.0,-1.0
+"0.44: [snapshot, customBlock:userDef, {script}, *]",192,0.4367816091954023,0.4153846153846154,-1.0,-1.0,-1.0
+"0.10: [script, doIf, {script}, *]",193,0.10344827586206896,0,-1.0,-1.0,-1.0
+"0.82: [sprite:userDef, script, {show}, *]",194,0.8160919540229885,0.6974358974358974,-1.0,-1.0,-1.0
+"0.30: [doIf, script, {show}, *]",195,0.3045977011494253,0.15897435897435896,-1.0,-1.0,-1.0
+"0.18: [doForever, script, {show}, *]",196,0.1839080459770115,0,-1.0,-1.0,-1.0
+"0.26: [doIfElse, script, {show}, *]",197,0.26436781609195403,0.13333333333333333,-1.0,-1.0,-1.0
+"0.17: [snapshot, stage:Stage, {sprite:userDef}, *]",198,0.16666666666666666,0.17435897435897435,-1.0,-1.0,-1.0
+"0.17: [reportOr, reportLessThan, {var:userDef}, *]",199,0.1724137931034483,0,-1.0,-1.0,-1.0
+"0.14: [script, doChangeVar, {var:userDef}, *]",200,0.13793103448275862,0,-1.0,-1.0,-1.0
+"0.17: [script, gotoXY, {var:userDef}, *]",201,0.16666666666666666,0,-1.0,-1.0,-1.0
+"0.41: [script, changeXPosition, {var:userDef}, *]",202,0.40804597701149425,0,-1.0,-1.0,-1.0
+"0.29: [doSetVar, reportProduct, {var:userDef}, *]",203,0.28735632183908044,0,-1.0,-1.0,-1.0
+"0.17: [reportNot, reportEquals, {var:userDef}, *]",204,0.16666666666666666,0,-1.0,-1.0,-1.0
+"0.16: [reportAnd, reportLessThan, {var:userDef}, *]",205,0.15517241379310345,0,-1.0,-1.0,-1.0
+"0.36: [doIf, reportLessThan, {var:userDef}, *]",206,0.3620689655172414,0.22564102564102564,-1.0,-1.0,-1.0
+"0.41: [script, changeYPosition, {var:userDef}, *]",207,0.41379310344827586,0.10256410256410256,-1.0,-1.0,-1.0
+"0.29: [doIfElse, reportEquals, {var:userDef}, *]",208,0.28735632183908044,0.19487179487179487,-1.0,-1.0,-1.0
+"0.22: [changeYPosition, reportProduct, {var:userDef}, *]",209,0.21839080459770116,0,-1.0,-1.0,-1.0
+"0.24: [doUntil, reportEquals, {var:userDef}, *]",210,0.23563218390804597,0.14358974358974358,-1.0,-1.0,-1.0
+"0.15: [doWaitUntil, reportEquals, {var:userDef}, *]",211,0.14942528735632185,0.1282051282051282,-1.0,-1.0,-1.0
+"0.23: [changeXPosition, reportProduct, {var:userDef}, *]",212,0.22988505747126436,0,-1.0,-1.0,-1.0
+"0.11: [script, doDeleteFromList, {var:userDef}, *]",213,0.10919540229885058,0.11282051282051282,-1.0,-1.0,-1.0
+"0.24: [reportOr, reportEquals, {var:userDef}, *]",214,0.2413793103448276,0.11794871794871795,-1.0,-1.0,-1.0
+"0.23: [script, doSwitchToCostume, {var:userDef}, *]",215,0.22988505747126436,0,-1.0,-1.0,-1.0
+"0.36: [doIfElse, reportLessThan, {var:userDef}, *]",216,0.3620689655172414,0.15897435897435896,-1.0,-1.0,-1.0
+"0.21: [reportAnd, reportEquals, {var:userDef}, *]",217,0.20689655172413793,0.10256410256410256,-1.0,-1.0,-1.0
+"0.51: [doIf, reportEquals, {var:userDef}, *]",218,0.5114942528735632,0.27692307692307694,-1.0,-1.0,-1.0
+"0.28: [script, doSetVar, {var:userDef}, *]",219,0.27586206896551724,0.14871794871794872,-1.0,-1.0,-1.0
+"0.13: [script, doAddToList, {var:userDef}, *]",220,0.12643678160919541,0.12307692307692308,-1.0,-1.0,-1.0
+"0.13: [reportJoinWords, list, {var:userDef}, *]",221,0.13218390804597702,0,-1.0,-1.0,-1.0
+"0.39: [stage:Stage, sprite:userDef, {varDec:userDef}, *]",222,0.3850574712643678,0.26153846153846155,-1.0,-1.0,-1.0
+"0.17: [sprite:userDef, customBlock:userDef, {varDec:userDef}, *]",223,0.16666666666666666,0.11282051282051282,-1.0,-1.0,-1.0
+"0.25: [script, doSetVar, {varMenu:rotation style}, *]",224,0.2471264367816092,0,-1.0,-1.0,-1.0
+"0.33: [script, doHideVar, {varMenu:userDef}, *]",225,0.3275862068965517,0.24615384615384617,-1.0,-1.0,-1.0
+"0.29: [script, doShowVar, {varMenu:userDef}, *]",226,0.28735632183908044,0.24615384615384617,-1.0,-1.0,-1.0
+"0.83: [script, doChangeVar, {varMenu:userDef}, *]",227,0.8333333333333334,0.558974358974359,-1.0,-1.0,-1.0
+"0.86: [script, doSetVar, {varMenu:userDef}, *]",228,0.8563218390804598,0.5948717948717949,-1.0,-1.0,-1.0
+"0.11: [reportAnd, reportLessThan, {xPosition}, *]",229,0.11494252873563218,0,-1.0,-1.0,-1.0
+"0.15: [doIf, reportLessThan, {xPosition}, *]",230,0.14942528735632185,0,-1.0,-1.0,-1.0
+"0.16: [doIf, reportLessThan, {yPosition}, *]",231,0.16091954022988506,0,-1.0,-1.0,-1.0
+"0.96: [*, *, {snapshot}, varDec:userDef, *]",232,0.9597701149425287,0.882051282051282,-1.0,-1.0,-1.0
+"1.00: [*, *, {snapshot}, *, stage:Stage]",233,1.0,1.0,-1.0,-1.0,-1.0
+"0.32: [*, snapshot, {stage:Stage}, *, sprite:userDef]",234,0.3218390804597701,0.4307692307692308,-1.0,-1.0,-1.0
+"0.67: [*, snapshot, {stage:Stage}, *, script]",235,0.6724137931034483,0.5692307692307692,-1.0,-1.0,-1.0
+"0.99: [*, snapshot, {stage:Stage}, sprite:userDef, *]",236,0.9942528735632183,0.9897435897435898,-1.0,-1.0,-1.0
+"0.41: [*, *, {snapshot}, customBlock:userDef, varDec:userDef]",237,0.40804597701149425,0.39487179487179486,-1.0,-1.0,-1.0
+"0.78: [*, *, {snapshot}, varDec:userDef, varDec:userDef, *]",238,0.7758620689655172,0.5333333333333333,-1.0,-1.0,-1.0
+"0.55: [*, *, {snapshot}, *, stage:Stage, varDec:userDef]",239,0.5517241379310345,0.48205128205128206,-1.0,-1.0,-1.0
+"0.44: [*, *, {snapshot}, *, stage:Stage, customBlock:userDef]",240,0.4367816091954023,0.4153846153846154,-1.0,-1.0,-1.0
+"0.11: [*, *, {snapshot}, *, stage:Stage, varDec:userDef, *]",241,0.10919540229885058,0.24102564102564103,-1.0,-1.0,-1.0
+"0.66: [*, snapshot, {stage:Stage}, script, sprite:userDef]",242,0.6551724137931034,0.5435897435897435,-1.0,-1.0,-1.0
+"0.21: [*, snapshot, {stage:Stage}, *, script, sprite:userDef]",243,0.20689655172413793,0.18974358974358974,-1.0,-1.0,-1.0
+"0.47: [*, snapshot, {stage:Stage}, *, script, script]",244,0.46551724137931033,0.37948717948717947,-1.0,-1.0,-1.0
+"0.29: [*, snapshot, {stage:Stage}, *, sprite:userDef, sprite:userDef]",245,0.29310344827586204,0.3487179487179487,-1.0,-1.0,-1.0
+"0.94: [*, snapshot, {stage:Stage}, sprite:userDef, sprite:userDef, *]",246,0.9425287356321839,0.882051282051282,-1.0,-1.0,-1.0
+"0.24: [snapshot, stage:Stage, {script}, *, receiveGo, doSwitchToCostume]",247,0.23563218390804597,0.26666666666666666,-1.0,-1.0,-1.0
+"0.11: [snapshot, stage:Stage, {script}, *, receiveGo, doSwitchToCostume, *]",248,0.10919540229885058,0.15384615384615385,-1.0,-1.0,-1.0
+"0.18: [*, *, {snapshot}, customBlock:userDef, customBlock:userDef, varDec:userDef]",249,0.1839080459770115,0.13846153846153847,-1.0,-1.0,-1.0
+"0.34: [*, *, {snapshot}, customBlock:userDef, varDec:userDef, varDec:userDef]",250,0.3448275862068966,0.28205128205128205,-1.0,-1.0,-1.0
+"0.44: [*, *, {snapshot}, *, stage:Stage, varDec:userDef, varDec:userDef]",251,0.4367816091954023,0.2358974358974359,-1.0,-1.0,-1.0
+"0.18: [*, *, {snapshot}, *, stage:Stage, customBlock:userDef, customBlock:userDef]",252,0.1839080459770115,0.13846153846153847,-1.0,-1.0,-1.0
+"0.67: [*, *, {snapshot}, varDec:userDef, varDec:userDef, varDec:userDef, *]",253,0.6724137931034483,0.4205128205128205,-1.0,-1.0,-1.0
+"0.22: [*, *, {snapshot}, *, stage:Stage, customBlock:userDef, varDec:userDef]",254,0.22413793103448276,0.2564102564102564,-1.0,-1.0,-1.0
+"0.45: [*, snapshot, {stage:Stage}, script, script, sprite:userDef]",255,0.4482758620689655,0.35384615384615387,-1.0,-1.0,-1.0
+"0.63: [*, snapshot, {stage:Stage}, script, sprite:userDef, sprite:userDef]",256,0.632183908045977,0.5128205128205128,-1.0,-1.0,-1.0
+"0.26: [*, snapshot, {stage:Stage}, *, sprite:userDef, sprite:userDef, sprite:userDef]",257,0.25862068965517243,0.26666666666666666,-1.0,-1.0,-1.0
+"0.20: [*, snapshot, {stage:Stage}, *, script, sprite:userDef, sprite:userDef]",258,0.19540229885057472,0.1794871794871795,-1.0,-1.0,-1.0
+"0.37: [*, snapshot, {stage:Stage}, *, script, script, script]",259,0.3735632183908046,0.26666666666666666,-1.0,-1.0,-1.0
+"0.88: [*, snapshot, {stage:Stage}, sprite:userDef, sprite:userDef, sprite:userDef, *]",260,0.8793103448275862,0.7692307692307693,-1.0,-1.0,-1.0
+"0.18: [*, *, {snapshot}, stage:Stage, customBlock:userDef, varDec:userDef, varDec:userDef]",261,0.1781609195402299,0.1794871794871795,-1.0,-1.0,-1.0
+"0.32: [*, *, {snapshot}, customBlock:userDef, varDec:userDef, varDec:userDef, varDec:userDef]",262,0.3218390804597701,0.24102564102564103,-1.0,-1.0,-1.0
+"0.17: [*, *, {snapshot}, customBlock:userDef, customBlock:userDef, varDec:userDef, varDec:userDef]",263,0.16666666666666666,0.10256410256410256,-1.0,-1.0,-1.0
+"0.36: [*, *, {snapshot}, stage:Stage, varDec:userDef, varDec:userDef, varDec:userDef]",264,0.3620689655172414,0.15384615384615385,-1.0,-1.0,-1.0
+"0.13: [*, *, {snapshot}, stage:Stage, customBlock:userDef, customBlock:userDef, varDec:userDef]",265,0.12643678160919541,0,-1.0,-1.0,-1.0
+"0.36: [*, snapshot, {stage:Stage}, script, script, script, sprite:userDef]",266,0.3563218390804598,0.24615384615384617,-1.0,-1.0,-1.0
+"0.60: [*, snapshot, {stage:Stage}, script, sprite:userDef, sprite:userDef, sprite:userDef]",267,0.603448275862069,0.47692307692307695,-1.0,-1.0,-1.0
+"0.44: [*, snapshot, {stage:Stage}, script, script, sprite:userDef, sprite:userDef]",268,0.4367816091954023,0.3333333333333333,-1.0,-1.0,-1.0

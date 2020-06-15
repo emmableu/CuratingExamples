@@ -1,0 +1,522 @@
+name,id,supportA,supportB,jdYes,jdNo,confidenceYes
+"0.40: [{evaluateCustomBlock:userDef}, *]",0,0.4,0.5128939828080229,-1.0,-1.0,-1.0
+"0.10: [{getCostumeIdx}, *]",1,0.1,0.22636103151862463,-1.0,-1.0,-1.0
+"0.25: [{literal:color}, *]",2,0.25,0.19197707736389685,-1.0,-1.0,-1.0
+"0.55: [{literal:left arrow}, *]",3,0.55,0.48424068767908307,-1.0,-1.0,-1.0
+"0.50: [{literal:mouse-pointer}, *]",4,0.5,0.3008595988538682,-1.0,-1.0,-1.0
+"0.50: [{literal:right arrow}, *]",5,0.5,0.49570200573065903,-1.0,-1.0,-1.0
+"0.15: [{literal:space}, *]",6,0.15,0.42120343839541546,-1.0,-1.0,-1.0
+"1.00: [{literal:userDef}, *]",7,1.0,0.994269340974212,-1.0,-1.0,-1.0
+"0.45: [{script}, *]",8,0.45,0.47564469914040114,-1.0,-1.0,-1.0
+"0.55: [{var:userDef}, *]",9,0.55,0.6561604584527221,-1.0,-1.0,-1.0
+"0.25: [{xPosition}, *]",10,0.25,0.30659025787965616,-1.0,-1.0,-1.0
+"0.30: [{yPosition}, *]",11,0.3,0.30945558739255014,-1.0,-1.0,-1.0
+"0.15: [script, {doStopAllSounds}, *]",12,0.15,0.20916905444126074,-1.0,-1.0,-1.0
+"0.35: [script, {doWearNextCostume}, *]",13,0.35,0.47564469914040114,-1.0,-1.0,-1.0
+"0.35: [script, {evaluateCustomBlock:userDef}, *]",14,0.35,0.4813753581661891,-1.0,-1.0,-1.0
+"0.10: [reportTouchingObject, {literal:mouse-pointer}, *]",15,0.1,0.2177650429799427,-1.0,-1.0,-1.0
+"0.25: [reportProduct, {literal:userDef}, *]",16,0.25,0.3467048710601719,-1.0,-1.0,-1.0
+"0.25: [reportLessThan, {var:userDef}, *]",17,0.25,0.46418338108882523,-1.0,-1.0,-1.0
+"0.25: [reportProduct, {var:userDef}, *]",18,0.25,0.3037249283667622,-1.0,-1.0,-1.0
+"0.25: [doForever, script, {doWearNextCostume}, *]",19,0.25,0.1346704871060172,-1.0,-1.0,-1.0
+"0.75: [sprite:userDef, script, {hide}, *]",20,0.75,0.7535816618911175,-1.0,-1.0,-1.0
+"0.10: [script, setEffect, {literal:color}, *]",21,0.1,0,-1.0,-1.0,-1.0
+"0.20: [doIf, reportTouchingObject, {literal:edge}, *]",22,0.2,0,-1.0,-1.0,-1.0
+"0.25: [script, goToLayer, {literal:front}, *]",23,0.25,0.4355300859598854,-1.0,-1.0,-1.0
+"0.10: [script, setEffect, {literal:ghost}, *]",24,0.1,0.33810888252148996,-1.0,-1.0,-1.0
+"0.20: [script, receiveInteraction, {literal:pressed}, *]",25,0.2,0.36962750716332377,-1.0,-1.0,-1.0
+"0.75: [script, gotoXY, {literal:userDef}, *]",26,0.75,0.7879656160458453,-1.0,-1.0,-1.0
+"0.20: [doIf, reportKeyPressed, {literal:userDef}, *]",27,0.2,0.1518624641833811,-1.0,-1.0,-1.0
+"0.15: [changeXPosition, reportProduct, {literal:userDef}, *]",28,0.15,0.14040114613180515,-1.0,-1.0,-1.0
+"0.50: [script, receiveMessage, {literal:userDef}, *]",29,0.5,0.6389684813753582,-1.0,-1.0,-1.0
+"0.30: [script, doGotoObject, {literal:userDef}, *]",30,0.3,0.2034383954154728,-1.0,-1.0,-1.0
+"0.10: [doIfElse, reportLessThan, {literal:userDef}, *]",31,0.1,0.28939828080229224,-1.0,-1.0,-1.0
+"0.15: [reportOr, reportEquals, {literal:userDef}, *]",32,0.15,0.22349570200573066,-1.0,-1.0,-1.0
+"0.25: [reportOr, reportTouchingObject, {literal:userDef}, *]",33,0.25,0.1977077363896848,-1.0,-1.0,-1.0
+"0.10: [doWait, reportRandom, {literal:userDef}, *]",34,0.1,0.166189111747851,-1.0,-1.0,-1.0
+"0.75: [script, doSwitchToCostume, {literal:userDef}, *]",35,0.75,0.8194842406876791,-1.0,-1.0,-1.0
+"0.10: [doUntil, reportEquals, {literal:userDef}, *]",36,0.1,0.2521489971346705,-1.0,-1.0,-1.0
+"0.20: [gotoXY, reportRandom, {literal:userDef}, *]",37,0.2,0.22922636103151864,-1.0,-1.0,-1.0
+"0.15: [script, setEffect, {literal:userDef}, *]",38,0.15,0.3753581661891118,-1.0,-1.0,-1.0
+"0.20: [script, doGlide, {literal:userDef}, *]",39,0.2,0.36103151862464183,-1.0,-1.0,-1.0
+"0.15: [script, doSayFor, {literal:userDef}, *]",40,0.15,0.2808022922636103,-1.0,-1.0,-1.0
+"0.15: [doIf, reportEquals, {literal:userDef}, *]",41,0.15,0.4699140401146132,-1.0,-1.0,-1.0
+"0.15: [changeYPosition, reportProduct, {literal:userDef}, *]",42,0.15,0.1318051575931232,-1.0,-1.0,-1.0
+"0.10: [reportAnd, reportEquals, {literal:userDef}, *]",43,0.1,0.2148997134670487,-1.0,-1.0,-1.0
+"0.10: [script, receiveKey, {literal:userDef}, *]",44,0.1,0.19197707736389685,-1.0,-1.0,-1.0
+"0.50: [script, doBroadcast, {literal:userDef}, *]",45,0.5,0.6389684813753582,-1.0,-1.0,-1.0
+"1.00: [sprite:userDef, script, {receiveGo}, *]",46,1.0,0.9627507163323782,-1.0,-1.0,-1.0
+"0.15: [sprite:userDef, script, {removeClone}, *]",47,0.15,0.30659025787965616,-1.0,-1.0,-1.0
+"0.15: [script, doIfElse, {script}, *]",48,0.15,0.13753581661891118,-1.0,-1.0,-1.0
+"0.10: [script, doForever, {script}, *]",49,0.1,0,-1.0,-1.0,-1.0
+"0.10: [script, doIf, {script}, *]",50,0.1,0,-1.0,-1.0,-1.0
+"0.70: [sprite:userDef, script, {show}, *]",51,0.7,0.7507163323782235,-1.0,-1.0,-1.0
+"0.15: [doIf, reportEquals, {var:userDef}, *]",52,0.15,0.3982808022922636,-1.0,-1.0,-1.0
+"0.15: [doIf, reportLessThan, {var:userDef}, *]",53,0.15,0.2922636103151863,-1.0,-1.0,-1.0
+"0.20: [script, changeYPosition, {var:userDef}, *]",54,0.2,0.25501432664756446,-1.0,-1.0,-1.0
+"0.15: [doIfElse, reportLessThan, {var:userDef}, *]",55,0.15,0.2693409742120344,-1.0,-1.0,-1.0
+"0.10: [doUntil, reportEquals, {var:userDef}, *]",56,0.1,0.1977077363896848,-1.0,-1.0,-1.0
+"0.15: [changeXPosition, reportProduct, {var:userDef}, *]",57,0.15,0.1174785100286533,-1.0,-1.0,-1.0
+"0.20: [script, forward, {var:userDef}, *]",58,0.2,0,-1.0,-1.0,-1.0
+"0.10: [reportAnd, reportEquals, {var:userDef}, *]",59,0.1,0.16905444126074498,-1.0,-1.0,-1.0
+"0.15: [changeYPosition, reportProduct, {var:userDef}, *]",60,0.15,0.10888252148997135,-1.0,-1.0,-1.0
+"0.10: [script, doSetVar, {var:userDef}, *]",61,0.1,0.21203438395415472,-1.0,-1.0,-1.0
+"0.15: [script, changeXPosition, {var:userDef}, *]",62,0.15,0.24068767908309455,-1.0,-1.0,-1.0
+"0.15: [script, doHideVar, {varMenu:userDef}, *]",63,0.15,0.2922636103151863,-1.0,-1.0,-1.0
+"0.10: [script, doSetVar, {xPosition}, *]",64,0.1,0,-1.0,-1.0,-1.0
+"0.10: [doIf, reportLessThan, {xPosition}, *]",65,0.1,0.10315186246418338,-1.0,-1.0,-1.0
+"0.10: [script, doSetVar, {yPosition}, *]",66,0.1,0,-1.0,-1.0,-1.0
+"0.30: [{reportLessThan}, literal:userDef]",67,0.3,0,-1.0,-1.0,-1.0
+"0.45: [{script}, doGotoObject]",68,0.45,0,-1.0,-1.0,-1.0
+"0.50: [{script}, changeYPosition]",69,0.5,0,-1.0,-1.0,-1.0
+"0.25: [{script}, setXPosition]",70,0.25,0,-1.0,-1.0,-1.0
+"0.15: [{script}, setYPosition]",71,0.15,0,-1.0,-1.0,-1.0
+"0.40: [{script}, changeXPosition]",72,0.4,0,-1.0,-1.0,-1.0
+"0.65: [{script}, setHeading]",73,0.65,0,-1.0,-1.0,-1.0
+"0.70: [{script}, forward]",74,0.7,0,-1.0,-1.0,-1.0
+"0.40: [{script}, evaluateCustomBlock:userDef]",75,0.4,0,-1.0,-1.0,-1.0
+"0.35: [{script}, turn]",76,0.35,0,-1.0,-1.0,-1.0
+"0.40: [{script}, bounceOffEdge]",77,0.4,0,-1.0,-1.0,-1.0
+"0.45: [{customBlock:userDef}, *, script]",78,0.45,0,-1.0,-1.0,-1.0
+"0.10: [{reportDifference}, literal:userDef, *]",79,0.1,0,-1.0,-1.0,-1.0
+"0.15: [{reportDifference}, *, literal:userDef]",80,0.15,0,-1.0,-1.0,-1.0
+"0.35: [{reportEquals}, *, literal:userDef]",81,0.35,0,-1.0,-1.0,-1.0
+"0.10: [{reportEquals}, literal:userDef, *]",82,0.1,0,-1.0,-1.0,-1.0
+"0.10: [{reportOr}, reportOr, *]",83,0.1,0,-1.0,-1.0,-1.0
+"0.25: [{reportOr}, reportTouchingObject, *]",84,0.25,0,-1.0,-1.0,-1.0
+"0.60: [{reportRandom}, literal:userDef, *]",85,0.6,0,-1.0,-1.0,-1.0
+"0.20: [{script}, turnLeft, *]",86,0.2,0,-1.0,-1.0,-1.0
+"0.25: [{script}, removeClone, *]",87,0.25,0,-1.0,-1.0,-1.0
+"0.25: [{script}, bounceOffEdge, *]",88,0.25,0,-1.0,-1.0,-1.0
+"0.25: [{script}, forward, *]",89,0.25,0,-1.0,-1.0,-1.0
+"0.15: [{script}, *, doWearNextCostume]",90,0.15,0,-1.0,-1.0,-1.0
+"0.70: [{script}, doWait, *]",91,0.7,0,-1.0,-1.0,-1.0
+"0.15: [{script}, *, show]",92,0.15,0,-1.0,-1.0,-1.0
+"0.40: [{script}, doBroadcast, *]",93,0.4,0,-1.0,-1.0,-1.0
+"0.15: [{script}, doRepeat, *]",94,0.15,0,-1.0,-1.0,-1.0
+"0.35: [{script}, *, evaluateCustomBlock:userDef]",95,0.35,0,-1.0,-1.0,-1.0
+"0.30: [{script}, *, receiveKey]",96,0.3,0,-1.0,-1.0,-1.0
+"0.35: [{script}, doChangeVar, *]",97,0.35,0,-1.0,-1.0,-1.0
+"0.65: [{script}, hide, *]",98,0.65,0,-1.0,-1.0,-1.0
+"0.10: [{script}, *, createClone]",99,0.1,0,-1.0,-1.0,-1.0
+"0.40: [{script}, changeYPosition, *]",100,0.4,0,-1.0,-1.0,-1.0
+"0.25: [{script}, setHeading, *]",101,0.25,0,-1.0,-1.0,-1.0
+"0.65: [{script}, *, doSwitchToCostume]",102,0.65,0,-1.0,-1.0,-1.0
+"0.30: [{script}, changeXPosition, *]",103,0.3,0,-1.0,-1.0,-1.0
+"0.20: [{script}, doUntil, *]",104,0.2,0,-1.0,-1.0,-1.0
+"0.15: [{script}, *, turnLeft]",105,0.15,0,-1.0,-1.0,-1.0
+"0.50: [{script}, doPlaySoundUntilDone, *]",106,0.5,0,-1.0,-1.0,-1.0
+"0.25: [{script}, *, doRepeat]",107,0.25,0,-1.0,-1.0,-1.0
+"0.55: [{script}, *, forward]",108,0.55,0,-1.0,-1.0,-1.0
+"0.35: [{script}, doGotoObject, *]",109,0.35,0,-1.0,-1.0,-1.0
+"0.15: [{script}, doWearNextCostume, *]",110,0.15,0,-1.0,-1.0,-1.0
+"0.40: [{customBlock:userDef}, *, script, *]",111,0.4,0,-1.0,-1.0,-1.0
+"0.40: [{reportKeyPressed}, *, literal:up arrow, *]",112,0.4,0,-1.0,-1.0,-1.0
+"0.30: [{reportTouchingObject}, *, literal:edge, *]",113,0.3,0,-1.0,-1.0,-1.0
+"0.80: [{reportTouchingObject}, *, literal:userDef, *]",114,0.8,0,-1.0,-1.0,-1.0
+"0.25: [{script}, *, doGotoObject, *]",115,0.25,0,-1.0,-1.0,-1.0
+"0.35: [{script}, *, doBroadcast, *]",116,0.35,0,-1.0,-1.0,-1.0
+"0.15: [{script}, *, playSound, *]",117,0.15,0,-1.0,-1.0,-1.0
+"0.10: [{script}, *, turnLeft, *]",118,0.1,0,-1.0,-1.0,-1.0
+"0.50: [{script}, *, doSwitchToCostume, *]",119,0.5,0,-1.0,-1.0,-1.0
+"0.10: [{script}, *, setHeading, *]",120,0.1,0,-1.0,-1.0,-1.0
+"0.40: [{script}, *, doPlaySoundUntilDone, *]",121,0.4,0,-1.0,-1.0,-1.0
+"0.15: [{script}, *, forward, *]",122,0.15,0,-1.0,-1.0,-1.0
+"0.90: [*, *, {snapshot}, varDec:userDef, *]",123,0.9,0.9197707736389685,-1.0,-1.0,-1.0
+"0.25: [script, {changeEffect}, literal:userDef, *]",124,0.25,0,-1.0,-1.0,-1.0
+"0.35: [script, {doUntil}, script, *]",125,0.35,0,-1.0,-1.0,-1.0
+"0.35: [script, {changeXPosition}, *, literal:userDef, *]",126,0.35,0,-1.0,-1.0,-1.0
+"0.45: [script, {changeYPosition}, *, literal:userDef, *]",127,0.45,0,-1.0,-1.0,-1.0
+"0.25: [script, {createClone}, *, literal:myself, *]",128,0.25,0,-1.0,-1.0,-1.0
+"0.15: [script, {doBroadcastAndWait}, *, literal:userDef, *]",129,0.15,0,-1.0,-1.0,-1.0
+"0.15: [script, {doFaceTowards}, *, literal:mouse-pointer, *]",130,0.15,0,-1.0,-1.0,-1.0
+"0.55: [script, {doPlaySoundUntilDone}, *, literal:userDef, *]",131,0.55,0,-1.0,-1.0,-1.0
+"0.15: [script, {doShowVar}, *, varMenu:userDef, *]",132,0.15,0,-1.0,-1.0,-1.0
+"0.95: [script, {doStopThis}, *, literal:all, *]",133,0.95,0,-1.0,-1.0,-1.0
+"0.95: [script, {doWait}, *, literal:userDef, *]",134,0.95,0,-1.0,-1.0,-1.0
+"0.60: [script, {forward}, *, literal:userDef, *]",135,0.6,0,-1.0,-1.0,-1.0
+"0.45: [script, {playSound}, *, literal:userDef, *]",136,0.45,0,-1.0,-1.0,-1.0
+"0.10: [script, {receiveKey}, *, literal:space, *]",137,0.1,0,-1.0,-1.0,-1.0
+"0.10: [reportNot, {reportTouchingObject}, *, literal:userDef, *]",138,0.1,0,-1.0,-1.0,-1.0
+"0.55: [script, {setHeading}, *, literal:userDef, *]",139,0.55,0,-1.0,-1.0,-1.0
+"0.20: [script, {setXPosition}, *, literal:userDef, *]",140,0.2,0,-1.0,-1.0,-1.0
+"0.10: [script, {setYPosition}, *, literal:userDef, *]",141,0.1,0,-1.0,-1.0,-1.0
+"0.60: [*, snapshot, {stage:Stage}, *, script]",142,0.6,0.6303724928366762,-1.0,-1.0,-1.0
+"1.00: [*, snapshot, {stage:Stage}, sprite:userDef, *]",143,1.0,0.9914040114613181,-1.0,-1.0,-1.0
+"0.40: [*, snapshot, {stage:Stage}, *, sprite:userDef]",144,0.4,0.3667621776504298,-1.0,-1.0,-1.0
+"0.25: [script, {turn}, *, literal:userDef, *]",145,0.25,0,-1.0,-1.0,-1.0
+"0.25: [script, {turnLeft}, *, literal:userDef, *]",146,0.25,0,-1.0,-1.0,-1.0
+"0.35: [*, snapshot, {customBlock:userDef}, *, script, *]",147,0.35,0,-1.0,-1.0,-1.0
+"0.25: [script, doIf, {reportLessThan}, literal:userDef]",148,0.25,0,-1.0,-1.0,-1.0
+"0.15: [script, doIf, {script}, doPlaySoundUntilDone]",149,0.15,0,-1.0,-1.0,-1.0
+"0.30: [script, doIf, {script}, playSound]",150,0.3,0,-1.0,-1.0,-1.0
+"0.60: [stage:Stage, sprite:userDef, {script}, doWait]",151,0.6,0,-1.0,-1.0,-1.0
+"0.10: [script, doForever, {script}, createClone]",152,0.1,0,-1.0,-1.0,-1.0
+"0.55: [stage:Stage, sprite:userDef, {script}, setHeading]",153,0.55,0,-1.0,-1.0,-1.0
+"0.30: [stage:Stage, sprite:userDef, {script}, evaluateCustomBlock:userDef]",154,0.3,0,-1.0,-1.0,-1.0
+"0.30: [script, doIf, {script}, doTellTo]",155,0.3,0,-1.0,-1.0,-1.0
+"0.20: [script, doIf, {script}, forward]",156,0.2,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, doChangeVar]",157,0.1,0,-1.0,-1.0,-1.0
+"0.10: [script, doIfElse, {script}, doWearNextCostume]",158,0.1,0,-1.0,-1.0,-1.0
+"0.30: [script, doForever, {script}, doFaceTowards]",159,0.3,0,-1.0,-1.0,-1.0
+"0.55: [script, doForever, {script}, forward]",160,0.55,0,-1.0,-1.0,-1.0
+"0.20: [stage:Stage, sprite:userDef, {script}, doRepeat]",161,0.2,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, bubble]",162,0.1,0,-1.0,-1.0,-1.0
+"0.90: [stage:Stage, sprite:userDef, {script}, doSetVar]",163,0.9,0,-1.0,-1.0,-1.0
+"0.55: [script, doIf, {script}, doChangeVar]",164,0.55,0,-1.0,-1.0,-1.0
+"0.20: [script, doUntil, {script}, forward]",165,0.2,0,-1.0,-1.0,-1.0
+"0.15: [script, doForever, {script}, doSetVar]",166,0.15,0,-1.0,-1.0,-1.0
+"0.10: [snapshot, stage:Stage, {script}, doPlaySoundUntilDone]",167,0.1,0,-1.0,-1.0,-1.0
+"0.35: [script, doIf, {script}, hide]",168,0.35,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, doWaitUntil]",169,0.1,0,-1.0,-1.0,-1.0
+"0.15: [script, doIf, {script}, doIfElse]",170,0.15,0,-1.0,-1.0,-1.0
+"0.15: [script, doIf, {script}, turnLeft]",171,0.15,0,-1.0,-1.0,-1.0
+"0.25: [stage:Stage, sprite:userDef, {script}, doUntil]",172,0.25,0,-1.0,-1.0,-1.0
+"0.50: [stage:Stage, sprite:userDef, {script}, setScale]",173,0.5,0,-1.0,-1.0,-1.0
+"0.25: [script, doIf, {script}, turn]",174,0.25,0,-1.0,-1.0,-1.0
+"0.40: [snapshot, stage:Stage, {script}, doSwitchToCostume]",175,0.4,0,-1.0,-1.0,-1.0
+"0.55: [stage:Stage, sprite:userDef, {script}, doSwitchToCostume]",176,0.55,0,-1.0,-1.0,-1.0
+"0.10: [script, doRepeat, {script}, gotoXY]",177,0.1,0,-1.0,-1.0,-1.0
+"0.10: [script, doRepeat, {script}, createClone]",178,0.1,0,-1.0,-1.0,-1.0
+"0.50: [script, doIf, {script}, doWait]",179,0.5,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {customBlock:userDef}, *, script]",180,0.1,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, script, {doIf}, script, *]",181,0.1,0,-1.0,-1.0,-1.0
+"0.10: [doForever, script, {doIfElse}, *, reportOr]",182,0.1,0,-1.0,-1.0,-1.0
+"0.85: [sprite:userDef, script, {doSetVar}, *, varMenu:userDef]",183,0.85,0,-1.0,-1.0,-1.0
+"0.85: [sprite:userDef, script, {doSetVar}, literal:userDef, *]",184,0.85,0,-1.0,-1.0,-1.0
+"0.15: [doForever, script, {doSetVar}, *, varMenu:userDef]",185,0.15,0,-1.0,-1.0,-1.0
+"0.25: [sprite:userDef, script, {doUntil}, script, *]",186,0.25,0,-1.0,-1.0,-1.0
+"0.10: [script, doIfElse, {reportEquals}, var:userDef, *]",187,0.1,0,-1.0,-1.0,-1.0
+"0.20: [script, doIf, {reportLessThan}, literal:userDef, *]",188,0.2,0,-1.0,-1.0,-1.0
+"0.15: [script, doIf, {script}, removeClone, *]",189,0.15,0,-1.0,-1.0,-1.0
+"0.30: [script, doIf, {script}, doWait, *]",190,0.3,0,-1.0,-1.0,-1.0
+"0.10: [snapshot, stage:Stage, {script}, doIf, *]",191,0.1,0,-1.0,-1.0,-1.0
+"0.30: [snapshot, stage:Stage, {script}, doForever, *]",192,0.3,0,-1.0,-1.0,-1.0
+"0.10: [script, doIf, {script}, turnLeft, *]",193,0.1,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, setScale, *]",194,0.1,0,-1.0,-1.0,-1.0
+"0.20: [script, doForever, {script}, *, doFaceTowards]",195,0.2,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, turnLeft, *]",196,0.1,0,-1.0,-1.0,-1.0
+"0.40: [script, doForever, {script}, doWait, *]",197,0.4,0,-1.0,-1.0,-1.0
+"0.10: [script, doForever, {script}, *, doGlide]",198,0.1,0,-1.0,-1.0,-1.0
+"0.35: [snapshot, stage:Stage, {script}, doSwitchToCostume, *]",199,0.35,0,-1.0,-1.0,-1.0
+"0.25: [stage:Stage, sprite:userDef, {script}, *, receiveOnClone]",200,0.25,0,-1.0,-1.0,-1.0
+"0.10: [script, doForever, {script}, *, evaluateCustomBlock:userDef]",201,0.1,0,-1.0,-1.0,-1.0
+"0.10: [script, doIf, {script}, *, doIfElse]",202,0.1,0,-1.0,-1.0,-1.0
+"0.10: [script, doRepeat, {script}, changeXPosition, *]",203,0.1,0,-1.0,-1.0,-1.0
+"0.55: [snapshot, stage:Stage, {script}, *, receiveGo]",204,0.55,0,-1.0,-1.0,-1.0
+"0.15: [stage:Stage, sprite:userDef, {script}, doBroadcast, *]",205,0.15,0,-1.0,-1.0,-1.0
+"0.35: [script, doForever, {script}, *, doGotoObject]",206,0.35,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, doRepeat, *]",207,0.1,0,-1.0,-1.0,-1.0
+"0.10: [script, doIf, {script}, *, turnLeft]",208,0.1,0,-1.0,-1.0,-1.0
+"0.15: [script, doForever, {script}, doGlide, *]",209,0.15,0,-1.0,-1.0,-1.0
+"0.10: [script, doForever, {script}, *, doChangeVar]",210,0.1,0,-1.0,-1.0,-1.0
+"0.20: [script, doForever, {script}, doChangeVar, *]",211,0.2,0,-1.0,-1.0,-1.0
+"0.10: [script, doIf, {script}, doIfElse, *]",212,0.1,0,-1.0,-1.0,-1.0
+"0.25: [stage:Stage, sprite:userDef, {script}, doSwitchToCostume, *]",213,0.25,0,-1.0,-1.0,-1.0
+"0.15: [script, doIf, {script}, *, playSound]",214,0.15,0,-1.0,-1.0,-1.0
+"0.25: [stage:Stage, sprite:userDef, {script}, *, receiveKey]",215,0.25,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, doGotoObject, *]",216,0.1,0,-1.0,-1.0,-1.0
+"0.15: [script, doIf, {script}, hide, *]",217,0.15,0,-1.0,-1.0,-1.0
+"0.25: [stage:Stage, sprite:userDef, {script}, *, evaluateCustomBlock:userDef]",218,0.25,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, doShowVar, *]",219,0.1,0,-1.0,-1.0,-1.0
+"0.60: [stage:Stage, sprite:userDef, {script}, hide, *]",220,0.6,0,-1.0,-1.0,-1.0
+"0.15: [stage:Stage, sprite:userDef, {script}, setHeading, *]",221,0.15,0,-1.0,-1.0,-1.0
+"0.45: [script, doForever, {script}, *, forward]",222,0.45,0,-1.0,-1.0,-1.0
+"0.25: [script, doIf, {script}, *, doTellTo]",223,0.25,0,-1.0,-1.0,-1.0
+"0.15: [stage:Stage, sprite:userDef, {script}, doUntil, *]",224,0.15,0,-1.0,-1.0,-1.0
+"0.40: [script, doForever, {script}, doPlaySoundUntilDone, *]",225,0.4,0,-1.0,-1.0,-1.0
+"0.90: [script, doIf, {script}, doStopThis, *]",226,0.9,0,-1.0,-1.0,-1.0
+"0.10: [script, doRepeat, {script}, changeYPosition, *]",227,0.1,0,-1.0,-1.0,-1.0
+"0.15: [script, doUntil, {script}, *, forward]",228,0.15,0,-1.0,-1.0,-1.0
+"0.15: [script, doIfElse, {script}, *, doIfElse]",229,0.15,0,-1.0,-1.0,-1.0
+"0.15: [script, doIf, {script}, doChangeVar, *]",230,0.15,0,-1.0,-1.0,-1.0
+"0.10: [script, doForever, {script}, doSetVar, *]",231,0.1,0,-1.0,-1.0,-1.0
+"0.10: [script, doForever, {script}, *, doSwitchToCostume]",232,0.1,0,-1.0,-1.0,-1.0
+"0.25: [snapshot, stage:Stage, {sprite:userDef}, *, varDec:userDef]",233,0.25,0,-1.0,-1.0,-1.0
+"0.10: [sprite:userDef, script, {bubble}, *, literal:userDef, *]",234,0.1,0,-1.0,-1.0,-1.0
+"0.10: [doRepeat, script, {changeXPosition}, *, literal:userDef, *]",235,0.1,0,-1.0,-1.0,-1.0
+"0.10: [doRepeat, script, {changeYPosition}, *, literal:userDef, *]",236,0.1,0,-1.0,-1.0,-1.0
+"0.10: [doForever, script, {createClone}, *, literal:myself, *]",237,0.1,0,-1.0,-1.0,-1.0
+"0.10: [doRepeat, script, {createClone}, *, literal:myself, *]",238,0.1,0,-1.0,-1.0,-1.0
+"0.10: [doIf, script, {doBroadcastAndWait}, *, literal:userDef, *]",239,0.1,0,-1.0,-1.0,-1.0
+"0.20: [doForever, script, {doFaceTowards}, *, literal:userDef, *]",240,0.2,0,-1.0,-1.0,-1.0
+"0.10: [doForever, script, {doFaceTowards}, *, literal:mouse-pointer, *]",241,0.1,0,-1.0,-1.0,-1.0
+"0.10: [sprite:userDef, script, {doFaceTowards}, *, literal:userDef, *]",242,0.1,0,-1.0,-1.0,-1.0
+"0.30: [stage:Stage, script, {doForever}, *, script, *]",243,0.3,0,-1.0,-1.0,-1.0
+"0.20: [doForever, script, {doGotoObject}, *, literal:mouse-pointer, *]",244,0.2,0,-1.0,-1.0,-1.0
+"0.15: [doForever, script, {doGotoObject}, *, literal:userDef, *]",245,0.15,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, script, {doPlaySoundUntilDone}, *, literal:userDef, *]",246,0.1,0,-1.0,-1.0,-1.0
+"0.40: [doForever, script, {doPlaySoundUntilDone}, *, literal:userDef, *]",247,0.4,0,-1.0,-1.0,-1.0
+"0.15: [doIf, script, {doPlaySoundUntilDone}, *, literal:userDef, *]",248,0.15,0,-1.0,-1.0,-1.0
+"0.10: [sprite:userDef, script, {doShowVar}, *, varMenu:userDef, *]",249,0.1,0,-1.0,-1.0,-1.0
+"0.90: [doIf, script, {doStopThis}, *, literal:all, *]",250,0.9,0,-1.0,-1.0,-1.0
+"0.10: [sprite:userDef, script, {doSwitchToCostume}, *, var:userDef, *]",251,0.1,0,-1.0,-1.0,-1.0
+"0.40: [reifyScript, script, {doSwitchToCostume}, *, literal:userDef, *]",252,0.4,0,-1.0,-1.0,-1.0
+"0.40: [stage:Stage, script, {doSwitchToCostume}, *, literal:userDef, *]",253,0.4,0,-1.0,-1.0,-1.0
+"0.10: [sprite:userDef, script, {doSwitchToCostume}, *, reportSum, *]",254,0.1,0,-1.0,-1.0,-1.0
+"0.10: [doIfElse, script, {doSwitchToCostume}, *, literal:userDef, *]",255,0.1,0,-1.0,-1.0,-1.0
+"0.55: [sprite:userDef, script, {doSwitchToCostume}, *, literal:userDef, *]",256,0.55,0,-1.0,-1.0,-1.0
+"0.60: [sprite:userDef, script, {doWait}, *, literal:userDef, *]",257,0.6,0,-1.0,-1.0,-1.0
+"0.50: [doIf, script, {doWait}, *, literal:userDef, *]",258,0.5,0,-1.0,-1.0,-1.0
+"0.10: [doForever, script, {forward}, *, var:userDef, *]",259,0.1,0,-1.0,-1.0,-1.0
+"0.20: [doIf, script, {forward}, *, literal:userDef, *]",260,0.2,0,-1.0,-1.0,-1.0
+"0.45: [doForever, script, {forward}, *, literal:userDef, *]",261,0.45,0,-1.0,-1.0,-1.0
+"0.15: [doUntil, script, {forward}, *, literal:userDef, *]",262,0.15,0,-1.0,-1.0,-1.0
+"0.30: [doIf, script, {playSound}, *, literal:userDef, *]",263,0.3,0,-1.0,-1.0,-1.0
+"0.10: [sprite:userDef, script, {receiveKey}, *, literal:right arrow, *]",264,0.1,0,-1.0,-1.0,-1.0
+"0.10: [sprite:userDef, script, {receiveKey}, *, literal:left arrow, *]",265,0.1,0,-1.0,-1.0,-1.0
+"0.30: [script, doIf, {reportKeyPressed}, *, literal:down arrow, *]",266,0.3,0,-1.0,-1.0,-1.0
+"0.40: [script, doIf, {reportKeyPressed}, *, literal:right arrow, *]",267,0.4,0,-1.0,-1.0,-1.0
+"0.45: [script, doIf, {reportKeyPressed}, *, literal:left arrow, *]",268,0.45,0,-1.0,-1.0,-1.0
+"0.35: [script, doIf, {reportKeyPressed}, *, literal:up arrow, *]",269,0.35,0,-1.0,-1.0,-1.0
+"0.35: [script, doIf, {reportTouchingColor}, *, literal:userDef, *]",270,0.35,0,-1.0,-1.0,-1.0
+"0.75: [script, doIf, {reportTouchingObject}, *, literal:userDef, *]",271,0.75,0,-1.0,-1.0,-1.0
+"0.30: [script, doIf, {script}, *, doBroadcast, *]",272,0.3,0,-1.0,-1.0,-1.0
+"0.40: [script, doIf, {script}, *, doStopThis, *]",273,0.4,0,-1.0,-1.0,-1.0
+"0.10: [script, doIf, {script}, *, doBroadcastAndWait, *]",274,0.1,0,-1.0,-1.0,-1.0
+"0.35: [script, doForever, {script}, *, doPlaySoundUntilDone, *]",275,0.35,0,-1.0,-1.0,-1.0
+"0.20: [script, doIf, {script}, *, doSetVar, *]",276,0.2,0,-1.0,-1.0,-1.0
+"0.10: [script, doRepeat, {script}, *, changeEffect, *]",277,0.1,0,-1.0,-1.0,-1.0
+"0.10: [script, doIfElse, {script}, *, gotoXY, *]",278,0.1,0,-1.0,-1.0,-1.0
+"0.10: [script, doIfElse, {script}, *, doSwitchToCostume, *]",279,0.1,0,-1.0,-1.0,-1.0
+"0.10: [script, doIfElse, {script}, *, doIfElse, *]",280,0.1,0,-1.0,-1.0,-1.0
+"0.40: [doTellTo, reifyScript, {script}, *, doSwitchToCostume, *]",281,0.4,0,-1.0,-1.0,-1.0
+"0.20: [script, doForever, {script}, *, doGotoObject, *]",282,0.2,0,-1.0,-1.0,-1.0
+"0.10: [sprite:userDef, script, {setHeading}, *, reportRandom, *]",283,0.1,0,-1.0,-1.0,-1.0
+"0.50: [sprite:userDef, script, {setHeading}, *, literal:userDef, *]",284,0.5,0,-1.0,-1.0,-1.0
+"0.50: [sprite:userDef, script, {setScale}, *, literal:userDef, *]",285,0.5,0,-1.0,-1.0,-1.0
+"0.45: [snapshot, stage:Stage, {sprite:userDef}, *, script, *]",286,0.45,0,-1.0,-1.0,-1.0
+"0.10: [doRepeat, script, {turn}, *, literal:userDef, *]",287,0.1,0,-1.0,-1.0,-1.0
+"0.10: [doIf, script, {turn}, *, reportRandom, *]",288,0.1,0,-1.0,-1.0,-1.0
+"0.15: [doIf, script, {turn}, *, literal:userDef, *]",289,0.15,0,-1.0,-1.0,-1.0
+"0.15: [doIf, script, {turnLeft}, *, literal:userDef, *]",290,0.15,0,-1.0,-1.0,-1.0
+"0.10: [sprite:userDef, script, {turnLeft}, *, literal:userDef, *]",291,0.1,0,-1.0,-1.0,-1.0
+"0.15: [{script}, hide, doTellTo]",292,0.15,0,-1.0,-1.0,-1.0
+"0.10: [{script}, doSetVar, doChangeVar]",293,0.1,0,-1.0,-1.0,-1.0
+"0.10: [{script}, doIf, doSwitchToCostume]",294,0.1,0,-1.0,-1.0,-1.0
+"0.15: [{script}, gotoXY, doWait]",295,0.15,0,-1.0,-1.0,-1.0
+"0.20: [{script}, gotoXY, setHeading]",296,0.2,0,-1.0,-1.0,-1.0
+"0.10: [{script}, setHeading, forward]",297,0.1,0,-1.0,-1.0,-1.0
+"0.25: [{script}, forward, doIf]",298,0.25,0,-1.0,-1.0,-1.0
+"0.25: [{script}, doChangeVar, doWait]",299,0.25,0,-1.0,-1.0,-1.0
+"0.10: [{script}, doBroadcast, doSetVar]",300,0.1,0,-1.0,-1.0,-1.0
+"0.15: [{script}, doWait, doBroadcast]",301,0.15,0,-1.0,-1.0,-1.0
+"0.10: [{script}, forward, doIfElse]",302,0.1,0,-1.0,-1.0,-1.0
+"0.20: [{script}, *, forward, doIf]",303,0.2,0,-1.0,-1.0,-1.0
+"0.20: [{script}, doSwitchToCostume, doWait, *]",304,0.2,0,-1.0,-1.0,-1.0
+"0.20: [{script}, *, receiveGo, playSound]",305,0.2,0,-1.0,-1.0,-1.0
+"0.10: [{script}, forward, doIf, *]",306,0.1,0,-1.0,-1.0,-1.0
+"0.20: [{script}, setHeading, doForever, *]",307,0.2,0,-1.0,-1.0,-1.0
+"0.10: [{script}, *, receiveMessage, doWearNextCostume]",308,0.1,0,-1.0,-1.0,-1.0
+"0.10: [{script}, *, doChangeVar, doIf]",309,0.1,0,-1.0,-1.0,-1.0
+"0.45: [{script}, *, receiveGo, doSwitchToCostume]",310,0.45,0,-1.0,-1.0,-1.0
+"0.15: [{script}, doSwitchToCostume, doForever, *]",311,0.15,0,-1.0,-1.0,-1.0
+"0.20: [{script}, *, doFaceTowards, forward]",312,0.2,0,-1.0,-1.0,-1.0
+"0.10: [{script}, doSetVar, doSetVar, *]",313,0.1,0,-1.0,-1.0,-1.0
+"0.15: [{script}, hide, doStopThis, *]",314,0.15,0,-1.0,-1.0,-1.0
+"0.10: [{script}, createClone, doWait, *]",315,0.1,0,-1.0,-1.0,-1.0
+"0.25: [{reportEquals}, *, literal:userDef, var:userDef, *]",316,0.25,0,-1.0,-1.0,-1.0
+"0.10: [{reportOr}, *, reportEquals, reportEquals, *]",317,0.1,0,-1.0,-1.0,-1.0
+"0.10: [{reportQuotient}, *, var:userDef, literal:userDef, *]",318,0.1,0,-1.0,-1.0,-1.0
+"0.55: [{reportRandom}, *, literal:userDef, literal:userDef, *]",319,0.55,0,-1.0,-1.0,-1.0
+"0.20: [{script}, *, receiveMessage, doSwitchToCostume, *]",320,0.2,0,-1.0,-1.0,-1.0
+"0.10: [{script}, *, receiveKey, doSwitchToCostume, *]",321,0.1,0,-1.0,-1.0,-1.0
+"0.25: [{script}, *, receiveGo, doSwitchToCostume, *]",322,0.25,0,-1.0,-1.0,-1.0
+"0.10: [{script}, *, receiveGo, doIf, *]",323,0.1,0,-1.0,-1.0,-1.0
+"0.65: [*, *, {snapshot}, *, stage:Stage, varDec:userDef]",324,0.65,0.5300859598853869,-1.0,-1.0,-1.0
+"0.35: [*, *, {snapshot}, *, stage:Stage, customBlock:userDef]",325,0.35,0.40974212034383956,-1.0,-1.0,-1.0
+"0.55: [*, *, {snapshot}, varDec:userDef, varDec:userDef, *]",326,0.55,0.6590257879656161,-1.0,-1.0,-1.0
+"0.10: [*, *, {snapshot}, *, stage:Stage, customBlock:userDef, *]",327,0.1,0,-1.0,-1.0,-1.0
+"0.25: [*, *, {snapshot}, *, stage:Stage, varDec:userDef, *]",328,0.25,0.17765042979942694,-1.0,-1.0,-1.0
+"0.20: [script, {changeEffect}, *, literal:color, literal:userDef, *]",329,0.2,0,-1.0,-1.0,-1.0
+"0.75: [script, {doChangeVar}, *, varMenu:userDef, literal:userDef, *]",330,0.75,0,-1.0,-1.0,-1.0
+"0.75: [script, {doIf}, *, reportTouchingObject, script, *]",331,0.75,0,-1.0,-1.0,-1.0
+"0.25: [script, {doIf}, *, reportLessThan, script, *]",332,0.25,0,-1.0,-1.0,-1.0
+"0.10: [script, {doIf}, *, reportColorIsTouchingColor, script, *]",333,0.1,0,-1.0,-1.0,-1.0
+"0.25: [script, {doIf}, *, reportOr, script, *]",334,0.25,0,-1.0,-1.0,-1.0
+"0.10: [script, {doSetVar}, *, varMenu:userDef, reportRandom, *]",335,0.1,0,-1.0,-1.0,-1.0
+"0.10: [script, {doSetVar}, *, varMenu:userDef, reportProduct, *]",336,0.1,0,-1.0,-1.0,-1.0
+"0.95: [*, snapshot, {stage:Stage}, sprite:userDef, sprite:userDef, *]",337,0.95,0.9111747851002865,-1.0,-1.0,-1.0
+"0.35: [*, snapshot, {stage:Stage}, *, script, script]",338,0.35,0.4183381088825215,-1.0,-1.0,-1.0
+"0.35: [*, snapshot, {stage:Stage}, *, sprite:userDef, sprite:userDef]",339,0.35,0.30945558739255014,-1.0,-1.0,-1.0
+"0.15: [*, snapshot, {stage:Stage}, *, sprite:userDef, sprite:userDef, *]",340,0.15,0,-1.0,-1.0,-1.0
+"0.15: [stage:Stage, sprite:userDef, {script}, gotoXY, setHeading]",341,0.15,0,-1.0,-1.0,-1.0
+"0.15: [stage:Stage, sprite:userDef, {script}, setScale, gotoXY]",342,0.15,0,-1.0,-1.0,-1.0
+"0.15: [stage:Stage, sprite:userDef, {script}, doSetVar, setScale]",343,0.15,0,-1.0,-1.0,-1.0
+"0.20: [script, doForever, {script}, forward, doIf]",344,0.2,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, doSetVar, goToLayer]",345,0.1,0,-1.0,-1.0,-1.0
+"0.25: [stage:Stage, sprite:userDef, {script}, gotoXY, doSwitchToCostume]",346,0.25,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, gotoXY, doWait]",347,0.1,0,-1.0,-1.0,-1.0
+"0.15: [stage:Stage, sprite:userDef, {script}, doWait, gotoXY]",348,0.15,0,-1.0,-1.0,-1.0
+"0.15: [stage:Stage, sprite:userDef, {script}, evaluateCustomBlock:userDef, hide]",349,0.15,0,-1.0,-1.0,-1.0
+"0.25: [stage:Stage, sprite:userDef, {script}, doSwitchToCostume, doSetVar]",350,0.25,0,-1.0,-1.0,-1.0
+"0.50: [script, doForever, {script}, doIf, doIf]",351,0.5,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, doSetVar, doHideVar]",352,0.1,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, setScale, doTellTo]",353,0.1,0,-1.0,-1.0,-1.0
+"0.25: [stage:Stage, sprite:userDef, {script}, doSetVar, doSetVar]",354,0.25,0,-1.0,-1.0,-1.0
+"0.25: [stage:Stage, sprite:userDef, {script}, gotoXY, show]",355,0.25,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, show, setEffect]",356,0.1,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, setHeading, doWait]",357,0.1,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, doSetVar, doSwitchToCostume]",358,0.1,0,-1.0,-1.0,-1.0
+"0.20: [stage:Stage, sprite:userDef, {script}, doSetVar, gotoXY]",359,0.2,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, setHeading, setScale]",360,0.1,0,-1.0,-1.0,-1.0
+"0.15: [script, doIf, {script}, doChangeVar, doWait]",361,0.15,0,-1.0,-1.0,-1.0
+"0.10: [script, doForever, {script}, changeXPosition, doIf]",362,0.1,0,-1.0,-1.0,-1.0
+"0.30: [script, doForever, {script}, forward, bounceOffEdge]",363,0.3,0,-1.0,-1.0,-1.0
+"0.25: [snapshot, stage:Stage, {sprite:userDef}, varDec:userDef, script]",364,0.25,0,-1.0,-1.0,-1.0
+"0.15: [doIfElse, script, {doIfElse}, script, script, *]",365,0.15,0,-1.0,-1.0,-1.0
+"0.15: [doIf, script, {doIfElse}, script, script, *]",366,0.15,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, *, receiveMessage, doFaceTowards]",367,0.1,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, gotoXY, show, *]",368,0.1,0,-1.0,-1.0,-1.0
+"0.15: [script, doForever, {script}, *, doFaceTowards, forward]",369,0.15,0,-1.0,-1.0,-1.0
+"0.10: [script, doIf, {script}, doChangeVar, removeClone, *]",370,0.1,0,-1.0,-1.0,-1.0
+"0.70: [stage:Stage, sprite:userDef, {script}, *, receiveGo, doSetVar]",371,0.7,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, gotoXY, doSetVar, *]",372,0.1,0,-1.0,-1.0,-1.0
+"0.45: [script, doForever, {script}, doIf, doIf, *]",373,0.45,0,-1.0,-1.0,-1.0
+"0.35: [stage:Stage, sprite:userDef, {script}, doWait, doForever, *]",374,0.35,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, *, receiveInteraction, hide]",375,0.1,0,-1.0,-1.0,-1.0
+"0.50: [stage:Stage, sprite:userDef, {script}, doSetVar, doForever, *]",376,0.5,0,-1.0,-1.0,-1.0
+"0.45: [stage:Stage, sprite:userDef, {script}, *, receiveMessage, show]",377,0.45,0,-1.0,-1.0,-1.0
+"0.10: [script, doIf, {script}, hide, doStopThis, *]",378,0.1,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, *, evaluateCustomBlock:userDef, gotoXY]",379,0.1,0,-1.0,-1.0,-1.0
+"0.35: [snapshot, stage:Stage, {script}, *, receiveGo, doSwitchToCostume]",380,0.35,0.2521489971346705,-1.0,-1.0,-1.0
+"0.15: [stage:Stage, sprite:userDef, {script}, *, receiveGo, doTellTo]",381,0.15,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, hide, doTellTo, *]",382,0.1,0,-1.0,-1.0,-1.0
+"0.25: [stage:Stage, sprite:userDef, {script}, *, receiveGo, setHeading]",383,0.25,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, gotoXY, hide, *]",384,0.1,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, hide, doStopThis, *]",385,0.1,0,-1.0,-1.0,-1.0
+"0.15: [script, doIf, {script}, doBroadcast, doWait, *]",386,0.15,0,-1.0,-1.0,-1.0
+"0.35: [stage:Stage, sprite:userDef, {script}, show, doForever, *]",387,0.35,0,-1.0,-1.0,-1.0
+"0.20: [script, doForever, {script}, forward, bounceOffEdge, *]",388,0.2,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, doUntil, removeClone, *]",389,0.1,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, doRepeat, hide, *]",390,0.1,0,-1.0,-1.0,-1.0
+"0.25: [script, doIf, {script}, doTellTo, doStopThis, *]",391,0.25,0,-1.0,-1.0,-1.0
+"0.20: [stage:Stage, sprite:userDef, {script}, hide, doForever, *]",392,0.2,0,-1.0,-1.0,-1.0
+"0.15: [stage:Stage, sprite:userDef, {script}, *, receiveMessage, setHeading]",393,0.15,0,-1.0,-1.0,-1.0
+"0.25: [stage:Stage, sprite:userDef, {script}, *, receiveGo, doSwitchToCostume]",394,0.25,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, setScale, doForever, *]",395,0.1,0,-1.0,-1.0,-1.0
+"0.15: [script, doForever, {script}, *, forward, doIf]",396,0.15,0,-1.0,-1.0,-1.0
+"0.20: [stage:Stage, sprite:userDef, {script}, *, receiveOnClone, show]",397,0.2,0,-1.0,-1.0,-1.0
+"0.30: [stage:Stage, sprite:userDef, {script}, *, receiveGo, setScale]",398,0.3,0,-1.0,-1.0,-1.0
+"0.10: [snapshot, stage:Stage, {script}, *, receiveMessage, doStopAllSounds]",399,0.1,0,-1.0,-1.0,-1.0
+"0.10: [script, doIf, {script}, *, doChangeVar, turn]",400,0.1,0,-1.0,-1.0,-1.0
+"0.15: [stage:Stage, sprite:userDef, {script}, *, receiveMessage, gotoXY]",401,0.15,0,-1.0,-1.0,-1.0
+"0.25: [script, doForever, {script}, *, forward, bounceOffEdge]",402,0.25,0,-1.0,-1.0,-1.0
+"0.25: [stage:Stage, sprite:userDef, {script}, gotoXY, doForever, *]",403,0.25,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, hide, doBroadcast, *]",404,0.1,0,-1.0,-1.0,-1.0
+"0.90: [snapshot, stage:Stage, {sprite:userDef}, *, script, script]",405,0.9,0,-1.0,-1.0,-1.0
+"0.10: [snapshot, stage:Stage, {sprite:userDef}, script, customBlock:userDef, *]",406,0.1,0,-1.0,-1.0,-1.0
+"0.95: [snapshot, stage:Stage, {sprite:userDef}, script, script, *]",407,0.95,0,-1.0,-1.0,-1.0
+"0.10: [snapshot, stage:Stage, {sprite:userDef}, varDec:userDef, script, *]",408,0.1,0,-1.0,-1.0,-1.0
+"0.10: [doIf, script, {changeEffect}, *, literal:color, literal:userDef, *]",409,0.1,0,-1.0,-1.0,-1.0
+"0.10: [doRepeat, script, {changeEffect}, *, literal:ghost, literal:userDef, *]",410,0.1,0,-1.0,-1.0,-1.0
+"0.10: [sprite:userDef, script, {doChangeVar}, *, varMenu:userDef, literal:userDef, *]",411,0.1,0,-1.0,-1.0,-1.0
+"0.55: [doIf, script, {doChangeVar}, *, varMenu:userDef, literal:userDef, *]",412,0.55,0,-1.0,-1.0,-1.0
+"0.20: [doForever, script, {doIf}, *, reportLessThan, script, *]",413,0.2,0,-1.0,-1.0,-1.0
+"0.15: [doForever, script, {doIf}, *, reportEquals, script, *]",414,0.15,0,-1.0,-1.0,-1.0
+"0.20: [doForever, script, {doIf}, *, reportOr, script, *]",415,0.2,0,-1.0,-1.0,-1.0
+"0.70: [doForever, script, {doIf}, *, reportTouchingObject, script, *]",416,0.7,0,-1.0,-1.0,-1.0
+"0.35: [doForever, script, {doIf}, *, reportTouchingColor, script, *]",417,0.35,0,-1.0,-1.0,-1.0
+"0.10: [doIf, script, {doIf}, *, reportTouchingObject, script, *]",418,0.1,0,-1.0,-1.0,-1.0
+"0.20: [sprite:userDef, script, {doRepeat}, *, literal:userDef, script, *]",419,0.2,0,-1.0,-1.0,-1.0
+"0.15: [sprite:userDef, script, {doSetVar}, *, varMenu:rotation style, literal:userDef, *]",420,0.15,0,-1.0,-1.0,-1.0
+"0.80: [sprite:userDef, script, {doSetVar}, *, varMenu:userDef, literal:userDef, *]",421,0.8,0,-1.0,-1.0,-1.0
+"0.10: [sprite:userDef, script, {gotoXY}, *, reportRandom, literal:userDef, *]",422,0.1,0,-1.0,-1.0,-1.0
+"0.40: [script, doTellTo, {reifyScript}, *, list, script, *]",423,0.4,0,-1.0,-1.0,-1.0
+"0.10: [script, doIf, {reportColorIsTouchingColor}, *, literal:userDef, literal:userDef, *]",424,0.1,0,-1.0,-1.0,-1.0
+"0.10: [script, setHeading, {reportDifference}, *, literal:userDef, direction, *]",425,0.1,0,-1.0,-1.0,-1.0
+"0.10: [script, doIf, {reportLessThan}, *, yPosition, literal:userDef, *]",426,0.1,0,-1.0,-1.0,-1.0
+"0.20: [script, doIf, {reportOr}, *, reportTouchingObject, reportTouchingObject, *]",427,0.2,0,-1.0,-1.0,-1.0
+"0.10: [script, doSetVar, {reportProduct}, *, literal:userDef, var:userDef, *]",428,0.1,0,-1.0,-1.0,-1.0
+"0.15: [script, setHeading, {reportRandom}, *, literal:userDef, literal:userDef, *]",429,0.15,0,-1.0,-1.0,-1.0
+"0.15: [script, turn, {reportRandom}, *, literal:userDef, literal:userDef, *]",430,0.15,0,-1.0,-1.0,-1.0
+"0.10: [script, doSetVar, {reportRandom}, *, literal:userDef, literal:userDef, *]",431,0.1,0,-1.0,-1.0,-1.0
+"0.10: [script, doSwitchToCostume, {reportSum}, *, literal:userDef, var:userDef, *]",432,0.1,0,-1.0,-1.0,-1.0
+"0.25: [stage:Stage, sprite:userDef, {script}, *, receiveGo, gotoXY, *]",433,0.25,0,-1.0,-1.0,-1.0
+"0.20: [snapshot, stage:Stage, {script}, *, receiveGo, doForever, *]",434,0.2,0,-1.0,-1.0,-1.0
+"0.20: [script, doForever, {script}, *, doIf, doIf, *]",435,0.2,0,-1.0,-1.0,-1.0
+"0.15: [script, doForever, {script}, *, doWait, doChangeVar, *]",436,0.15,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, *, evaluateCustomBlock:userDef, hide, *]",437,0.1,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, *, receiveGo, doSwitchToCostume, *]",438,0.1,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, *, receiveMessage, doSwitchToCostume, *]",439,0.1,0,-1.0,-1.0,-1.0
+"0.20: [snapshot, stage:Stage, {script}, *, receiveGo, doSwitchToCostume, *]",440,0.2,0.13753581661891118,-1.0,-1.0,-1.0
+"0.15: [script, doIf, {script}, *, doBroadcast, doStopThis, *]",441,0.15,0,-1.0,-1.0,-1.0
+"0.15: [script, doForever, {script}, *, forward, bounceOffEdge, *]",442,0.15,0,-1.0,-1.0,-1.0
+"0.15: [stage:Stage, sprite:userDef, {script}, *, receiveGo, playSound, *]",443,0.15,0,-1.0,-1.0,-1.0
+"0.10: [script, doForever, {script}, *, doWearNextCostume, doWait, *]",444,0.1,0,-1.0,-1.0,-1.0
+"0.20: [script, doIf, {script}, *, doTellTo, doStopThis, *]",445,0.2,0,-1.0,-1.0,-1.0
+"0.10: [{script}, show, gotoXY, doWait]",446,0.1,0,-1.0,-1.0,-1.0
+"0.10: [{script}, doGlide, doGlide, doGlide, *]",447,0.1,0,-1.0,-1.0,-1.0
+"0.20: [{script}, forward, doIf, doIf, *]",448,0.2,0,-1.0,-1.0,-1.0
+"0.10: [{script}, doChangeVar, doWait, doIf, *]",449,0.1,0,-1.0,-1.0,-1.0
+"0.15: [{script}, doWait, doSwitchToCostume, doWait, *]",450,0.15,0,-1.0,-1.0,-1.0
+"0.20: [{script}, *, doSwitchToCostume, doWait, doSwitchToCostume]",451,0.2,0,-1.0,-1.0,-1.0
+"0.40: [*, *, {snapshot}, *, stage:Stage, varDec:userDef, varDec:userDef]",452,0.4,0.3495702005730659,-1.0,-1.0,-1.0
+"0.40: [*, *, {snapshot}, varDec:userDef, varDec:userDef, varDec:userDef, *]",453,0.4,0.5444126074498568,-1.0,-1.0,-1.0
+"0.10: [*, *, {snapshot}, stage:Stage, customBlock:userDef, varDec:userDef, *]",454,0.1,0,-1.0,-1.0,-1.0
+"0.10: [*, *, {snapshot}, stage:Stage, varDec:userDef, varDec:userDef, *]",455,0.1,0,-1.0,-1.0,-1.0
+"0.25: [*, *, {snapshot}, *, stage:Stage, customBlock:userDef, varDec:userDef]",456,0.25,0.22063037249283668,-1.0,-1.0,-1.0
+"0.40: [script, {doTellTo}, literal:Stage, reifyScript, list, *]",457,0.4,0,-1.0,-1.0,-1.0
+"0.40: [script, {doTellTo}, *, literal:Stage, reifyScript, list]",458,0.4,0,-1.0,-1.0,-1.0
+"0.60: [*, snapshot, {stage:Stage}, script, sprite:userDef, sprite:userDef]",459,0.6,0.5816618911174785,-1.0,-1.0,-1.0
+"0.25: [*, snapshot, {stage:Stage}, *, script, sprite:userDef, sprite:userDef]",460,0.25,0.20057306590257878,-1.0,-1.0,-1.0
+"0.30: [*, snapshot, {stage:Stage}, *, script, script, script]",461,0.3,0.30945558739255014,-1.0,-1.0,-1.0
+"0.10: [*, snapshot, {stage:Stage}, script, sprite:userDef, sprite:userDef, *]",462,0.1,0,-1.0,-1.0,-1.0
+"0.70: [*, snapshot, {stage:Stage}, sprite:userDef, sprite:userDef, sprite:userDef, *]",463,0.7,0.8166189111747851,-1.0,-1.0,-1.0
+"0.20: [*, snapshot, {stage:Stage}, *, sprite:userDef, sprite:userDef, sprite:userDef]",464,0.2,0.24641833810888253,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, doSetVar, setScale, gotoXY]",465,0.1,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, gotoXY, doSetVar, goBack]",466,0.1,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, show, gotoXY, doSetVar]",467,0.1,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, doSwitchToCostume, doSetVar, doSetVar]",468,0.1,0,-1.0,-1.0,-1.0
+"0.10: [doForever, script, {doIfElse}, reportEquals, script, script, *]",469,0.1,0,-1.0,-1.0,-1.0
+"0.10: [doIfElse, script, {doIfElse}, reportLessThan, script, script, *]",470,0.1,0,-1.0,-1.0,-1.0
+"0.10: [doIfElse, script, {doIfElse}, *, reportLessThan, script, script]",471,0.1,0,-1.0,-1.0,-1.0
+"0.10: [doForever, script, {doIfElse}, *, reportEquals, script, script]",472,0.1,0,-1.0,-1.0,-1.0
+"0.30: [doIf, script, {doTellTo}, literal:Stage, reifyScript, list, *]",473,0.3,0,-1.0,-1.0,-1.0
+"0.30: [doIf, script, {doTellTo}, *, literal:Stage, reifyScript, list]",474,0.3,0,-1.0,-1.0,-1.0
+"0.10: [script, doIf, {script}, *, changeEffect, playSound, turn]",475,0.1,0,-1.0,-1.0,-1.0
+"0.10: [script, doForever, {script}, *, forward, doFaceTowards, doIf]",476,0.1,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, *, receiveGo, doSetVar, doSetVar]",477,0.1,0,-1.0,-1.0,-1.0
+"0.15: [stage:Stage, sprite:userDef, {script}, *, receiveGo, hide, doForever]",478,0.15,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, *, receiveMessage, show, setHeading]",479,0.1,0,-1.0,-1.0,-1.0
+"0.10: [snapshot, stage:Stage, {script}, *, receiveGo, doSwitchToCostume, doForever]",480,0.1,0,-1.0,-1.0,-1.0
+"0.15: [stage:Stage, sprite:userDef, {script}, *, receiveMessage, show, doWait]",481,0.15,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, *, receiveGo, hide, goToLayer]",482,0.1,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, gotoXY, doSwitchToCostume, doForever, *]",483,0.1,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, doSetVar, gotoXY, doForever, *]",484,0.1,0,-1.0,-1.0,-1.0
+"0.10: [script, doForever, {script}, forward, doFaceTowards, doIf, *]",485,0.1,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, show, doWait, doForever, *]",486,0.1,0,-1.0,-1.0,-1.0
+"0.10: [snapshot, stage:Stage, {script}, receiveGo, doSwitchToCostume, doForever, *]",487,0.1,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, show, goToLayer, gotoXY, *]",488,0.1,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, *, receiveGo, doSwitchToCostume, doSetVar]",489,0.1,0,-1.0,-1.0,-1.0
+"0.30: [stage:Stage, sprite:userDef, {script}, *, receiveGo, doSetVar, doForever]",490,0.3,0,-1.0,-1.0,-1.0
+"0.15: [stage:Stage, sprite:userDef, {script}, receiveGo, setHeading, doForever, *]",491,0.15,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, *, receiveGo, gotoXY, doSwitchToCostume]",492,0.1,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, receiveGo, hide, doSwitchToCostume, *]",493,0.1,0,-1.0,-1.0,-1.0
+"0.15: [stage:Stage, sprite:userDef, {script}, receiveGo, hide, doForever, *]",494,0.15,0,-1.0,-1.0,-1.0
+"0.15: [stage:Stage, sprite:userDef, {script}, *, receiveGo, setHeading, doForever]",495,0.15,0,-1.0,-1.0,-1.0
+"0.10: [script, doForever, {script}, *, forward, bounceOffEdge, doIf]",496,0.1,0,-1.0,-1.0,-1.0
+"0.15: [script, doForever, {script}, forward, doIf, doIf, *]",497,0.15,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, *, receiveGo, doSetVar, gotoXY]",498,0.1,0,-1.0,-1.0,-1.0
+"0.10: [script, doForever, {script}, forward, bounceOffEdge, doIf, *]",499,0.1,0,-1.0,-1.0,-1.0
+"0.10: [script, doForever, {script}, *, forward, doIf, doIf]",500,0.1,0,-1.0,-1.0,-1.0
+"0.30: [stage:Stage, sprite:userDef, {script}, receiveGo, doSetVar, doForever, *]",501,0.3,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, *, receiveGo, hide, doSetVar]",502,0.1,0,-1.0,-1.0,-1.0
+"0.80: [snapshot, stage:Stage, {sprite:userDef}, script, script, script, *]",503,0.8,0,-1.0,-1.0,-1.0
+"0.15: [snapshot, stage:Stage, {sprite:userDef}, *, varDec:userDef, varDec:userDef, varDec:userDef]",504,0.15,0,-1.0,-1.0,-1.0
+"0.75: [snapshot, stage:Stage, {sprite:userDef}, *, script, script, script]",505,0.75,0,-1.0,-1.0,-1.0
+"0.10: [{script}, doSwitchToCostume, doWait, doSwitchToCostume, gotoXY]",506,0.1,0,-1.0,-1.0,-1.0
+"0.30: [*, *, {snapshot}, stage:Stage, varDec:userDef, varDec:userDef, varDec:userDef]",507,0.3,0.2636103151862464,-1.0,-1.0,-1.0
+"0.15: [*, *, {snapshot}, stage:Stage, customBlock:userDef, varDec:userDef, varDec:userDef]",508,0.15,0.166189111747851,-1.0,-1.0,-1.0
+"0.10: [*, *, {snapshot}, customBlock:userDef, varDec:userDef, varDec:userDef, varDec:userDef]",509,0.1,0.27507163323782235,-1.0,-1.0,-1.0
+"0.30: [*, snapshot, {stage:Stage}, script, script, script, sprite:userDef]",510,0.3,0.28939828080229224,-1.0,-1.0,-1.0
+"0.35: [*, snapshot, {stage:Stage}, script, script, sprite:userDef, sprite:userDef]",511,0.35,0.38108882521489973,-1.0,-1.0,-1.0
+"0.50: [*, snapshot, {stage:Stage}, script, sprite:userDef, sprite:userDef, sprite:userDef]",512,0.5,0.5472779369627507,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, receiveGo, doSetVar, gotoXY, doForever]",513,0.1,0,-1.0,-1.0,-1.0
+"0.10: [script, doIf, {script}, playSound, turn, doChangeVar, doWait]",514,0.1,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, receiveMessage, show, doWait, doForever]",515,0.1,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, receiveGo, hide, goToLayer, gotoXY]",516,0.1,0,-1.0,-1.0,-1.0
+"0.10: [stage:Stage, sprite:userDef, {script}, receiveGo, gotoXY, doSwitchToCostume, doForever]",517,0.1,0,-1.0,-1.0,-1.0
+"0.10: [script, doIf, {script}, changeEffect, playSound, turn, doChangeVar]",518,0.1,0,-1.0,-1.0,-1.0
+"0.10: [snapshot, stage:Stage, {sprite:userDef}, varDec:userDef, varDec:userDef, script, script]",519,0.1,0,-1.0,-1.0,-1.0
+"0.15: [snapshot, stage:Stage, {sprite:userDef}, varDec:userDef, varDec:userDef, varDec:userDef, script]",520,0.15,0,-1.0,-1.0,-1.0

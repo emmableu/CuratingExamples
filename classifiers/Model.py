@@ -152,6 +152,8 @@ class Model:
 
 
 
+
+
     def naive_predict(self, X, y):
         y_pred = self.model.predict(X)
         y_test = y

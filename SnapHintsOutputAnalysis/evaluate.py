@@ -8,8 +8,9 @@ plt.rcParams["font.size"] = 22
 plt.figure(figsize=(12,10))
 
 # behavior_labels = [ "costopall"]
-# behavior_labels = ["cochangescore", "keymove", "jump",  "movetomouse", "costopall"]
-behavior_labels = ["cochangescore"]
+behavior_labels = ["cochangescore", "keymove", "jump",  "movetomouse", "costopall"]
+# behavior_labels = ["cochangescore"]
+# behavior_labels = ["costopall"]
 # behavior_labels = ["jump"]
 # behavior_labels = ["keymove", "movetomouse", "moveanimate", "costopall", "jump"]
 # behavior_labels = ["costopall", "movetomouse",  "jump", "cochangescore","keymove"]
@@ -27,38 +28,28 @@ def get_x_y_train_snaphints(snaphints_dir, support_based_only = False):
     x = np.vstack((yes_x, no_x))
     y = np.hstack((np.array([1]*yes_x.shape[0]), np.array([0]*no_x.shape[0])))
     if not support_based_only:
-        # diff_params = [0.1, 0.2, 0.25, 0.3, 0.35, 0.4, 0.5]
-        support_diffs = [0]
-        diff_params = [0.2]
-        # yes_params = [0.3, 0.4, 0.5]
+        diff_params = [0.2, 0.3, 0.4]
         jd_yes_params = [0]
-        # confidence_params = [0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95]
-        confidence_params = [0]
-        # feature_grids = [(x, y, z) for x in diff_params for y in yes_params for z in confidence_params]
         max_f1 = 0
         x_orig = copy.deepcopy(x)
         count = 0
-        for support_diff in support_diffs:
-            for diff_param in diff_params:
-                for yes_param in yes_params:
-                    for confidence_param in confidence_params:
-                        count += 1
-                        print(count)
-                        feature_grid = [support_diff, diff_param, jd_yes_params, confidence_param]
-                        print(feature_grid)
-                        selected_features, new_feature_output = get_selected_feature_index(snaphints_dir, feature_grid[0], feature_grid[1], feature_grid[2], feature_grids[3])
-                        # save_obj(new_feature_output, "new_features", snaphints_dir)
-                        if len(selected_features) == 0:
-                            continue
-                        x = x_orig[:,selected_features]
-                        f1 = svm_linear.model_cross_val_predict(x, y)['f1']
-                        if f1 >= max_f1:
-                            best_selected_features = selected_features
-                            selected_feature_grid = feature_grid
-                            max_f1 = f1
-                        if f1 > 0.9:
-                            print("f1 > 0.9")
-                            break
+        for diff_param in diff_params:
+            count += 1
+            print(count)
+            print("diff_param: ", diff_param)
+            selected_features, new_feature_output = get_selected_feature_index(snaphints_dir, diff_param)
+            # save_obj(new_feature_output, "new_features", snaphints_dir)
+            if len(selected_features) == 0:
+                continue
+            x = x_orig[:,selected_features]
+            f1 = svm_linear.naive_cross_val_predict(x, y)['f1']
+            if f1 >= max_f1:
+                best_selected_features = selected_features
+                selected_feature_grid = [diff_param]
+                max_f1 = f1
+            if f1 > 0.9:
+                print("f1 > 0.9")
+                break
         return x_orig[:, best_selected_features], y, best_selected_features, selected_feature_grid, max_f1
 
     else:
@@ -99,7 +90,7 @@ def get_x_y_snaphints(snaphints_dir, partition):
 
 
 
-def get_selected_feature_index(snaphints_dir, support_diff, jd_diff, jd_yes_bar, confidence_bar):
+def get_selected_feature_index(snaphints_dir, jd_diff):
     features = pd.read_csv(snaphints_dir + "/features.csv")
     selected_features = []
     new_feature_output = pd.DataFrame(columns = features.columns)
@@ -114,24 +105,10 @@ def get_selected_feature_index(snaphints_dir, support_diff, jd_diff, jd_yes_bar,
         if "AND" not in name or jd_yes == -1.0:
             selected_features.append(fid)
             new_feature_output.loc[features.index[fid]] = features.iloc[fid]
-        #     selected_features.append(fid)
-        # if support_yes - support_no >= support_diff:
-        # if support_yes > 0.2:
-        if jd_yes - jd_no >= jd_diff:
+
+        elif jd_yes - jd_no >= jd_diff:
             new_feature_output.loc[features.index[fid]] = features.iloc[fid]
             selected_features.append(fid)
-
-        # elif jd_yes - jd_no >= jd_diff:
-        #     if jd_yes >= jd_yes_bar:
-        #         # print("jd_yes - jd_no >= jd_diff and jd_yes >= jd_yes_bar")
-        #         # print("jd_yes: ", jd_yes, "jd_no", jd_no, features.at[fid, "name"])
-        #         new_feature_output.loc[features.index[fid]] = features.iloc[fid]
-        #         selected_features.append(fid)
-        #     elif confidence >= confidence_bar:
-        #         new_feature_output.loc[features.index[fid]] = features.iloc[fid]
-        #         selected_features.append(fid)
-        # print("support_yes - support_no > 0.3")
-        # print(features.at[fid, "name"])
     print(selected_features)
     return np.array(selected_features), new_feature_output
 
@@ -150,7 +127,8 @@ def get_support_based_selected_feature_index(snaphints_dir, support_diff):
 # methods = ['Neighbor', 'AndAllFull', 'AndAll','DPM', 'All', 'And']
 # methods = ['AllOneHot', "OneHot2", 'Neighbor', 'All', 'DPM', "AndAllFull", "AndAll", "All-6-3"]
 # methods = ['AllOneHot', 'Neighbor']
-methods = ['AndAllComplete2']
+# methods = ['AllAllFinalSupportOver0']
+# methods = ["All", "AndAll"]
 
 
 def snaphints_crossvalidation():
@@ -165,7 +143,7 @@ def snaphints_crossvalidation():
                 snaphints_dir = "/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/submitted/" \
                                 + behavior + "/cv/fold" + str(fold) + "/SnapHints" + method+ "/"
 
-                feature_select = True
+                feature_select = False
                 # feature_select = False
                 if feature_select:
                     X_train, y_train, best_features, best_grid, best_f1 = get_x_y_train_snaphints(snaphints_dir, support_based_only = False)
@@ -327,4 +305,4 @@ def grouped_bar_chart():
 
 
 # grouped_bar_chart()
-snaphints_crossvalidation()
+# snaphints_crossvalidation()
