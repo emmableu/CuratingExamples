@@ -9,6 +9,7 @@ plt.figure(figsize=(12,10))
 
 # behavior_labels = [ "costopall"]
 behavior_labels = ["cochangescore", "keymove", "jump",  "movetomouse", "costopall"]
+behavior_labels = [ "movetomouse"]
 # behavior_labels = ["cochangescore"]
 # behavior_labels = ["costopall"]
 # behavior_labels = ["jump"]
