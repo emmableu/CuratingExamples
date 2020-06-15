@@ -1,7 +1,7 @@
 import sys
 sys.path.append('.')
 from evaluate_snaphints import *
-
+from sklearn.model_selection import StratifiedKFold
 methods = ["All", "AndAll"]
 
 
