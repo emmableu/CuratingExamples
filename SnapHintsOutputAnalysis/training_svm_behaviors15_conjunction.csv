@@ -1,0 +1,2 @@
+,,tp,tn,fp,fn,accuracy,precision,recall,f1,auc
+costopall,AndAllComplete-3-4Gram,198,3492,0,0,1,1,1,1,1

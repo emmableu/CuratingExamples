@@ -7,9 +7,9 @@ plt.rcParams["font.family"] ="Times New Roman"
 plt.rcParams["font.size"] = 22
 plt.figure(figsize=(12,10))
 
-behavior_labels = [ "jump"]
+# behavior_labels = [ "costopall"]
 # behavior_labels = ["cochangescore", "keymove", "jump",  "movetomouse", "costopall"]
-# behavior_labels = ["cochangescore"]
+behavior_labels = ["cochangescore"]
 # behavior_labels = ["jump"]
 # behavior_labels = ["keymove", "movetomouse", "moveanimate", "costopall", "jump"]
 # behavior_labels = ["costopall", "movetomouse",  "jump", "cochangescore","keymove"]
@@ -28,23 +28,28 @@ def get_x_y_train_snaphints(snaphints_dir, support_based_only = False):
     y = np.hstack((np.array([1]*yes_x.shape[0]), np.array([0]*no_x.shape[0])))
     if not support_based_only:
         # diff_params = [0.1, 0.2, 0.25, 0.3, 0.35, 0.4, 0.5]
-        support_diffs = [0.4]
-        diff_params = [0.4]
+        support_diffs = [0]
+        diff_params = [0.2]
         # yes_params = [0.3, 0.4, 0.5]
-        yes_params = [0.3]
+        jd_yes_params = [0]
         # confidence_params = [0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95]
-        confidence_params = [0.8]
+        confidence_params = [0]
         # feature_grids = [(x, y, z) for x in diff_params for y in yes_params for z in confidence_params]
         max_f1 = 0
         x_orig = copy.deepcopy(x)
+        count = 0
         for support_diff in support_diffs:
             for diff_param in diff_params:
                 for yes_param in yes_params:
                     for confidence_param in confidence_params:
-                        feature_grid = [support_diff, diff_param, yes_param, confidence_param]
+                        count += 1
+                        print(count)
+                        feature_grid = [support_diff, diff_param, jd_yes_params, confidence_param]
                         print(feature_grid)
                         selected_features, new_feature_output = get_selected_feature_index(snaphints_dir, feature_grid[0], feature_grid[1], feature_grid[2], feature_grids[3])
-                        save_obj(new_feature_output, "new_features", snaphints_dir)
+                        # save_obj(new_feature_output, "new_features", snaphints_dir)
+                        if len(selected_features) == 0:
+                            continue
                         x = x_orig[:,selected_features]
                         f1 = svm_linear.model_cross_val_predict(x, y)['f1']
                         if f1 >= max_f1:
@@ -101,19 +106,21 @@ def get_selected_feature_index(snaphints_dir, support_diff, jd_diff, jd_yes_bar,
     for fid in tqdm(features.index):
         name = features.at[fid, 'name']
         jd_yes = features.at[fid, 'jdYes']
+        # print(jd_yes)
         jd_no = features.at[fid, 'jdNo']
         confidence = features.at[fid, 'confidenceYes']
         support_yes = features.at[fid, 'supportA']
         support_no = features.at[fid, 'supportB']
-        # if "AND" not in name:
-        #     new_feature_output.loc[features.index[fid]] = features.iloc[fid]
+        if "AND" not in name or jd_yes == -1.0:
+            selected_features.append(fid)
+            new_feature_output.loc[features.index[fid]] = features.iloc[fid]
         #     selected_features.append(fid)
         # if support_yes - support_no >= support_diff:
-        if support_yes > 0.2:
-            # print("support_yes - support_no > 0.3")
-            # print(features.at[fid, "name"])
+        # if support_yes > 0.2:
+        if jd_yes - jd_no >= jd_diff:
             new_feature_output.loc[features.index[fid]] = features.iloc[fid]
             selected_features.append(fid)
+
         # elif jd_yes - jd_no >= jd_diff:
         #     if jd_yes >= jd_yes_bar:
         #         # print("jd_yes - jd_no >= jd_diff and jd_yes >= jd_yes_bar")
@@ -123,14 +130,10 @@ def get_selected_feature_index(snaphints_dir, support_diff, jd_diff, jd_yes_bar,
         #     elif confidence >= confidence_bar:
         #         new_feature_output.loc[features.index[fid]] = features.iloc[fid]
         #         selected_features.append(fid)
-
-
-
+        # print("support_yes - support_no > 0.3")
+        # print(features.at[fid, "name"])
+    print(selected_features)
     return np.array(selected_features), new_feature_output
-
-
-
-
 
 
 def get_support_based_selected_feature_index(snaphints_dir, support_diff):
@@ -144,32 +147,10 @@ def get_support_based_selected_feature_index(snaphints_dir, support_diff):
     return np.array(selected_features)
 
 
-
-
-
-
-
-
-
-
 # methods = ['Neighbor', 'AndAllFull', 'AndAll','DPM', 'All', 'And']
 # methods = ['AllOneHot', "OneHot2", 'Neighbor', 'All', 'DPM', "AndAllFull", "AndAll", "All-6-3"]
 # methods = ['AllOneHot', 'Neighbor']
-# methods = ['AndAllComplete-3-4GramCSEDM']
-
-
-# def visualize_conjunction():
-#     snaphints_dir = "/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/submitted/cochangescore/cv/fold1/SnapHintsAndAllComplete2/"
-#     yes_x, no_x = get_x_y_split_snaphints(snaphints_dir, [21450, 48436, 48394])
-#     # print(x.shape)
-#     # print(y.shape)
-#     save_obj(yes_x, "yes_x", root_dir)
-#     save_obj(no_x, "no_x", root_dir)
-#
-#
-# visualize_conjunction()
-
-
+methods = ['AndAllComplete2']
 
 
 def snaphints_crossvalidation():
@@ -197,7 +178,7 @@ def snaphints_crossvalidation():
                     X_train, y_train = get_x_y_snaphints(snaphints_dir, "train")
                     X_test, y_test = get_x_y_snaphints(snaphints_dir, "test")
                 y_test_total.extend(y_test)
-                print(len(y_test_total))
+                # print(len(y_test_total))
                 # y_test_total.extend(y_train)
                 # y_pred  = svm_linear.get_y_pred(X_train,  X_train, y_train)
                 y_pred  = svm_linear.get_y_pred(X_train,  X_test, y_train)
@@ -216,23 +197,18 @@ def snaphints_crossvalidation():
 
 
     # save_obj(behavior_results, "svm_behaviors13_34gram_moveanimate", root_dir, "SnapHintsOutputAnalysis")
-    save_obj(behavior_results, "svm_behaviors17_conjunction", root_dir, "SnapHintsOutputAnalysis")
+    save_obj(behavior_results, "behaviors16", root_dir, "SnapHintsOutputAnalysis")
     return behavior_results
 
 
 
-
-
-
-
-# snaphints_crossvalidation()
-
 behavior_labels_to_show = ["keymove", "cochangescore", "jump",  "movetomouse", "costopall"]
 # behavior_labels_to_show = ["keymove", "jump", "cochangescore", "movetomouse", "moveanimate"]
 behavior_labels_to_show = list(reversed(behavior_labels_to_show))
-methods_to_show = ['All', 'AndAllComplete-3-4Gram']
+# methods_to_show = ['All', 'AndAllComplete-3-4Gram']
 # methods_to_show = ['PQGra', 'DPM', "AndAllFull", "AndAll"]
-# methods_to_show = ['OneHot2', 'Neighbor', 'All']
+methods_to_show = ['OneHot2', 'Neighbor', 'All']
+methods_to_show = ['All', 'AndAll']
 methods_to_show = list(reversed(methods_to_show))
 label_dict = {'AllOneHot': "One-hot encoding",
               'OneHot2': "Bag Of Words",
@@ -282,7 +258,12 @@ def grouped_bar_chart():
         for behavior in behavior_labels_to_show:
             if methods_to_show[index] == "OneHot2" or methods_to_show[index]== "Neighbor" or methods_to_show[index] == "All":
                 behavior_results2 = load_obj("svm_behaviors10", root_dir, "SnapHintsOutputAnalysis")
+                # behavior_results2 = load_obj("behaviors16", root_dir, "SnapHintsOutputAnalysis")
                 bars.append(behavior_results2.at[(behavior, methods_to_show[index]), "f1"])
+            elif behavior == 'cochangescore':
+                # behavior_results3 = load_obj("svm_behaviors10", root_dir, "SnapHintsOutputAnalysis")
+                behavior_results3 = load_obj("behaviors16", root_dir, "SnapHintsOutputAnalysis")
+                bars.append(behavior_results3.at[(behavior, methods_to_show[index]), "f1"])
             else:
                 bars.append(behavior_results.at[(behavior, methods_to_show[index]), "f1"])
         return bars
@@ -345,4 +326,5 @@ def grouped_bar_chart():
     plt.show()
 
 
-grouped_bar_chart()
+# grouped_bar_chart()
+snaphints_crossvalidation()
