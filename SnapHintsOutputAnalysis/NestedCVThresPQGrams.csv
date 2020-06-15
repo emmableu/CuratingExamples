@@ -38,7 +38,7 @@ keymove,AndAll,5,,0.1
 keymove,AndAll,6,,0.1
 keymove,AndAll,7,,0.1
 keymove,AndAll,8,,0.1
-keymove,AndAll,9,,
+keymove,AndAll,9,,0.2
 jump,All,0,,
 jump,All,1,,
 jump,All,2,,
