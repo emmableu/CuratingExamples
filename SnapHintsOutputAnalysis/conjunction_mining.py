@@ -1,6 +1,6 @@
 import sys
-sys.path.append('..')
-from SnapHintsOutputAnalysis.evaluate import *
+sys.path.append('.')
+from .evaluate import *
 
 methods = ["All", "AndAll"]
 
