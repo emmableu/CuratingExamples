@@ -62,7 +62,7 @@ def main():
                             print("no need to do it")
                             break
                     threshold_final.at[(behavior, method, fold), "jd_diff_thred"] = best_thres
-                    save_obj(threshold_final, "NestedCVThres3", root_dir, "SnapHintsOutputAnalysis")
+                    save_obj(threshold_final, "NestedCVThres4", root_dir, "SnapHintsOutputAnalysis")
 
                     y_pred_here = get_pred_with_thres(X_all, y_all, X_test, best_thres)
                     y_test_total.extend(y_test)
@@ -79,7 +79,7 @@ def main():
             behavior_results.loc[(behavior, method)] = performance
             print(behavior_results)
 
-            save_obj(behavior_results, "NestedCVResult3", ".")
+            save_obj(behavior_results, "NestedCVResult4", ".")
     return behavior_results
 
 
