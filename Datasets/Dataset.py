@@ -1,5 +1,5 @@
 import sys
-sys.path.append("../../my_module/")
+sys.path.append("../my_module/")
 # export PYTHONPATH="${PYTHONPATH}:/path/to/your/module/"
 
 from save_load_pickle import *
