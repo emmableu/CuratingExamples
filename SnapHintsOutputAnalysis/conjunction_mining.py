@@ -3,6 +3,7 @@ sys.path.append('.')
 from evaluate_snaphints import *
 from sklearn.model_selection import StratifiedKFold
 methods = ["All", "AndAll"]
+# methods = ["OneHot", "Neighbor"]
 
 
 def main():
@@ -18,7 +19,11 @@ def main():
             y_pred_total = []
 
             for fold in range(10):
-                snaphints_dir = '../Datasets/data/SnapHintsData/submitted/'\
+                # snaphints_dir = '../Datasets/data/SnapHintsData/submitted/'\
+                # snaphints_dir = "/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/submitted/" \
+                #              + behavior + "/cv/fold" + str(fold) + "/SnapHints" + method + "Support>0/"
+
+                snaphints_dir =  '../Datasets/data/SnapHintsData/submitted/'\
                                 + behavior + "/cv/fold" + str(fold) + "/SnapHintsAllAllFinalSupportOver0/"
                 X_all, y_all = get_x_y_snaphints(snaphints_dir, "train")
                 X_test, y_test = get_x_y_snaphints(snaphints_dir, "test")
@@ -36,7 +41,7 @@ def main():
                         print("no need to do it")
                         break
 
-                if method == "All":
+                if method != "AndAll":
                     threshold_final.at[(behavior, method, fold), "support_thred"] = best_thres_simple
                     y_pred_here = get_simple_pred_with_thres(X_all, y_all, X_test, best_thres_simple)
                     y_test_total.extend(y_test)
@@ -62,7 +67,7 @@ def main():
                             print("no need to do it")
                             break
                     threshold_final.at[(behavior, method, fold), "jd_diff_thred"] = best_thres
-                    save_obj(threshold_final, "NestedCVThres4", root_dir, "SnapHintsOutputAnalysis")
+                    save_obj(threshold_final, "NestedCVThresPQGrams", ".")
 
                     y_pred_here = get_pred_with_thres(X_all, y_all, X_test, best_thres)
                     y_test_total.extend(y_test)
@@ -79,7 +84,7 @@ def main():
             behavior_results.loc[(behavior, method)] = performance
             print(behavior_results)
 
-            save_obj(behavior_results, "NestedCVResult4", ".")
+            save_obj(behavior_results, "NestedCVResultPQGrams", ".")
     return behavior_results
 
 
