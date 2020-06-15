@@ -47,7 +47,7 @@ def main():
                     X_all, X_test = get_simple_data_subset(X_all, X_test, best_thres_simple)
                     print("x all shape:", X_all.shape)
                     print("here is for conjunction")
-                    thres_grid = [0, 0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]
+                    thres_grid = [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]
                     # thres_grid = [0.1,0.9]
                     max_f1 = 0
                     best_thres = -1
