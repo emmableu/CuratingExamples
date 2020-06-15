@@ -1,5 +1,5 @@
 import sys
-sys.path.append('/Users/wwang33/Documents/IJAIED20/CuratingExamples/SnapHintsOutputAnalysis')
+sys.path.append('..')
 from SnapHintsOutputAnalysis.evaluate import *
 
 methods = ["All", "AndAll"]
@@ -18,7 +18,7 @@ def main():
             y_pred_total = []
 
             for fold in range(10):
-                snaphints_dir = "/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/submitted/" \
+                snaphints_dir = '../../Datasets/data/SnapHintsData/submitted/'\
                                 + behavior + "/cv/fold" + str(fold) + "/SnapHintsAllAllFinalSupportOver0/"
                 X_all, y_all = get_x_y_snaphints(snaphints_dir, "train")
                 X_test, y_test = get_x_y_snaphints(snaphints_dir, "test")

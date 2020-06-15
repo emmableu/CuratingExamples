@@ -1,5 +1,5 @@
 import sys
-sys.path.append('/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets')
+sys.path.append('../Datasets')
 from Dataset import *
 import copy
 import matplotlib.pyplot as plt
