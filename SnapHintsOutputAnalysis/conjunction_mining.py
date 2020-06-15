@@ -1,6 +1,6 @@
 import sys
 sys.path.append('.')
-from .evaluate import *
+from evaluate_snaphints import *
 
 methods = ["All", "AndAll"]
 

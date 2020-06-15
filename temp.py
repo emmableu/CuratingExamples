@@ -127,7 +127,7 @@
 from shutil import *
 import sys
 sys.path.append('/Users/wwang33/Documents/IJAIED20/CuratingExamples/SnapHintsOutputAnalysis')
-from SnapHintsOutputAnalysis.evaluate import *
+from SnapHintsOutputAnalysis.evaluate_snaphints import *
 
 
 for behavior in behavior_labels:
