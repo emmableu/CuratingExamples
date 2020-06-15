@@ -1,10 +1,10 @@
 import sys
-sys.path.append("../../my_module")
-from save_load_pickle import *
-from translation_dict import *
+sys.path.append("../../my_module/")
+from my_module.save_load_pickle import *
+# from translation_dict import *
 import pandas as pd
-from CodeShape import *
-from Test import *
+# from CodeShape import *
+# from Test import *
 from ActionData import *
 import numpy as np
 from sklearn.model_selection import train_test_split
