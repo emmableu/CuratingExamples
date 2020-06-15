@@ -23,6 +23,8 @@ from Dataset import *
 import pandas as pd
 import warnings
 import sklearn
+sys.path.append("../classifiers/")
+
 from classifiers.Baseline import BaselineModel
 from classifiers.knn_classifiers.KNN import KNNModel
 from classifiers.lr_classifiers.LogisticRegression import LRModel
