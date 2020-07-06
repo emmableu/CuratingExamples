@@ -5,11 +5,11 @@ import copy
 import matplotlib.pyplot as plt
 plt.rcParams["font.family"] ="Times New Roman"
 plt.rcParams["font.size"] = 22
-plt.figure(figsize=(12,10))
+plt.figure(figsize=(13,10))
 
 # behavior_labels = [ "costopall"]
-# behavior_labels = ["cochangescore", "keymove", "jump",  "movetomouse", "costopall"]
-behavior_labels = [ "movetomouse"]
+behavior_labels = ["cochangescore", "keymove", "jump",  "movetomouse", "costopall"]
+# behavior_labels = [ "movetomouse"]
 # behavior_labels = ["cochangescore"]
 # behavior_labels = ["costopall"]
 # behavior_labels = ["jump"]
@@ -128,7 +128,9 @@ def get_support_based_selected_feature_index(snaphints_dir, support_diff):
 # methods = ['Neighbor', 'AndAllFull', 'AndAll','DPM', 'All', 'And']
 # methods = ['AllOneHot', "OneHot2", 'Neighbor', 'All', 'DPM', "AndAllFull", "AndAll", "All-6-3"]
 # methods = ['AllOneHot', 'Neighbor']
-# methods = ['AllAllFinalSupportOver0']
+methods = ['OneHotSupport>0', 'NeighborSupport>0', 'AllAllFinalSupportOver0', "AndAllComplete-3-4Gram"]
+# methods = [ "AndAllAndAllComplete-3-4Gram-Final"]
+# methods = ['AndAllComplete-3-4Gram']
 # methods = ["All", "AndAll"]
 
 
@@ -176,7 +178,7 @@ def snaphints_crossvalidation():
 
 
     # save_obj(behavior_results, "svm_behaviors13_34gram_moveanimate", root_dir, "SnapHintsOutputAnalysis")
-    save_obj(behavior_results, "behaviors16", root_dir, "SnapHintsOutputAnalysis")
+    save_obj(behavior_results, "svm_behaviors21_largerthan0.5", root_dir, "SnapHintsOutputAnalysis")
     return behavior_results
 
 
@@ -186,36 +188,42 @@ behavior_labels_to_show = ["keymove", "cochangescore", "jump",  "movetomouse", "
 behavior_labels_to_show = list(reversed(behavior_labels_to_show))
 # methods_to_show = ['All', 'AndAllComplete-3-4Gram']
 # methods_to_show = ['PQGra', 'DPM', "AndAllFull", "AndAll"]
-methods_to_show = ['OneHot2', 'Neighbor', 'All']
-methods_to_show = ['All', 'AndAll']
+methods_to_show = ['OneHot2', 'Neighbor', 'All', "AndAllComplete-3-4Gram"]
+# methods_to_show = methods
 methods_to_show = list(reversed(methods_to_show))
-label_dict = {'AllOneHot': "One-hot encoding",
-              'OneHot2': "Bag Of Words",
-            'Neighbor': 'Neighborhood',
-                'All': 'pq-Gram',
-                'AndAllComplete-3-4Gram': 'pq-Gram Operator',
-                'All-6-3': 'PQGrams 6-3',
+# label_dict = {'AllOneHot': "One-hot encoding",
+#               'OneHot2': "Bag Of Words",
+#             'Neighbor': 'Neighborhood',
+#                 'All': 'pq-Gram',
+#                 'AndAllComplete-3-4Gram': 'pq-Gram Operator',
+#                 'All-6-3': 'PQGrams 6-3',
+#               'DPM': 'PQGram DPM',
+#               'AndAllFull': 'All-based Conjunctions',
+#               'AndAll': 'DPM-based Conjunctions'}
+
+label_dict = {'OneHot2': "Bag-of-Words",
+              'Neighbor': 'Neighborhood',
+              'All': 'pq-Grams',
+              'OneHotSupport>0':"Bag-of-Words",
+              'NeighborSupport>0': 'Neighborhood',
+               'AllAllFinalSupportOver0': 'pq-Grams',
+              'All-6-3': 'PQGrams 6-3',
               'DPM': 'PQGram DPM',
               'AndAllFull': 'All-based Conjunctions',
-              'AndAll': 'DPM-based Conjunctions'}
+              'AndAll': 'DPM-based Conjunctions',
+              'AndAllComplete-3-4Gram': 'pq-Gram Conjunction Mining'}
 
-if len(methods_to_show) == 3:
-    label_dict = {'OneHot2': "Bag Of Words",
-                  'Neighbor': 'Neighborhood',
-                  'All': 'pq-Grams',
-                  'All-6-3': 'PQGrams 6-3',
-                  'DPM': 'PQGram DPM',
-                  'AndAllFull': 'All-based Conjunctions',
-                  'AndAll': 'DPM-based Conjunctions'}
-
-color_dict = { 'AllOneHot': "#D9AE80",
-            'Neighbor': '#F2B6BC',
-            'All': '#D6F2C2',
-               'OneHot2': '#D9AE80',
+color_dict = { 'AllOneHot': "#D6F2C2",
+            'Neighbor': '#8BD9C3',
+            'All': '#45B3BF',
+               'OneHotSupport>0':"#D6F2C2",
+               'NeighborSupport>0': '#8BD9C3',
+               'AllAllFinalSupportOver0': '#45B3BF',
+               'OneHot2': '#D6F2C2',
                'DPM': '#8BD9C3',
               'AndAllFull': '#45B3BF',
               'AndAll': '#1FA2BF',
-               'AndAllComplete-3-4Gram': '#1FA2BF'}
+               'AndAllComplete-3-4Gram': '#F2B6BC'}
 
 behavior_dict = {
     "keymove": "KeyboardMove (#n = 190/413)",
@@ -239,10 +247,10 @@ def grouped_bar_chart():
                 behavior_results2 = load_obj("svm_behaviors10", root_dir, "SnapHintsOutputAnalysis")
                 # behavior_results2 = load_obj("behaviors16", root_dir, "SnapHintsOutputAnalysis")
                 bars.append(behavior_results2.at[(behavior, methods_to_show[index]), "f1"])
-            elif behavior == 'cochangescore':
-                # behavior_results3 = load_obj("svm_behaviors10", root_dir, "SnapHintsOutputAnalysis")
-                behavior_results3 = load_obj("behaviors16", root_dir, "SnapHintsOutputAnalysis")
-                bars.append(behavior_results3.at[(behavior, methods_to_show[index]), "f1"])
+            # elif behavior == 'cochangescore':
+            #     # behavior_results3 = load_obj("svm_behaviors10", root_dir, "SnapHintsOutputAnalysis")
+            #     behavior_results3 = load_obj("behaviors16", root_dir, "SnapHintsOutputAnalysis")
+            #     bars.append(behavior_results3.at[(behavior, methods_to_show[index]), "f1"])
             else:
                 bars.append(behavior_results.at[(behavior, methods_to_show[index]), "f1"])
         return bars
@@ -300,10 +308,10 @@ def grouped_bar_chart():
 
     # Create legend & Show graphic
     plt.title("F1 Scores")
-    # fig.tight_layout()
+    plt.tight_layout()
     plt.savefig("f1_operators")
     plt.show()
 
 
-# grouped_bar_chart()
 # snaphints_crossvalidation()
+# grouped_bar_chart()

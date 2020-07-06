@@ -25,12 +25,12 @@ def main():
 
                 snaphints_dir =  '../Datasets/data/SnapHintsData/submitted/'\
                                 + behavior + "/cv/fold" + str(fold) + "/SnapHintsAllAllFinalSupportOver0/"
-                # snaphints_dir =  "/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/submitted/" \
-                #                 + behavior + "/cv/fold" + str(fold) + "/SnapHintsAllAllFinalSupportOver0/"
+                snaphints_dir =  "/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/submitted/" \
+                                + behavior + "/cv/fold" + str(fold) + "/SnapHintsAllAllFinalSupportOver0/"
                 X_all, y_all = get_x_y_snaphints(snaphints_dir, "train")
                 X_test, y_test = get_x_y_snaphints(snaphints_dir, "test")
-                simple_thres_grid = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
-                # simple_thres_grid = [0.2]
+                # simple_thres_grid = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+                simple_thres_grid = [0.2]
                 max_f1_simple = 0
                 best_thres_simple = -1
                 for s_thres in simple_thres_grid:
@@ -56,7 +56,7 @@ def main():
                     print("x all shape:", X_all.shape)
                     print("here is for conjunction")
                     thres_grid = [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]
-                    # thres_grid = [0.3]
+                    thres_grid = [0.3]
                     max_f1 = 0
                     best_thres = -1
                     for thres in thres_grid:
@@ -70,7 +70,7 @@ def main():
                             print("no need to do it")
                             break
                     threshold_final.at[(behavior, method, fold), "jd_diff_thred"] = best_thres
-                    save_obj(threshold_final, "NestedCVThresMoveToMouse", ".")
+                    save_obj(threshold_final, "NestedCVThresJump_temp", ".")
 
                     y_pred_here = get_pred_with_thres(X_all, y_all, X_test, best_thres)
                     y_test_total.extend(y_test)
@@ -87,7 +87,7 @@ def main():
             behavior_results.loc[(behavior, method)] = performance
             print(behavior_results)
 
-            save_obj(behavior_results, "NestedCVResultMoveToMouse", ".")
+            save_obj(behavior_results, "NestedCVResultJump_temp", ".")
     return behavior_results
 
 
@@ -96,7 +96,7 @@ def main():
 def get_f1_with_thres(X_all, y_all, thres, simple = True):
     y_val_total = []
     y_pred_total = []
-    split_strategy = StratifiedKFold(10)
+    split_strategy = StratifiedKFold(2)
 
     for train_index, val_index in split_strategy.split(X_all, y_all):
         X_train, X_val = X_all[train_index], X_all[val_index]
