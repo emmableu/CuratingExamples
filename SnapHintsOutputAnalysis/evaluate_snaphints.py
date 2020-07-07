@@ -7,8 +7,9 @@ plt.rcParams["font.family"] ="Times New Roman"
 plt.rcParams["font.size"] = 22
 plt.figure(figsize=(13,10))
 
-# behavior_labels = [ "costopall"]
-behavior_labels = ["cochangescore", "keymove", "jump",  "movetomouse", "costopall"]
+behavior_labels = [ "costopall"]
+# behavior_labels = ["cochangescore", "keymove", "jump",  "movetomouse", "costopall"]
+# behavior_labels = ["jump"]
 # behavior_labels = [ "movetomouse"]
 # behavior_labels = ["cochangescore"]
 # behavior_labels = ["costopall"]
@@ -28,35 +29,36 @@ def get_x_y_train_snaphints(snaphints_dir, support_based_only = False):
     no_x = get_yes_no(data, "no")
     x = np.vstack((yes_x, no_x))
     y = np.hstack((np.array([1]*yes_x.shape[0]), np.array([0]*no_x.shape[0])))
-    if not support_based_only:
-        diff_params = [0.2, 0.3, 0.4]
-        jd_yes_params = [0]
-        max_f1 = 0
-        x_orig = copy.deepcopy(x)
-        count = 0
-        for diff_param in diff_params:
-            count += 1
-            print(count)
-            print("diff_param: ", diff_param)
-            selected_features, new_feature_output = get_selected_feature_index(snaphints_dir, diff_param)
-            # save_obj(new_feature_output, "new_features", snaphints_dir)
-            if len(selected_features) == 0:
-                continue
-            x = x_orig[:,selected_features]
-            f1 = svm_linear.naive_cross_val_predict(x, y)['f1']
-            if f1 >= max_f1:
-                best_selected_features = selected_features
-                selected_feature_grid = [diff_param]
-                max_f1 = f1
-            if f1 > 0.9:
-                print("f1 > 0.9")
-                break
-        return x_orig[:, best_selected_features], y, best_selected_features, selected_feature_grid, max_f1
-
-    else:
-        support_diff = 0.4
-        selected_features = get_support_based_selected_feature_index(snaphints_dir, support_diff)
-        return x[:, selected_features], y, selected_features
+    return x, y
+    # if not support_based_only:
+    #     diff_params = [0.2, 0.3, 0.4]
+    #     jd_yes_params = [0]
+    #     max_f1 = 0
+    #     x_orig = copy.deepcopy(x)
+    #     count = 0
+    #     for diff_param in diff_params:
+    #         count += 1
+    #         print(count)
+    #         print("diff_param: ", diff_param)
+    #         selected_features, new_feature_output = get_selected_feature_index(snaphints_dir, diff_param)
+    #         # save_obj(new_feature_output, "new_features", snaphints_dir)
+    #         if len(selected_features) == 0:
+    #             continue
+    #         x = x_orig[:,selected_features]
+    #         f1 = svm_linear.naive_cross_val_predict(x, y)['f1']
+    #         if f1 >= max_f1:
+    #             best_selected_features = selected_features
+    #             selected_feature_grid = [diff_param]
+    #             max_f1 = f1
+    #         if f1 > 0.9:
+    #             print("f1 > 0.9")
+    #             break
+    #     return x_orig[:, best_selected_features], y, best_selected_features, selected_feature_grid, max_f1
+    #
+    # else:
+    #     support_diff = 0.4
+    #     selected_features = get_support_based_selected_feature_index(snaphints_dir, support_diff)
+    #     return x[:, selected_features], y, selected_features
 
 
 
@@ -128,7 +130,9 @@ def get_support_based_selected_feature_index(snaphints_dir, support_diff):
 # methods = ['Neighbor', 'AndAllFull', 'AndAll','DPM', 'All', 'And']
 # methods = ['AllOneHot', "OneHot2", 'Neighbor', 'All', 'DPM', "AndAllFull", "AndAll", "All-6-3"]
 # methods = ['AllOneHot', 'Neighbor']
-methods = ['OneHotSupport>0', 'NeighborSupport>0', 'AllAllFinalSupportOver0', "AndAllComplete-3-4Gram"]
+# methods = ["AndAllComplete-3-4Gram"]
+methods = ["All-6-3"]
+# methods = ['OneHotSupport>0', 'NeighborSupport>0', 'AllAllFinalSupportOver0', "AndAllComplete-3-4Gram"]
 # methods = [ "AndAllAndAllComplete-3-4Gram-Final"]
 # methods = ['AndAllComplete-3-4Gram']
 # methods = ["All", "AndAll"]
@@ -158,11 +162,26 @@ def snaphints_crossvalidation():
                 else:
                     X_train, y_train = get_x_y_snaphints(snaphints_dir, "train")
                     X_test, y_test = get_x_y_snaphints(snaphints_dir, "test")
+
+                    print("x_train shape: ", X_train.shape)
+                    print("x_test shape: ", X_test.shape)
+                    # X_train = np.vstack((X_train, X_test))
+                    # y_train = np.concatenate([y_train, y_test])
+                    np.random.seed(42)
+                    np.random.shuffle(X_train)
+                    np.random.seed(42)
+                    np.random.shuffle(y_train)
+
+                    np.random.seed(43)
+                    np.random.shuffle(X_test)
+                    np.random.seed(43)
+                    np.random.shuffle(y_test)
                 y_test_total.extend(y_test)
                 # print(len(y_test_total))
                 # y_test_total.extend(y_train)
                 # y_pred  = svm_linear.get_y_pred(X_train,  X_train, y_train)
                 y_pred  = svm_linear.get_y_pred(X_train,  X_test, y_train)
+                print("y_pred, y_test: ", y_pred, y_test)
                 y_pred_total.extend(y_pred)
                 performance_temp = svm_linear.get_matrix(y_test_total, y_pred_total)
 
@@ -178,7 +197,7 @@ def snaphints_crossvalidation():
 
 
     # save_obj(behavior_results, "svm_behaviors13_34gram_moveanimate", root_dir, "SnapHintsOutputAnalysis")
-    save_obj(behavior_results, "svm_behaviors21_largerthan0.5", root_dir, "SnapHintsOutputAnalysis")
+    save_obj(behavior_results, "svm_behaviors22", root_dir, "SnapHintsOutputAnalysis")
     return behavior_results
 
 
