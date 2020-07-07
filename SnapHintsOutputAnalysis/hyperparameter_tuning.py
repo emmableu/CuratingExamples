@@ -5,7 +5,7 @@ import operator
 from evaluate_snaphints import *
 np.set_printoptions(threshold=sys.maxsize)
 
-pq_rules = pd.read_csv("/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/csedm20/CRV/pqRules.csv")
+# pq_rules = pd.read_csv("/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/csedm20/CRV/pqRules.csv")
 game_label_data = pd.read_csv("/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/game_label_413.csv")
 # print(game_label_data.head())
 fold_seed = []
@@ -17,14 +17,20 @@ for x in range(413):
         fold_seed.append(this_list)
         this_list = []
     this_list.append(x)
-conjunction_rules = pd.read_csv(
-    "/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/csedm20/CRV/ConjunctionRules.csv")
+# conjunction_rules = pd.read_csv(
+#     "/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/csedm20/CRV/ConjunctionRules.csv")
+
+
+pq_rules = pd.read_csv(
+    "/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/csedm20/CRV/OneHotRules.csv")
+pq_rules = pd.read_csv(
+    "/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/csedm20/CRV/NeighborRules.csv")
 
 pq_rule_category = ["Train", "TrainVal"]
 
 conjunction_rule_category = ["TrainSupport", "TrainjdPos", "TrainjdNeg", "TrainValSupport", "TrainValjdPos",
                              "TrainValjdNeg"]
-print(conjunction_rules.columns)
+# print(conjunction_rules.columns)
 
 
 def pq_rule_tuning():
@@ -148,13 +154,13 @@ def get_y_pred(support, jd_diff, y_data, train, val, col_id, jd_pos, jd_neg):
         else:
             pq_rule_retain_list.append(pq_rules.at[i, 'ruleID'])
 
-    for i in conjunction_rules.index:
-        if (conjunction_rules.at[i, 'ruleIDA'] in pq_rule_removal_list) or (
-                conjunction_rules.at[i, 'ruleIDB'] in pq_rule_removal_list):
-            continue
-        if (conjunction_rules.at[i, jd_pos] - conjunction_rules.at[i, jd_neg]) < jd_diff:
-            continue
-        x_data.append(list(eval(conjunction_rules.at[i, "snapshotVector"])))
+    # for i in conjunction_rules.index:
+    #     if (conjunction_rules.at[i, 'ruleIDA'] in pq_rule_removal_list) or (
+    #             conjunction_rules.at[i, 'ruleIDB'] in pq_rule_removal_list):
+    #         continue
+    #     if (conjunction_rules.at[i, jd_pos] - conjunction_rules.at[i, jd_neg]) < jd_diff:
+    #         continue
+    #     x_data.append(list(eval(conjunction_rules.at[i, "snapshotVector"])))
 
         # if conjunction_rules.at[i, jd_pos] > 0.8:
         #     try:
@@ -213,14 +219,14 @@ grid_score_dict, best_score_dict, final_score_dict = conjunction_rule_tuning()
 
 grid_score_df = pd.DataFrame(grid_score_dict)
 best_score_dict = pd.DataFrame(best_score_dict)
-save_obj(grid_score_df, "grid_score_dict", "score_df", "pqgram_[0.1, 0.2, 0.3, 0.4, 0.5]_conjunction_diff[0.2, 0.3, 0.4, 0.5, 0.6]")
-save_obj(best_score_dict, "best_score_dict", "score_df", "pqgram_[0.1, 0.2, 0.3, 0.4, 0.5]_conjunction_diff[0.2, 0.3, 0.4, 0.5, 0.6]")
+save_obj(grid_score_df, "grid_score_dict", "score_df", "neighbor_[0.1, 0.2, 0.3, 0.4, 0.5]")
+save_obj(best_score_dict, "best_score_dict", "score_df", "neighbor_[0.1, 0.2, 0.3, 0.4, 0.5]")
 try:
     final_score_dict = pd.Series(final_score_dict)
 except:
     pass
 
-save_obj(final_score_dict, "final_score_dict", "score_df", "pqgram_[0.1, 0.2, 0.3, 0.4, 0.5]_conjunction_diff[0.2, 0.3, 0.4, 0.5, 0.6]")
+save_obj(final_score_dict, "final_score_dict", "score_df", "neighbor_[0.1, 0.2, 0.3, 0.4, 0.5]")
 
 # grid_score_dict = test_simulate()
 # save_obj(grid_score_dict, "test_simulate", "score_df")
