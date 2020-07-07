@@ -7,8 +7,8 @@ plt.rcParams["font.family"] ="Times New Roman"
 plt.rcParams["font.size"] = 22
 plt.figure(figsize=(13,10))
 
-behavior_labels = [ "costopall"]
-# behavior_labels = ["cochangescore", "keymove", "jump",  "movetomouse", "costopall"]
+# behavior_labels = [ "costopall"]
+behavior_labels = ["cochangescore", "keymove", "jump",  "movetomouse", "costopall"]
 # behavior_labels = ["jump"]
 # behavior_labels = [ "movetomouse"]
 # behavior_labels = ["cochangescore"]

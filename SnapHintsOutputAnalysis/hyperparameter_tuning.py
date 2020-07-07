@@ -11,7 +11,7 @@ game_label_data = pd.read_csv("/Users/wwang33/Documents/SnapHints/data/csc110/fa
 fold_seed = []
 this_list = []
 for x in range(413):
-    if x % 41 == 0 and len(this_list) > 0:
+    if x % 82 == 0 and len(this_list) > 0:
         if x == 410:
             this_list.extend([410, 411, 412])
         fold_seed.append(this_list)
@@ -33,16 +33,16 @@ def pq_rule_tuning():
     for label in behavior_labels:
         print(label)
         y_data = game_label_data[label].to_numpy()
-        for fold in range(10):
+        for fold in range(5):
             test = fold_seed[fold]
-            val = fold_seed[(fold + 1) % 10]
+            val = fold_seed[(fold + 1) % 5]
             train = []
-            for j in range(2, 10):
-                train += fold_seed[(fold + j) % 10]
+            for j in range(2, 5):
+                train += fold_seed[(fold + j) % 5]
 
             col_id = label + str(fold) + "TrainVal"
 
-            grid_list = [0.1, 0.2, 0.3]
+            grid_list = [0.1, 0.2, 0.3, 0.4, 0.5]
             sub_dict = {}
             for grid in grid_list:
                 x_data = []
@@ -82,23 +82,23 @@ def conjunction_rule_tuning():
         full_y_pred = []
         full_y_test = []
 
-        for fold in range(10):
+        for fold in range(5):
             sub_dict = {}
             test = fold_seed[fold]
             # print("fold " , fold , " test: ", test)
-            val = fold_seed[(fold + 1) % 10]
+            val = fold_seed[(fold + 1) % 5]
             train = []
-            for j in range(2, 10):
-                train += fold_seed[(fold + j) % 10]
+            for j in range(2, 5):
+                train += fold_seed[(fold + j) % 5]
             col_id = label + str(fold) + "Train"
             jd_pos = label + str(fold) + "TrainjdPos"
             jd_neg = label + str(fold) + "TrainjdNeg"
 
             # support_grid = [0.1, 0.3]
-            support_grid = [0.1, 0.2, 0.3]
-            support_grid = [0.1, 0.2, 0.3]
-            # jd_diff_grid = [0.2, 0.3, 0.4, 0.5, 0.6]
-            jd_diff_grid = [1]
+            # support_grid = [0.1, 0.2, 0.3]
+            support_grid = [0.1, 0.2, 0.3, 0.4, 0.5]
+            jd_diff_grid = [0.2, 0.3, 0.4, 0.5, 0.6]
+            # jd_diff_grid = [1]
             # jd_diff_grid = [0.2, 0.6]
             for support in support_grid:
                 for jd_diff in jd_diff_grid:
@@ -118,7 +118,7 @@ def conjunction_rule_tuning():
 
             real_y_pred, y_test = get_y_pred(best_key[0], best_key[1], y_data, all_train, test, all_col_id, all_jd_pos,
                                              all_jd_neg)
-            print("real_y_pred, y_test: ", real_y_pred, y_test)
+            # print("real_y_pred, y_test: ", real_y_pred, y_test)
             fake_performance = svm_linear.get_matrix(y_test, real_y_pred)
             full_y_pred.extend(real_y_pred)
             full_y_test.extend(y_test)
@@ -146,17 +146,15 @@ def get_y_pred(support, jd_diff, y_data, train, val, col_id, jd_pos, jd_neg):
         if pq_rules.at[i, col_id] < support or ("snapshot" in pq_rules.at[i, 'grams']):
             pq_rule_removal_list.append(pq_rules.at[i, 'ruleID'])
         else:
-            # print(pq_rules.at[i, 'grams'])
-            # print(pq_rules.at[i, col_id])
             pq_rule_retain_list.append(pq_rules.at[i, 'ruleID'])
 
-    # for i in conjunction_rules.index:
-    #     if (conjunction_rules.at[i, 'ruleIDA'] in pq_rule_removal_list) or (
-    #             conjunction_rules.at[i, 'ruleIDB'] in pq_rule_removal_list):
-    #         continue
-    #     if (conjunction_rules.at[i, jd_pos] - conjunction_rules.at[i, jd_neg]) < jd_diff:
-    #         continue
-    #     x_data.append(list(eval(conjunction_rules.at[i, "snapshotVector"])))
+    for i in conjunction_rules.index:
+        if (conjunction_rules.at[i, 'ruleIDA'] in pq_rule_removal_list) or (
+                conjunction_rules.at[i, 'ruleIDB'] in pq_rule_removal_list):
+            continue
+        if (conjunction_rules.at[i, jd_pos] - conjunction_rules.at[i, jd_neg]) < jd_diff:
+            continue
+        x_data.append(list(eval(conjunction_rules.at[i, "snapshotVector"])))
 
         # if conjunction_rules.at[i, jd_pos] > 0.8:
         #     try:
@@ -168,15 +166,12 @@ def get_y_pred(support, jd_diff, y_data, train, val, col_id, jd_pos, jd_neg):
     pq_rule_data = pq_rules["snapshotVector"].tolist()
     pq_rule_data = [list(eval(item)) for item in pq_rule_data]
     pq_rule_data = np.asarray(pq_rule_data)
-    pq_rule_data = pq_rule_data[pq_rule_retain_list]
-    print("line 172: pq_rule_data shape", pq_rule_data.shape)
-
     x_data = np.asarray(x_data)
-    print("line 172: x_data shape", x_data.shape)
-
-    x_data = np.vstack((pq_rule_data, x_data))
-
-    # x_data = pq_rule_data
+    pq_rule_data = pq_rule_data[pq_rule_retain_list]
+    if x_data.shape[0] != 0:
+        x_data = np.vstack((pq_rule_data, x_data))
+    else:
+        x_data = pq_rule_data
     x_data = x_data.transpose()
     x_train = x_data[train]
 
@@ -185,7 +180,7 @@ def get_y_pred(support, jd_diff, y_data, train, val, col_id, jd_pos, jd_neg):
     y_train = y_data[train]
     x_val = x_data[val]
     y_val = y_data[val]
-    print("x_val: ", x_val)
+    # print("x_val: ", x_val)
     y_pred = svm_linear.get_y_pred(x_train, x_val, y_train)
     return y_pred, y_val
 
@@ -218,14 +213,14 @@ grid_score_dict, best_score_dict, final_score_dict = conjunction_rule_tuning()
 
 grid_score_df = pd.DataFrame(grid_score_dict)
 best_score_dict = pd.DataFrame(best_score_dict)
-save_obj(grid_score_df, "grid_score_df4", "score_df")
-save_obj(best_score_dict, "best_score_dict4", "score_df")
+save_obj(grid_score_df, "grid_score_dict", "score_df", "pqgram_[0.1, 0.2, 0.3, 0.4, 0.5]_conjunction_diff[0.2, 0.3, 0.4, 0.5, 0.6]")
+save_obj(best_score_dict, "best_score_dict", "score_df", "pqgram_[0.1, 0.2, 0.3, 0.4, 0.5]_conjunction_diff[0.2, 0.3, 0.4, 0.5, 0.6]")
 try:
     final_score_dict = pd.Series(final_score_dict)
 except:
     pass
 
-save_obj(final_score_dict, "final_score_dict4", "score_df")
+save_obj(final_score_dict, "final_score_dict", "score_df", "pqgram_[0.1, 0.2, 0.3, 0.4, 0.5]_conjunction_diff[0.2, 0.3, 0.4, 0.5, 0.6]")
 
 # grid_score_dict = test_simulate()
 # save_obj(grid_score_dict, "test_simulate", "score_df")
