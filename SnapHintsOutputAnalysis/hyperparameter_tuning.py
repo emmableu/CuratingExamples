@@ -5,7 +5,7 @@ import operator
 from evaluate_snaphints import *
 np.set_printoptions(threshold=sys.maxsize)
 
-# pq_rules = pd.read_csv("/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/csedm20/CRV/pqRules.csv")
+pq_rules = pd.read_csv("/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/csedm20/CRV/pqRules.csv")
 game_label_data = pd.read_csv("/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/game_label_413.csv")
 # print(game_label_data.head())
 fold_seed = []
@@ -21,10 +21,10 @@ for x in range(413):
 #     "/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/csedm20/CRV/ConjunctionRules.csv")
 
 
-pq_rules = pd.read_csv(
-    "/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/csedm20/CRV/OneHotRules.csv")
-pq_rules = pd.read_csv(
-    "/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/csedm20/CRV/NeighborRules.csv")
+# pq_rules = pd.read_csv(
+#     "/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/csedm20/CRV/OneHotRules.csv")
+# pq_rules = pd.read_csv(
+#     "/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/csedm20/CRV/NeighborRules.csv")
 
 pq_rule_category = ["Train", "TrainVal"]
 
@@ -102,6 +102,7 @@ def conjunction_rule_tuning():
 
             # support_grid = [0.1, 0.3]
             # support_grid = [0.1, 0.2, 0.3]
+            # support_grid = [-1]
             support_grid = [0.1, 0.2, 0.3, 0.4, 0.5]
             jd_diff_grid = [0.2, 0.3, 0.4, 0.5, 0.6]
             # jd_diff_grid = [1]
@@ -123,6 +124,8 @@ def conjunction_rule_tuning():
             all_jd_neg = label + str(fold) + "TrainValjdNeg"
 
             real_y_pred, y_test = get_y_pred(best_key[0], best_key[1], y_data, all_train, test, all_col_id, all_jd_pos,
+                                             all_jd_neg)
+            real_y_pred, y_test = get_y_pred(best_key[0], best_key[1], y_data, all_train, all_train, all_col_id, all_jd_pos,
                                              all_jd_neg)
             # print("real_y_pred, y_test: ", real_y_pred, y_test)
             fake_performance = svm_linear.get_matrix(y_test, real_y_pred)
@@ -219,14 +222,14 @@ grid_score_dict, best_score_dict, final_score_dict = conjunction_rule_tuning()
 
 grid_score_df = pd.DataFrame(grid_score_dict)
 best_score_dict = pd.DataFrame(best_score_dict)
-save_obj(grid_score_df, "grid_score_dict", "score_df", "neighbor_[0.1, 0.2, 0.3, 0.4, 0.5]")
-save_obj(best_score_dict, "best_score_dict", "score_df", "neighbor_[0.1, 0.2, 0.3, 0.4, 0.5]")
+save_obj(grid_score_df, "grid_score_dict", "score_df", "training_pqgram_only_[0.1, 0.2, 0.3, 0.4, 0.5]")
+save_obj(best_score_dict, "best_score_dict", "score_df", "training_pqgram_only_[0.1, 0.2, 0.3, 0.4, 0.5]")
 try:
     final_score_dict = pd.Series(final_score_dict)
 except:
     pass
 
-save_obj(final_score_dict, "final_score_dict", "score_df", "neighbor_[0.1, 0.2, 0.3, 0.4, 0.5]")
+save_obj(final_score_dict, "final_score_dict", "score_df", "training_pqgram_only_[0.1, 0.2, 0.3, 0.4, 0.5]")
 
 # grid_score_dict = test_simulate()
 # save_obj(grid_score_dict, "test_simulate", "score_df")

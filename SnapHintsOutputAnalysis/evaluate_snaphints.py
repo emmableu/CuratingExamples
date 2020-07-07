@@ -208,6 +208,7 @@ behavior_labels_to_show = list(reversed(behavior_labels_to_show))
 # methods_to_show = ['All', 'AndAllComplete-3-4Gram']
 # methods_to_show = ['PQGra', 'DPM', "AndAllFull", "AndAll"]
 methods_to_show = ['OneHot2', 'Neighbor', 'All', "AndAllComplete-3-4Gram"]
+methods_to_show = ['OneHot2', 'Neighbor', 'All']
 # methods_to_show = methods
 methods_to_show = list(reversed(methods_to_show))
 # label_dict = {'AllOneHot': "One-hot encoding",
@@ -258,26 +259,44 @@ def grouped_bar_chart():
     # behavior_results = load_obj("svm_behaviors9", root_dir, "SnapHintsOutputAnalysis")
     behavior_results = load_obj("svm_behaviors15_conjunction_DPM1", root_dir, "SnapHintsOutputAnalysis")
     barWidth = 0.13
+    all_methods = ["pqgram_[0.1, 0.2, 0.3, 0.4, 0.5]_conjunction_diff[0.2, 0.3, 0.4, 0.5, 0.6]", "pqgram_only_[0.1, 0.2, 0.3, 0.4, 0.5]",
+                   "neighbor_[0.1, 0.2, 0.3, 0.4, 0.5]", "onehot_[0.1, 0.2, 0.3, 0.4, 0.5]"]
+    all_methods = ["pqgram_[0.1, 0.2, 0.3, 0.4, 0.5]_conjunction_diff[0.2, 0.3, 0.4, 0.5, 0.6]", "pqgram_all",
+                   "neighbor_all", "onehot_all"]
+    all_methods = ["training_onehot_[0.1, 0.2, 0.3, 0.4, 0.5]",
+                   "training_neighbor_[0.1, 0.2, 0.3, 0.4, 0.5]", "training_pqgram_only_[0.1, 0.2, 0.3, 0.4, 0.5]"]
+
+    all_methods = ["pqgram_only_[0.1, 0.2, 0.3, 0.4, 0.5]",
+                   "neighbor_[0.1, 0.2, 0.3, 0.4, 0.5]", "onehot_[0.1, 0.2, 0.3, 0.4, 0.5]"]
     # print(behavior_results)
-    def get_bar(index):
-        bars = []
-        for behavior in behavior_labels_to_show:
-            if methods_to_show[index] == "OneHot2" or methods_to_show[index]== "Neighbor" or methods_to_show[index] == "All":
-                behavior_results2 = load_obj("svm_behaviors10", root_dir, "SnapHintsOutputAnalysis")
-                # behavior_results2 = load_obj("behaviors16", root_dir, "SnapHintsOutputAnalysis")
-                bars.append(behavior_results2.at[(behavior, methods_to_show[index]), "f1"])
-            # elif behavior == 'cochangescore':
-            #     # behavior_results3 = load_obj("svm_behaviors10", root_dir, "SnapHintsOutputAnalysis")
-            #     behavior_results3 = load_obj("behaviors16", root_dir, "SnapHintsOutputAnalysis")
-            #     bars.append(behavior_results3.at[(behavior, methods_to_show[index]), "f1"])
-            else:
-                bars.append(behavior_results.at[(behavior, methods_to_show[index]), "f1"])
-        return bars
-
+    # def get_bar(index):
+    #     bars = []
+    #     for behavior in behavior_labels_to_show:
+    #         if methods_to_show[index] == "OneHot2" or methods_to_show[index]== "Neighbor" or methods_to_show[index] == "All":
+    #             behavior_results2 = load_obj("svm_behaviors10", root_dir, "SnapHintsOutputAnalysis")
+    #             # behavior_results2 = load_obj("behaviors16", root_dir, "SnapHintsOutputAnalysis")
+    #             bars.append(behavior_results2.at[(behavior, methods_to_show[index]), "f1"])
+    #         # elif behavior == 'cochangescore':
+    #         #     # behavior_results3 = load_obj("svm_behaviors10", root_dir, "SnapHintsOutputAnalysis")
+    #         #     behavior_results3 = load_obj("behaviors16", root_dir, "SnapHintsOutputAnalysis")
+    #         #     bars.append(behavior_results3.at[(behavior, methods_to_show[index]), "f1"])
+    #         else:
+    #             bars.append(behavior_results.at[(behavior, methods_to_show[index]), "f1"])
+    #     return bars
+    #
+    # bars = []
+    # for i in range(len(methods_to_show)):
+    #     bars.append(get_bar(i))
     bars = []
-    for i in range(len(methods_to_show)):
-        bars.append(get_bar(i))
+    for method in all_methods:
+        data = load_obj("final_score_dict", "score_df", method)
+        bar = []
+        for label in ["costopall", "movetomouse", "jump", "cochangescore", "keymove"]:
+            d = round(data[label], 2)
+            bar.append(d)
+        bars.append(bar)
 
+    # bars = [[0.23, 0.43, 0.67, 0.54, 0.81], [0.39, 0.42, 0.63, 0.57, 0.83], [0.35, 0.42, 0.60, 0.62, 0.78], [0.32, 0.56, 0.66, 0.53, 0.83]]
     print("bars: ", bars)
     # Set position of bar on X axis
     r = [np.arange(len(bars[0]))]
@@ -328,9 +347,9 @@ def grouped_bar_chart():
     # Create legend & Show graphic
     plt.title("F1 Scores")
     plt.tight_layout()
-    plt.savefig("f1_operators")
+    plt.savefig("f1_scores_without_bug")
     plt.show()
 
 
 # snaphints_crossvalidation()
-# grouped_bar_chart()
+grouped_bar_chart()
