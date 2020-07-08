@@ -266,8 +266,8 @@ def grouped_bar_chart():
     all_methods = ["training_onehot_[0.1, 0.2, 0.3, 0.4, 0.5]",
                    "training_neighbor_[0.1, 0.2, 0.3, 0.4, 0.5]", "training_pqgram_only_[0.1, 0.2, 0.3, 0.4, 0.5]"]
 
-    all_methods = ["pqgram_only_[0.1, 0.2, 0.3, 0.4, 0.5]",
-                   "neighbor_[0.1, 0.2, 0.3, 0.4, 0.5]", "onehot_[0.1, 0.2, 0.3, 0.4, 0.5]"]
+    all_methods = ["pqRules_[0.1, 0.2, 0.3, 0.4, 0.5]",
+                   "NeighborRules_[0.1, 0.2, 0.3, 0.4, 0.5]", "OneHotRules_[0.1, 0.2, 0.3, 0.4, 0.5]"]
     # print(behavior_results)
     # def get_bar(index):
     #     bars = []
@@ -289,7 +289,7 @@ def grouped_bar_chart():
     #     bars.append(get_bar(i))
     bars = []
     for method in all_methods:
-        data = load_obj("final_score_dict", "score_df", method)
+        data = load_obj("final_score_dict", "score_df_c_tuned", method)
         bar = []
         for label in ["costopall", "movetomouse", "jump", "cochangescore", "keymove"]:
             d = round(data[label], 2)
@@ -347,9 +347,9 @@ def grouped_bar_chart():
     # Create legend & Show graphic
     plt.title("F1 Scores")
     plt.tight_layout()
-    plt.savefig("f1_scores_without_bug")
+    plt.savefig("f1_c_tuned")
     plt.show()
 
 
 # snaphints_crossvalidation()
-# grouped_bar_chart()
+grouped_bar_chart()
