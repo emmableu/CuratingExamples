@@ -30,10 +30,10 @@ class SVMLinearModel(Model):
 
 
 
-class SVMLinearP001(Model):
-    def __init__(self):
-        self.name = "Linear-Support SVC"
-        self.model =  LinearSVC(C=0.001)
+# class SVMLinearP001(Model):
+#     def __init__(self):
+#         self.name = "Linear-Support SVC"
+#         self.model =  LinearSVC(C=0.001)
 
 
 
@@ -54,7 +54,7 @@ class SVMLinear10(Model):
         self.model =  LinearSVC(C=10)
 
 
-class SVMLinear10(Model):
+class SVMLinear100(Model):
     def __init__(self):
         self.name = "Linear-Support SVC"
         self.model =  LinearSVC(C=100)

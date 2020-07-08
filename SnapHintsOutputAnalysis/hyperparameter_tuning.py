@@ -3,6 +3,15 @@ import sys
 sys.path.append('.')
 import operator
 from evaluate_snaphints import *
+
+from classifiers.svm_classifiers.SVM_Linear import SVMLinearModel, SVMLinearP01, SVMLinearP1, SVMLinear10, SVMLinear100
+
+svm_linear_p01 = SVMLinearP01()
+svm_linear_p1 = SVMLinearP1()
+svm_linear_10 = SVMLinear10()
+svm_linear_100 = SVMLinear100()
+
+
 np.set_printoptions(threshold=sys.maxsize)
 
 game_label_data = pd.read_csv("/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/game_label_413.csv")
@@ -18,7 +27,7 @@ for x in range(413):
 
 
 
-def rule_tuning(rule_data):
+def rule_tuning(pq_rules):
     grid_score_dict = {}
     best_score_dict = {}
     final_score_dict = {}
@@ -32,7 +41,6 @@ def rule_tuning(rule_data):
         for fold in range(5):
             sub_dict = {}
             test = fold_seed[fold]
-            # print("fold " , fold , " test: ", test)
             val = fold_seed[(fold + 1) % 5]
             train = []
             for j in range(2, 5):
@@ -40,11 +48,13 @@ def rule_tuning(rule_data):
             col_id = label + str(fold) + "Train"
 
             support_grid = [0.1, 0.2, 0.3, 0.4, 0.5]
+            c_grids = [svm_linear_p01, svm_linear_p1, svm_linear, svm_linear_10, svm_linear_100]
 
             for support in support_grid:
-                f1 = get_f1(support, y_data, train, val, col_id)
-                sub_dict[support] = f1
-                grid_score_dict[label + str(fold)] = sub_dict
+                for c_grid in c_grids:
+                    f1 = get_f1(pq_rules, support, y_data, train, val, col_id, c_grid)
+                    sub_dict[(support, c_grid)] = f1
+                    grid_score_dict[label + str(fold)] = sub_dict
 
             best_key = get_best_key(sub_dict)
             best_score = {"best_grid_set": best_key, "val_f1": sub_dict[best_key]}
@@ -52,7 +62,7 @@ def rule_tuning(rule_data):
 
             all_train = train + val
             all_col_id = label + str(fold) + "TrainVal"
-            real_y_pred, y_test = get_y_pred(best_key, y_data, all_train, test, all_col_id)
+            real_y_pred, y_test = get_y_pred(pq_rules, best_key[0], y_data, all_train, test, all_col_id, best_key[1])
 
             full_y_pred.extend(real_y_pred)
             full_y_test.extend(y_test)
@@ -64,14 +74,14 @@ def rule_tuning(rule_data):
     return grid_score_dict, best_score_dict, final_score_dict
 
 
-def get_f1(support, y_data, train, val, col_id):
-    y_pred, y_val = get_y_pred(support, y_data, train, val, col_id)
-    performance_temp = svm_linear.get_matrix(y_val, y_pred)
+def get_f1(pq_rules, support, y_data, train, val, col_id, c_grid):
+    y_pred, y_val = get_y_pred(pq_rules, support, y_data, train, val, col_id, c_grid)
+    performance_temp = c_grid.get_matrix(y_val, y_pred)
     f1 = performance_temp['f1']
     return f1
 
 
-def get_y_pred(support, y_data, train, val, col_id):
+def get_y_pred(pq_rules, support, y_data, train, val, col_id, c_grid):
     pq_rule_data = []
     x_data = []
     pq_rule_removal_list = []
@@ -81,7 +91,6 @@ def get_y_pred(support, y_data, train, val, col_id):
             pq_rule_removal_list.append(pq_rules.at[i, 'ruleID'])
         else:
             pq_rule_retain_list.append(pq_rules.at[i, 'ruleID'])
-
 
     pq_rule_data = pq_rules["snapshotVector"].tolist()
     pq_rule_data = [list(eval(item)) for item in pq_rule_data]
@@ -100,8 +109,7 @@ def get_y_pred(support, y_data, train, val, col_id):
     y_train = y_data[train]
     x_val = x_data[val]
     y_val = y_data[val]
-    # print("x_val: ", x_val)
-    y_pred = svm_linear.get_y_pred(x_train, x_val, y_train)
+    y_pred = c_grid.get_y_pred(x_train, x_val, y_train)
     return y_pred, y_val
 
 
