@@ -29,6 +29,40 @@ class SVMLinearModel(Model):
         print("Best parameters for LinearSVC:{}".format(grid_search.best_params_))
 
 
+
+class SVMLinearP001(Model):
+    def __init__(self):
+        self.name = "Linear-Support SVC"
+        self.model =  LinearSVC(C=0.001)
+
+
+
+class SVMLinearP01(Model):
+    def __init__(self):
+        self.name = "Linear-Support SVC"
+        self.model =  LinearSVC(C=0.01)
+
+
+class SVMLinearP1(Model):
+    def __init__(self):
+        self.name = "Linear-Support SVC"
+        self.model =  LinearSVC(C=0.1)
+
+class SVMLinear10(Model):
+    def __init__(self):
+        self.name = "Linear-Support SVC"
+        self.model =  LinearSVC(C=10)
+
+
+class SVMLinear10(Model):
+    def __init__(self):
+        self.name = "Linear-Support SVC"
+        self.model =  LinearSVC(C=100)
+
+
+
+
+
 class TunedSVMLinearModel(Model):
     def __init__(self):
         self.name = "Linear-Support SVC Tuned"
