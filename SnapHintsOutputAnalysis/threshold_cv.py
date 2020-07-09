@@ -41,12 +41,17 @@ def threshold_cv(tuning_methd):
                 for q_thres in q_thres_grid:
                     fixed_params = [p_thres, q_thres, 100]
                     record = get_tuned_prediction(method, label, fixed_params)
-                    final_score_dict[(label, fixed_params)] = record
+                    final_score_dict[(label, fixed_params[0], fixed_params[1], fixed_params[2])] = record
         elif tuning_methd == "nGramRules":
             for n_thres in n_thres_grid:
                 fixed_params = [100, 100, n_thres]
                 record = get_tuned_prediction(method, label, fixed_params)
                 final_score_dict[(label, fixed_params[0], fixed_params[1], fixed_params[2])] = record
+        else:
+            fixed_params = [100, 100, 100]
+            record = get_tuned_prediction(method, label, fixed_params)
+            final_score_dict[(label, fixed_params[0], fixed_params[1], fixed_params[2])] = record
+
 
 
     return final_score_dict
@@ -82,13 +87,28 @@ def get_tuned_prediction(method, label, fixed_params):
 
 
 
+def get_one_hot_from_disk():
+    final_score_dict = {}
+    for label in behavior_labels:
+        fixed_params = [100, 100, 100]
+        record = get_tuned_prediction(method, label, fixed_params)
+        final_score_dict[label] = record
+    return final_score_dict
+
+
+
+
 
 
 # methods = ["pqRules", "nGramRules"]
-methods = ["nGramRules", "pqRules", "OneHotRules"]
+methods = ["OneHotRules"]
 # methods = ["OneHotRules"]
 for method in methods:
     rule_data = pd.read_csv(
         "/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/csedm20/CRV_new_413/" + method + ".csv")
-    final_score_dict = threshold_cv(method)
-    save_obj(final_score_dict, "final_score_dict", "threshold_cv", method)
+    # final_score_dict = threshold_cv(method)
+    # final_score_dict = pd.DataFrame(final_score_dict)
+    # save_obj(final_score_dict, "final_score_dict", "threshold_cv", method)
+    final_score_dict = get_one_hot_from_disk()
+    final_score_dict = pd.DataFrame(final_score_dict)
+    save_obj(final_score_dict, "final_score_dict", "all_tuning", method)
