@@ -27,16 +27,9 @@ for x in range(413):
     this_list.append(x)
 
 
-def threshold_cv(tuning_methd, validation_f1 = False):
-    # grid_score_dict = {}
-    best_score_dict = {}
+def threshold_cv(tuning_methd):
     final_score_dict = {}
     for label in behavior_labels:
-        y_data = game_label_data[label].to_numpy()
-
-        full_y_pred = []
-        full_y_test = []
-
 
         p_thres_grid = [1, 2, 3]
         q_thres_grid = [1, 2, 3, 4]
@@ -46,67 +39,49 @@ def threshold_cv(tuning_methd, validation_f1 = False):
         if tuning_methd == "pqRules":
             for p_thres in p_thres_grid:
                 for q_thres in q_thres_grid:
-
-
-
-                        for c_grid in c_grids:
-                            f1 = get_f1_from_disk(method, label, fold, c_grid, p_thres, q_thres, 100)
-                            if f1>best_f1:
-                                best_f1 = f1
-                                best_c  = c_grid
-
-                        real_y_pred, y_test = get_y_pred(y_data, train, val, best_c, p_thres, q_thres, 100)
-
-
+                    fixed_params = [p_thres, q_thres, 100]
+                    record = get_tuned_prediction(method, label, fixed_params)
+                    final_score_dict[(label, fixed_params)] = record
         elif tuning_methd == "nGramRules":
             for n_thres in n_thres_grid:
-
                 fixed_params = [100, 100, n_thres]
-
-                f1, feature_dim = get_tuned_prediction(method, label, c_grids, fixed_params)
-
-
-
-            full_y_pred.extend(real_y_pred)
-            full_y_test.extend(y_test)
-
-        full_y_pred = np.asarray(full_y_pred)
-        full_y_test = np.asarray(full_y_test)
-        performance = svm_linear.get_matrix(full_y_test, full_y_pred)
-        final_score_dict[label] = {"f1": performance['f1'], "recall": performance['recall'],
-                                   "precision": performance["precision"]}
-
-    return grid_score_dict, best_score_dict, final_score_dict
+                record = get_tuned_prediction(method, label, fixed_params)
+                final_score_dict[(label, fixed_params[0], fixed_params[1], fixed_params[2])] = record
 
 
+    return final_score_dict
 
 
-def get_tuned_prediction(method, label, c_grids, fixed_params):
+def get_tuned_prediction(method, label, fixed_params):
     y_data = game_label_data[label].to_numpy()
     full_y_pred = []
     full_y_test = []
+    total_feature_count = 0
     for fold in range(5):
         test = fold_seed[fold]
         val = fold_seed[(fold + 1) % 5]
         train = []
         for j in range(2, 5):
             train += fold_seed[(fold + j) % 5]
-        best_c, best_f1 = -1, -1
-        for c_grid in c_grids:
-            f1 = get_f1_from_disk(method, label, fold, c_grid, fixed_params[0], fixed_params[1], fixed_params[2])
-            if f1 > best_f1:
-                best_f1 = f1
-                best_c = c_grid
+        best_c = get_best_c_from_disk(method, label, fold, fixed_params[0], fixed_params[1], fixed_params[2])
         all_train = train + val
-        real_y_pred, y_test = get_y_pred(y_data, all_train, test, best_c, fixed_params[0], fixed_params[1], fixed_params[2])
+        real_y_pred, y_test, feature_count = get_y_pred(y_data, all_train, test, best_c, fixed_params[0],
+                                                        fixed_params[1], fixed_params[2])
         full_y_pred.extend(real_y_pred)
         full_y_test.extend(y_test)
+        total_feature_count += feature_count
 
+    avg_feature_count = total_feature_count/5.0
     full_y_pred = np.asarray(full_y_pred)
     full_y_test = np.asarray(full_y_test)
     performance = svm_linear.get_matrix(full_y_test, full_y_pred)
-    final_score_dict[label] = {"f1": performance['f1'], "recall": performance['recall'],
-                               "precision": performance["precision"]}
+    record = {"f1": performance['f1'], "recall": performance['recall'],
+                                               "precision": performance["precision"],
+                                               "avg_feature_count": avg_feature_count}
+    return record
+
+
+
 
 
 # methods = ["pqRules", "nGramRules"]
@@ -115,19 +90,5 @@ methods = ["nGramRules", "pqRules", "OneHotRules"]
 for method in methods:
     rule_data = pd.read_csv(
         "/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/csedm20/CRV_new_413/" + method + ".csv")
-
-    # for validation_f1 in [True, False]:
-    #     grid_score_dict, best_score_dict, final_score_dict = all_tuning(method)
-    #
-    #     grid_score_df = pd.DataFrame(grid_score_dict)
-    #     best_score_dict = pd.DataFrame(best_score_dict)
-    #
-    #     save_obj(grid_score_df, "grid_score_dict", "all" + "_validation" * validation_f1 + "_tuning", method)
-    #     save_obj(best_score_dict, "best_score_dict",  "all" + "_validation" * validation_f1 + "_tuning", method)
-    #     try:
-    #         final_score_dict = pd.Series(final_score_dict)
-    #     except:
-    #         pass
-    #     save_obj(final_score_dict, "final_score_dict",  "all" + "_validation" * validation_f1 + "_tuning",method)
-    final_score_dict = all_tuning_with_grid_from_disk(method)
-    save_obj(final_score_dict, "final_score_dict", "all_tuning", method)
+    final_score_dict = threshold_cv(method)
+    save_obj(final_score_dict, "final_score_dict", "threshold_cv", method)

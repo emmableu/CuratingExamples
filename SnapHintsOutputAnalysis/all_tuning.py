@@ -165,12 +165,13 @@ def get_y_pred(y_data, train, val, c_grid, p_thres, q_thres, n_thres):
     x_train = x_data[train]
 
     print("x_train shape", x_train.shape)
+    feature_count = x_train.shape[1]
 
     y_train = y_data[train]
     x_val = x_data[val]
     y_val = y_data[val]
     y_pred = c_grid.get_y_pred(x_train, x_val, y_train)
-    return y_pred, y_val
+    return y_pred, y_val, feature_count
 
 
 

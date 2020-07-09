@@ -30,10 +30,17 @@ def get_best_key(sub_dict):
 
 
 
-def get_f1_from_disk(method, label, fold, c_grid, p_thres, q_thres, n_thres):
+def get_best_c_from_disk(method, label, fold, p_thres, q_thres, n_thres):
     grid_score_dict = load_obj("grid_score_dict", "all_validation_tuning", method)
-    f1 = grid_score_dict.at[(c_grid, p_thres, q_thres, n_thres), label+str(fold)]
-    return f1
+    best_c, best_f1 = None, -1
+    for i in grid_score_dict.index:
+        if i[1] == p_thres and i[2] == q_thres and i[3] == n_thres:
+            f1 = grid_score_dict.at[i, label + str(fold)]
+            print(i, "in", label+str(fold))
+            if f1>best_f1:
+                best_c = i[0]
+
+    return best_c
 
 def get_yes_no(data, yes_no_group):
     yes_x = data[yes_no_group].tolist()
