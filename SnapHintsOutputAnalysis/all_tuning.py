@@ -26,7 +26,7 @@ for x in range(413):
     this_list.append(x)
 
 
-def all_tuning(tuning_methd):
+def all_tuning(tuning_methd, validation_f1 = False):
     grid_score_dict = {}
     best_score_dict = {}
     final_score_dict = {}
@@ -47,7 +47,7 @@ def all_tuning(tuning_methd):
 
             p_thres_grid = [1, 2, 3]
             q_thres_grid = [1, 2, 3, 4]
-            n_thres_grid = [2, 3, 4, 5, 6, 8, 10]
+            n_thres_grid = [2, 3, 4, 5, 6, 7, 8, 9, 10]
 
             for c_grid in c_grids:
                 if tuning_methd == "pqRules":
@@ -71,9 +71,12 @@ def all_tuning(tuning_methd):
             best_score_dict[label + str(fold)] = best_score
 
             all_train = train + val
-            # real_y_pred, y_test = get_y_pred(y_data, all_train, test, best_key[0], best_key[1], best_key[2],
-            #                                  best_key[3])
-            real_y_pred, y_test = get_y_pred(y_data, train, val, best_key[0], best_key[1], best_key[2],
+            if not validation_f1:
+                real_y_pred, y_test = get_y_pred(y_data, all_train, test, best_key[0], best_key[1], best_key[2],
+                                             best_key[3])
+
+            elif validation_f1:
+                real_y_pred, y_test = get_y_pred(y_data, train, val, best_key[0], best_key[1], best_key[2],
                                              best_key[3])
 
             full_y_pred.extend(real_y_pred)
@@ -170,19 +173,21 @@ def get_y_pred(y_data, train, val, c_grid, p_thres, q_thres, n_thres):
 
 
 # methods = ["pqRules", "nGramRules"]
-methods = ["OneHotRules"]
+methods = ["nGramRules"]
 for method in methods:
     rule_data = pd.read_csv(
         "/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/csedm20/CRV_new_413/" + method + ".csv")
-    grid_score_dict, best_score_dict, final_score_dict = all_tuning(method)
 
-    grid_score_df = pd.DataFrame(grid_score_dict)
-    best_score_dict = pd.DataFrame(best_score_dict)
+    for validation_f1 in [True, False]:
+        grid_score_dict, best_score_dict, final_score_dict = all_tuning(method)
 
-    save_obj(grid_score_df, "grid_score_dict", "all_validation_tuning", method)
-    save_obj(best_score_dict, "best_score_dict", "all_validation_tuning", method)
-    try:
-        final_score_dict = pd.Series(final_score_dict)
-    except:
-        pass
-    save_obj(final_score_dict, "final_score_dict", "all_validation_tuning", method)
+        grid_score_df = pd.DataFrame(grid_score_dict)
+        best_score_dict = pd.DataFrame(best_score_dict)
+
+        save_obj(grid_score_df, "grid_score_dict", "all" + "_validation" * validation_f1 + "_tuning", method)
+        save_obj(best_score_dict, "best_score_dict",  "all" + "_validation" * validation_f1 + "_tuning", method)
+        try:
+            final_score_dict = pd.Series(final_score_dict)
+        except:
+            pass
+        save_obj(final_score_dict, "final_score_dict",  "all" + "_validation" * validation_f1 + "_tuning",method)

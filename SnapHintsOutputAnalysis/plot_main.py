@@ -237,7 +237,7 @@ def grouped_bar_chart():
     recalls = []
     precisions  = []
     for method in methods_to_show:
-        data = load_obj("final_score_dict", "all_validation_tuning", method)
+        data = load_obj("final_score_dict", "all_tuning", method)
         # data = load_obj("final_score_dict", "all_tuning", method)
         bar = []
         recall = []
@@ -305,7 +305,7 @@ def grouped_bar_chart():
     ax.legend(reversed_handles, reversed_labels, loc='upper center', bbox_to_anchor=(0.5, -0.05), ncol = 2)
 
     # Create legend & Show graphic
-    plt.title("Test F1 Scores")
+    plt.title("Testing F1 Scores")
     plt.tight_layout()
     plt.savefig("f1_c_tuned"+ datetime.now().strftime("%H-%M-%S"))
     plt.show()
