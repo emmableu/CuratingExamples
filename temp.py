@@ -126,14 +126,17 @@
 #
 from shutil import *
 import sys
-sys.path.append('/Users/wwang33/Documents/IJAIED20/CuratingExamples/SnapHintsOutputAnalysis')
-from SnapHintsOutputAnalysis.evaluate_snaphints import *
+# sys.path.append('/Users/wwang33/Documents/IJAIED20/CuratingExamples/SnapHintsOutputAnalysis')
+# from SnapHintsOutputAnalysis.evaluate_snaphints import *
 
 
-for behavior in behavior_labels:
-    for fold in range(10):
-        source = "/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/submitted/" \
-                        + behavior + "/cv/fold" + str(fold) + "/SnapHintsAllAllFinalSupportOver0/"
-        destination = '/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets/data/SnapHintsData/submitted/'\
-                        + behavior + "/cv/fold" + str(fold) + "/SnapHintsAllAllFinalSupportOver0/"
-        copytree(source, destination, ignore=ignore_patterns('*.pyc', 'tmp*','__pycache__'))
+# for behavior in behavior_labels:
+#     for fold in range(10):
+#         source = "/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/submitted/" \
+#                         + behavior + "/cv/fold" + str(fold) + "/SnapHintsAllAllFinalSupportOver0/"
+#         destination = '/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets/data/SnapHintsData/submitted/'\
+#                         + behavior + "/cv/fold" + str(fold) + "/SnapHintsAllAllFinalSupportOver0/"
+#         copytree(source, destination, ignore=ignore_patterns('*.pyc', 'tmp*','__pycache__'))
+
+
+# game_label = pd.read_csv(submission_dir + "/game_label_413_original.csv")

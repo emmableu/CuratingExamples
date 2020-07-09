@@ -5,8 +5,8 @@ import operator
 from evaluate_snaphints import *
 np.set_printoptions(threshold=sys.maxsize)
 
-pq_rules = pd.read_csv("/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/csedm20/CRV/pqRulesDPM.csv")
-game_label_data = pd.read_csv("/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/game_label_413.csv")
+pq_rules = pd.read_csv("/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/csedm20/CRV_new_413/pqRules_2_4.csv")
+game_label_data = pd.read_csv("/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets/data/PaperSubmission/game_label_413.csv")
 # print(game_label_data.head())
 fold_seed = []
 this_list = []

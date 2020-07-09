@@ -246,11 +246,11 @@ color_dict = { 'AllOneHot': "#D6F2C2",
                'AndAllComplete-3-4Gram': '#F2B6BC'}
 
 behavior_dict = {
-    "keymove": "KeyboardMove (#n = 190/413)",
-    "cochangescore": "CollisionChangeVar (#n = 116/413)",
-    "jump":"PlatformerJump (#n = 78/413)",
-    "movetomouse":"MoveWithMouse (#n = 48/413)",
-    "costopall":"CollisionStopGame (#n = 22/413)",
+    "keymove": "KeyboardMove (#n = 197/413)",
+    "cochangescore": "CollisionChangeVar (#n = 146/413)",
+    "jump":"PlatformerJump (#n = 81/413)",
+    "movetomouse":"MoveWithMouse (#n = 49/413)",
+    "costopall":"CollisionStopGame (#n = 25/413)",
 }
 
 
@@ -268,7 +268,10 @@ def grouped_bar_chart():
 
     all_methods = ["pqRules_[0.1, 0.2, 0.3, 0.4, 0.5]",
                    "NeighborRules_[0.1, 0.2, 0.3, 0.4, 0.5]", "OneHotRules_[0.1, 0.2, 0.3, 0.4, 0.5]"]
-    # print(behavior_results)
+
+    # all_methods = ["training_pqRules_[0.1, 0.2, 0.3, 0.4, 0.5]",
+    #                "training_NeighborRules_[0.1, 0.2, 0.3, 0.4, 0.5]", "training_OneHotRules_[0.1, 0.2, 0.3, 0.4, 0.5]"]
+   # print(behavior_results)
     # def get_bar(index):
     #     bars = []
     #     for behavior in behavior_labels_to_show:
@@ -288,13 +291,24 @@ def grouped_bar_chart():
     # for i in range(len(methods_to_show)):
     #     bars.append(get_bar(i))
     bars = []
+    recalls = []
+    precisions  = []
     for method in all_methods:
         data = load_obj("final_score_dict", "score_df_c_tuned", method)
         bar = []
+        recall = []
+        precision = []
         for label in ["costopall", "movetomouse", "jump", "cochangescore", "keymove"]:
-            d = round(data[label], 2)
+            d = round(data[label]["f1"], 2)
+            r = round(data[label]["recall"], 2)
+            p = round(data[label]["precision"], 2)
             bar.append(d)
+            recall.append(r)
+            precision.append(p)
+
         bars.append(bar)
+        recalls.append(recall)
+        precisions.append(precision)
 
     # bars = [[0.23, 0.43, 0.67, 0.54, 0.81], [0.39, 0.42, 0.63, 0.57, 0.83], [0.35, 0.42, 0.60, 0.62, 0.78], [0.32, 0.56, 0.66, 0.53, 0.83]]
     print("bars: ", bars)
@@ -314,19 +328,22 @@ def grouped_bar_chart():
         bar_plots.append(rects)
 
     # csfont = {"font}
-    def autolabel(rects):
+    def autolabel(rects, r, p):
         """Attach a text label above each bar in *rects*, displaying its height."""
-        for rect in rects:
+        for j in range(len(rects)):
+            rect = rects[j]
             height = rect.get_width()
             # print("height: ", height)
-            ax.annotate('{}'.format(height),
+            ax.annotate( "F1: " + '{}'.format(height) + " (P: " + str(p[j]) + "; R: " + str(r[j]) + ")",
                         xy=(height, rect.get_y() + rect.get_height() / 2),
-                        xytext=(20, -9),  # 3 points vertical offset
+                        xytext=(90, -9),  # 3 points vertical offset
                         textcoords="offset points",
                         ha='center', va='bottom', fontsize=15)
 
     for i in range(len(methods_to_show)):
-        autolabel(bar_plots[i])
+        r = recalls[i]
+        p = precisions[i]
+        autolabel(bar_plots[i], r, p)
     plt.ylabel('Game Behaviors')
     plt.yticks([r + barWidth for r in range(len(bars[0]))],  ([behavior_dict[i] for i in behavior_labels_to_show]))
     ax.spines["top"].set_visible(False)

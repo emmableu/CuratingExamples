@@ -11,10 +11,10 @@ svm_linear_p1 = SVMLinearP1()
 svm_linear_10 = SVMLinear10()
 svm_linear_100 = SVMLinear100()
 
-
 np.set_printoptions(threshold=sys.maxsize)
 
-game_label_data = pd.read_csv("/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets/data/PaperSubmission/game_label_413.csv")
+game_label_data = pd.read_csv(
+    "/Users/wwang33/Documents/IJAIED20/CuratingExamples/Datasets/data/PaperSubmission/game_label_413.csv")
 fold_seed = []
 this_list = []
 for x in range(413):
@@ -25,7 +25,8 @@ for x in range(413):
         this_list = []
     this_list.append(x)
 
-def rule_tuning(pq_rules, training_f1 = False):
+
+def rule_tuning(pq_rules, pq_tuning=False, training_f1=False):
     grid_score_dict = {}
     best_score_dict = {}
     final_score_dict = {}
@@ -47,12 +48,16 @@ def rule_tuning(pq_rules, training_f1 = False):
 
             support_grid = [0.1, 0.2, 0.3, 0.4, 0.5]
             c_grids = [svm_linear_100, svm_linear_10, svm_linear, svm_linear_p1, svm_linear_p01]
+            p_thres_grid = [1, 2, 3]
+            q_thres_grid = [1, 2, 3, 4]
 
             for support in support_grid:
                 for c_grid in c_grids:
-                    f1 = get_f1(pq_rules, support, y_data, train, val, col_id, c_grid)
-                    sub_dict[(support, c_grid)] = f1
-                    grid_score_dict[label + str(fold)] = sub_dict
+                    for p_thres in p_thres_grid:
+                        for q_thres in q_thres_grid:
+                            f1 = get_f1(pq_rules, support, y_data, train, val, col_id, c_grid, p_thres, q_thres)
+                            sub_dict[(support, c_grid, p_thres, q_thres)] = f1
+                            grid_score_dict[label + str(fold)] = sub_dict
 
             best_key = get_best_key(sub_dict)
             best_score = {"best_grid_set": best_key, "val_f1": sub_dict[best_key]}
@@ -62,34 +67,37 @@ def rule_tuning(pq_rules, training_f1 = False):
             all_col_id = label + str(fold) + "TrainVal"
             if training_f1:
                 real_y_pred, y_test = get_y_pred(pq_rules, best_key[0], y_data, all_train, all_train, all_col_id,
-                                                 best_key[1])
+                                                 best_key[1], best_key[2], best_key[3])
             else:
-                real_y_pred, y_test = get_y_pred(pq_rules, best_key[0], y_data, all_train, test, all_col_id, best_key[1])
+                real_y_pred, y_test = get_y_pred(pq_rules, best_key[0], y_data, all_train, test, all_col_id,
+                                                 best_key[1], best_key[2], best_key[3])
 
             full_y_pred.extend(real_y_pred)
             full_y_test.extend(y_test)
         full_y_pred = np.asarray(full_y_pred)
         full_y_test = np.asarray(full_y_test)
         performance = svm_linear.get_matrix(full_y_test, full_y_pred)
-        final_score_dict[label] = performance['f1']
+        final_score_dict[label] = {"f1": performance['f1'], "recall": performance['recall'],
+                                   "precision": performance["precision"]}
 
     return grid_score_dict, best_score_dict, final_score_dict
 
 
-def get_f1(pq_rules, support, y_data, train, val, col_id, c_grid):
-    y_pred, y_val = get_y_pred(pq_rules, support, y_data, train, val, col_id, c_grid)
+def get_f1(pq_rules, support, y_data, train, val, col_id, c_grid, p_thres, q_thres):
+    y_pred, y_val = get_y_pred(pq_rules, support, y_data, train, val, col_id, c_grid, p_thres, q_thres)
     performance_temp = c_grid.get_matrix(y_val, y_pred)
     f1 = performance_temp['f1']
     return f1
 
 
-def get_y_pred(pq_rules, support, y_data, train, val, col_id, c_grid):
+def get_y_pred(pq_rules, support, y_data, train, val, col_id, c_grid, p_thres=100, q_thres=100):
     pq_rule_data = []
     x_data = []
     pq_rule_removal_list = []
     pq_rule_retain_list = []
     for i in pq_rules.index:
-        if pq_rules.at[i, col_id] < support or ("snapshot" in pq_rules.at[i, 'grams']):
+        if pq_rules.at[i, col_id] < support or ("snapshot" in pq_rules.at[i, 'grams']) \
+                or pq_rules.at[i, "p"] > p_thres or pq_rules.at[i, "q"] > q_thres:
             pq_rule_removal_list.append(pq_rules.at[i, 'ruleID'])
         else:
             pq_rule_retain_list.append(pq_rules.at[i, 'ruleID'])
@@ -121,6 +129,10 @@ def get_best_key(sub_dict):
 
 def test_simulate():
     grid_score_dict = {}
+    pq_rules = pd.read_csv(
+        "/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/csedm20/CRV_new_413/" + "pqRules_2_4" + ".csv")
+    # pq_rules = pd.read_csv(
+    #     "/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/csedm20/CRV_new_413/" + "nGramRules" + ".csv")
 
     for label in behavior_labels:
         print(label)
@@ -139,19 +151,34 @@ def test_simulate():
     return grid_score_dict
 
 
-
-methods = ["pqRules", "OneHotRules", "NeighborRules"]
-for method in methods:
-    rule_data = pd.read_csv("/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/csedm20/CRV_new_413/" + method + ".csv")
-    grid_score_dict, best_score_dict, final_score_dict = rule_tuning(rule_data, training_f1=False)
-    grid_score_df = pd.DataFrame(grid_score_dict)
-    best_score_dict = pd.DataFrame(best_score_dict)
-    save_obj(grid_score_df, "grid_score_dict", "score_df_c_tuned", method + "_[0.1, 0.2, 0.3, 0.4, 0.5]")
-    save_obj(best_score_dict, "best_score_dict", "score_df_c_tuned",  method + "_[0.1, 0.2, 0.3, 0.4, 0.5]")
-    try:
-        final_score_dict = pd.Series(final_score_dict)
-    except:
-        pass
-    save_obj(final_score_dict, "final_score_dict", "score_df_c_tuned",  method + "_[0.1, 0.2, 0.3, 0.4, 0.5]")
-
-
+score_dict = test_simulate()
+print(score_dict)
+# methods = ["pqRules", "OneHotRules", "NeighborRules"]
+# for method in methods:
+#     rule_data = pd.read_csv(
+#         "/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/csedm20/CRV_new_413/" + method + ".csv")
+#     training_f1 = False
+#     grid_score_dict, best_score_dict, final_score_dict = rule_tuning(rule_data, training_f1)
+#     grid_score_df = pd.DataFrame(grid_score_dict)
+#     best_score_dict = pd.DataFrame(best_score_dict)
+#     if training_f1:
+#         method = "training_" + method
+#     save_obj(grid_score_df, "grid_score_dict", "score_df_c_tuned", method + "_[0.1, 0.2, 0.3, 0.4, 0.5]")
+#     save_obj(best_score_dict, "best_score_dict", "score_df_c_tuned", method + "_[0.1, 0.2, 0.3, 0.4, 0.5]")
+#     try:
+#         final_score_dict = pd.Series(final_score_dict)
+#     except:
+#         pass
+#     save_obj(final_score_dict, "final_score_dict", "score_df_c_tuned", method + "_[0.1, 0.2, 0.3, 0.4, 0.5]")
+#
+# count_dict = {}
+# for i in game_label_data.index:
+#     for label in behavior_labels:
+#         data = game_label_data.at[i, label]
+#         if data == 1:
+#             if label in count_dict:
+#                 count_dict[label] += 1
+#             else:
+#                 count_dict[label] = 1
+#
+# print(count_dict)
