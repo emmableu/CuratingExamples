@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 plt.rcParams["font.family"] = "Times New Roman"
 # plt.rcParams["font.style"] = "italic"
 plt.rcParams["font.size"] = 20
-plt.figure(figsize=(13, 10))
+plt.figure(figsize=(10, 10))
 import matplotlib.colors as mc
 import colorsys
 from datetime import datetime
@@ -86,6 +86,8 @@ def get_bar_data(method, label):
     else:
         data = threshold_cv_grid_score[(label, 100, 100, 100)]
     print(data)
+    # p = data["avg_feature_count"]
+    # label_dict[method] += " (Avg. # features: " + str(p) + ")"
     return data
 
 
@@ -117,9 +119,9 @@ def grouped_bar_chart():
             rect = rects[j]
             height = rect.get_width()
             # print("height: ", height)
-            ax.annotate("F1: " + '{}'.format(height) + " (Avg. # features: " + str(p) + ")",
+            ax.annotate("F1: " + '{}'.format(height) ,
                         xy=(height, rect.get_y() + rect.get_height() / 2),
-                        xytext=(140, -9),  # 3 points vertical offset
+                        xytext=(45, -9),  # 3 points vertical offset
                         textcoords="offset points",
                         ha='center', va='bottom', fontsize=20, style = "italic")
 
@@ -128,6 +130,7 @@ def grouped_bar_chart():
         autolabel(bar_plots[i], r, p)
     # plt.ylabel('Game Behaviors')
     plt.yticks(list(range(len(bars))), label_dict.values(), style = "italic")
+    plt.yticks(list(range(len(bars))))
     # plt.yticks([r + barWidth for r in range(len(bars[0]))],  ([behavior_dict[i] for i in behavior_labels_to_show]))
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
@@ -145,3 +148,4 @@ def grouped_bar_chart():
 
 # snaphints_crossvalidation()
 grouped_bar_chart()
+
