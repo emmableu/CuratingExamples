@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 plt.rcParams["font.family"] ="Times New Roman"
 plt.rcParams["font.size"] = 22
 plt.figure(figsize=(13,10))
-
+from datetime import datetime
 # behavior_labels = [ "costopall"]
 behavior_labels = ["cochangescore", "keymove", "jump",  "movetomouse", "costopall"]
 # behavior_labels = ["jump"]
@@ -203,13 +203,13 @@ def snaphints_crossvalidation():
 
 
 
-behavior_labels_to_show = ["keymove", "cochangescore", "jump",  "movetomouse", "costopall"]
+behavior_labels_to_show = ["keymove", "cochangescore", "jump",  "movetomouse"]
 # behavior_labels_to_show = ["jump"]
 # behavior_labels_to_show = ["keymove", "jump", "cochangescore", "movetomouse", "moveanimate"]
 behavior_labels_to_show = list(reversed(behavior_labels_to_show))
 
 methods_to_show = ['OneHotRules', 'nGramRules', 'pqRules']
-methods_to_show = ['pqRules']
+# methods_to_show = ['pqRules']
 
 methods_to_show = list(reversed(methods_to_show))
 
@@ -237,7 +237,7 @@ def grouped_bar_chart():
     recalls = []
     precisions  = []
     for method in methods_to_show:
-        data = load_obj("final_score_dict", "dpm_tuning", method)
+        data = load_obj("final_score_dict", "all_validation_tuning", method)
         # data = load_obj("final_score_dict", "all_tuning", method)
         bar = []
         recall = []
@@ -305,9 +305,9 @@ def grouped_bar_chart():
     ax.legend(reversed_handles, reversed_labels, loc='upper center', bbox_to_anchor=(0.5, -0.05), ncol = 2)
 
     # Create legend & Show graphic
-    plt.title("F1 Scores")
+    plt.title("Test F1 Scores")
     plt.tight_layout()
-    plt.savefig("f1_c_tuned")
+    plt.savefig("f1_c_tuned"+ datetime.now().strftime("%H-%M-%S"))
     plt.show()
 
 

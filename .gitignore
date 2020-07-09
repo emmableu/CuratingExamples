@@ -7,7 +7,7 @@ Datasets/data/*
 Datasets/data/PaperSubmission/*
 !Datasets/data/PaperSubmission/Simulation/
 #*.pkl
-*.png
+#*.png
 .idea/*
 *__pycache__*
 *.ipynb_checkpoints*

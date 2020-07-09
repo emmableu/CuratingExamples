@@ -61,13 +61,19 @@ def all_tuning(tuning_methd):
                         f1 = get_f1(y_data, train, val, c_grid, 100, 100, n_thres)
                         sub_dict[(c_grid, 100, 100, n_thres)] = f1
                         grid_score_dict[label + str(fold)] = sub_dict
+                elif tuning_methd == "OneHotRules":
+                    f1 = get_f1(y_data, train, val, c_grid, 100, 100, 100)
+                    sub_dict[(c_grid, 100, 100, 100)] = f1
+                    grid_score_dict[label + str(fold)] = sub_dict
 
             best_key = get_best_key(sub_dict)
             best_score = {"best_grid_set": best_key, "val_f1": sub_dict[best_key]}
             best_score_dict[label + str(fold)] = best_score
 
             all_train = train + val
-            real_y_pred, y_test = get_y_pred(y_data, all_train, test, best_key[0], best_key[1], best_key[2],
+            # real_y_pred, y_test = get_y_pred(y_data, all_train, test, best_key[0], best_key[1], best_key[2],
+            #                                  best_key[3])
+            real_y_pred, y_test = get_y_pred(y_data, train, val, best_key[0], best_key[1], best_key[2],
                                              best_key[3])
 
             full_y_pred.extend(real_y_pred)
@@ -99,9 +105,11 @@ def all_tuning_with_grid_from_disk(tuning_methd):
             all_train = train + val
 
             best_key = get_best_key_from_disk(method, label, fold)
-
-            real_y_pred, y_test = get_y_pred(y_data, all_train, test, best_key[0], best_key[1], best_key[2],
+            # print(best_key)
+            real_y_pred, y_test = get_y_pred(y_data, train, val, best_key[0], best_key[1], best_key[2],
                                              best_key[3])
+            # real_y_pred, y_test = get_y_pred(y_data, all_train, test, best_key[0], best_key[1], best_key[2],
+            #                                  best_key[3])
 
             full_y_pred.extend(real_y_pred)
             full_y_test.extend(y_test)
@@ -127,6 +135,8 @@ def get_y_pred(y_data, train, val, c_grid, p_thres, q_thres, n_thres):
         method = "nGramRules_" + str(n_thres)
     elif p_thres < 100:
         method = "pqRules_" + str(p_thres) + "_" + str(q_thres)
+    else:
+        method = "OneHotRules"
     pq_rules = pd.read_csv(
         "/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/csedm20/CRV_new_413/" + method + ".csv")
     pq_rule_data = []
@@ -159,20 +169,20 @@ def get_y_pred(y_data, train, val, c_grid, p_thres, q_thres, n_thres):
 
 
 
-methods = ["pqRules", "nGramRules"]
-# methods = ["nGramRules"]
+# methods = ["pqRules", "nGramRules"]
+methods = ["OneHotRules"]
 for method in methods:
     rule_data = pd.read_csv(
         "/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/csedm20/CRV_new_413/" + method + ".csv")
-    final_score_dict = all_tuning_with_grid_from_disk(method)
+    grid_score_dict, best_score_dict, final_score_dict = all_tuning(method)
 
-    # grid_score_df = pd.DataFrame(grid_score_dict)
-    # best_score_dict = pd.DataFrame(best_score_dict)
+    grid_score_df = pd.DataFrame(grid_score_dict)
+    best_score_dict = pd.DataFrame(best_score_dict)
 
-    # save_obj(grid_score_df, "grid_score_dict", "all_tuning", method)
-    # save_obj(best_score_dict, "best_score_dict", "all_tuning", method)
+    save_obj(grid_score_df, "grid_score_dict", "all_validation_tuning", method)
+    save_obj(best_score_dict, "best_score_dict", "all_validation_tuning", method)
     try:
         final_score_dict = pd.Series(final_score_dict)
     except:
         pass
-    save_obj(final_score_dict, "final_score_dict", "all_tuning", method)
+    save_obj(final_score_dict, "final_score_dict", "all_validation_tuning", method)
