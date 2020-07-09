@@ -1,9 +1,9 @@
+
 import sys
 sys.path.append('../Datasets')
 from Dataset import *
 import copy
 import matplotlib.pyplot as plt
-import operator
 plt.rcParams["font.family"] ="Times New Roman"
 plt.rcParams["font.size"] = 22
 plt.figure(figsize=(13,10))
@@ -17,20 +17,6 @@ behavior_labels = ["cochangescore", "keymove", "jump",  "movetomouse", "costopal
 # behavior_labels = ["jump"]
 # behavior_labels = ["keymove", "movetomouse", "moveanimate", "costopall", "jump"]
 # behavior_labels = ["costopall", "movetomouse",  "jump", "cochangescore","keymove"]
-
-
-def get_best_key_from_disk(method, label, fold):
-    best_score_dict = load_obj("best_score_dict", "all_tuning", method)
-    sub_dict = best_score_dict[label + str(fold)]
-    print(sub_dict["best_grid_set"])
-    return sub_dict["best_grid_set"]
-
-def get_best_key(sub_dict):
-    return max(sub_dict.items(), key=operator.itemgetter(1))[0]
-
-
-
-
 
 def get_yes_no(data, yes_no_group):
     yes_x = data[yes_no_group].tolist()
@@ -218,57 +204,22 @@ def snaphints_crossvalidation():
 
 
 behavior_labels_to_show = ["keymove", "cochangescore", "jump",  "movetomouse", "costopall"]
-behavior_labels_to_show = ["jump"]
+# behavior_labels_to_show = ["jump"]
 # behavior_labels_to_show = ["keymove", "jump", "cochangescore", "movetomouse", "moveanimate"]
 behavior_labels_to_show = list(reversed(behavior_labels_to_show))
-# methods_to_show = ['All', 'AndAllComplete-3-4Gram']
-# methods_to_show = ['PQGra', 'DPM', "AndAllFull", "AndAll"]
-methods_to_show = ['OneHot2', 'Neighbor', 'All', "AndAllComplete-3-4Gram"]
-methods_to_show = ['OneHot2']
-# for i in [2, 3, 5, 10]:
-#     methods_to_show.append("nGram")
-for p in range(1, 4):
-    for q in range(1, 5):
-        methods_to_show.append("pqGram")
-# methods_to_show = methods
+
+methods_to_show = ['OneHotRules', 'nGramRules', 'pqRules']
+methods_to_show = ['pqRules']
+
 methods_to_show = list(reversed(methods_to_show))
-# label_dict = {'AllOneHot': "One-hot encoding",
-#               'OneHot2': "Bag Of Words",
-#             'Neighbor': 'Neighborhood',
-#                 'All': 'pq-Gram',
-#                 'AndAllComplete-3-4Gram': 'pq-Gram Operator',
-#                 'All-6-3': 'PQGrams 6-3',
-#               'DPM': 'PQGram DPM',
-#               'AndAllFull': 'All-based Conjunctions',
-#               'AndAll': 'DPM-based Conjunctions'}
 
-label_dict = {'OneHot2': "Bag-of-Words",
-              'Neighbor': 'Neighborhood',
-              'All': 'pq-Grams',
-              'OneHotSupport>0':"Bag-of-Words",
-              'NeighborSupport>0': 'Neighborhood',
-               'AllAllFinalSupportOver0': 'pq-Grams',
-              'All-6-3': 'PQGrams 6-3',
-              'DPM': 'PQGram DPM',
-              'AndAllFull': 'All-based Conjunctions',
-              'AndAll': 'DPM-based Conjunctions',
-              'AndAllComplete-3-4Gram': 'pq-Gram Conjunction Mining',
-              "nGram": "nGram",
-              "pqGram": "pqGram"}
+label_dict =  { 'OneHotRules': "Bag-of-Words",
+            'nGramRules': 'n-Gram',
+            'pqRules': 'pq-Gram'}
 
-color_dict = { 'AllOneHot': "#D6F2C2",
-            'Neighbor': '#8BD9C3',
-            'All': '#45B3BF',
-            'nGram': '#45B3BF',
-            'pqGram': '#45B3BF',
-               'OneHotSupport>0':"#D6F2C2",
-               'NeighborSupport>0': '#8BD9C3',
-               'AllAllFinalSupportOver0': '#45B3BF',
-               'OneHot2': '#D9CCC5',
-               'DPM': '#8BD9C3',
-              'AndAllFull': '#45B3BF',
-              'AndAll': '#1FA2BF',
-               'AndAllComplete-3-4Gram': '#F2B6BC'}
+color_dict = { 'OneHotRules': "#D9CCC5",
+            'nGramRules': '#A69586',
+            'pqRules': '#868C81'}
 
 behavior_dict = {
     "keymove": "KeyboardMove (#n = 197/413)",
@@ -280,62 +231,19 @@ behavior_dict = {
 
 
 def grouped_bar_chart():
-    # set width of bar
-    # behavior_results = load_obj("svm_behaviors9", root_dir, "SnapHintsOutputAnalysis")
-    behavior_results = load_obj("svm_behaviors15_conjunction_DPM1", root_dir, "SnapHintsOutputAnalysis")
     barWidth = 0.13
-    all_methods = ["pqgram_[0.1, 0.2, 0.3, 0.4, 0.5]_conjunction_diff[0.2, 0.3, 0.4, 0.5, 0.6]", "pqgram_only_[0.1, 0.2, 0.3, 0.4, 0.5]",
-                   "neighbor_[0.1, 0.2, 0.3, 0.4, 0.5]", "onehot_[0.1, 0.2, 0.3, 0.4, 0.5]"]
-    all_methods = ["pqgram_[0.1, 0.2, 0.3, 0.4, 0.5]_conjunction_diff[0.2, 0.3, 0.4, 0.5, 0.6]", "pqgram_all",
-                   "neighbor_all", "onehot_all"]
-    all_methods = ["training_onehot_[0.1, 0.2, 0.3, 0.4, 0.5]",
-                   "training_neighbor_[0.1, 0.2, 0.3, 0.4, 0.5]", "training_pqgram_only_[0.1, 0.2, 0.3, 0.4, 0.5]"]
 
-    all_methods = ["pqRules_[0.1, 0.2, 0.3, 0.4, 0.5]",
-                   "NeighborRules_[0.1, 0.2, 0.3, 0.4, 0.5]", "OneHotRules_[0.1, 0.2, 0.3, 0.4, 0.5]"]
-
-
-    all_methods = ["OneHotRules_[0.1, 0.2, 0.3, 0.4, 0.5]"]
-
-
-    # for i in range(2, 11):
-    #     all_methods.append("nGramRules_" + str(i) + "_[0.1, 0.2, 0.3, 0.4, 0.5]")
-    methods_seed = "pqRules"
-    for p in range(1, 4):
-        for q in range(1, 5):
-            method = methods_seed + "_" + str(p) + "_" + str(q)
-            all_methods.append(method)
-    # all_methods = ["training_pqRules_[0.1, 0.2, 0.3, 0.4, 0.5]",
-    #                "training_NeighborRules_[0.1, 0.2, 0.3, 0.4, 0.5]", "training_OneHotRules_[0.1, 0.2, 0.3, 0.4, 0.5]"]
-   # print(behavior_results)
-    # def get_bar(index):
-    #     bars = []
-    #     for behavior in behavior_labels_to_show:
-    #         if methods_to_show[index] == "OneHot2" or methods_to_show[index]== "Neighbor" or methods_to_show[index] == "All":
-    #             behavior_results2 = load_obj("svm_behaviors10", root_dir, "SnapHintsOutputAnalysis")
-    #             # behavior_results2 = load_obj("behaviors16", root_dir, "SnapHintsOutputAnalysis")
-    #             bars.append(behavior_results2.at[(behavior, methods_to_show[index]), "f1"])
-    #         # elif behavior == 'cochangescore':
-    #         #     # behavior_results3 = load_obj("svm_behaviors10", root_dir, "SnapHintsOutputAnalysis")
-    #         #     behavior_results3 = load_obj("behaviors16", root_dir, "SnapHintsOutputAnalysis")
-    #         #     bars.append(behavior_results3.at[(behavior, methods_to_show[index]), "f1"])
-    #         else:
-    #             bars.append(behavior_results.at[(behavior, methods_to_show[index]), "f1"])
-    #     return bars
-    #
-    # bars = []
-    # for i in range(len(methods_to_show)):
-    #     bars.append(get_bar(i))
     bars = []
     recalls = []
     precisions  = []
-    for method in all_methods:
-        data = load_obj("final_score_dict", "score_df_c_tuned", method)
+    for method in methods_to_show:
+        data = load_obj("final_score_dict", "dpm_tuning", method)
+        # data = load_obj("final_score_dict", "all_tuning", method)
         bar = []
         recall = []
         precision = []
         # for label in ["costopall", "movetomouse", "jump", "cochangescore", "keymove"]:
-        for label in [ "jump"]:
+        for label in behavior_labels_to_show:
             d = round(data[label]["f1"], 2)
             r = round(data[label]["recall"], 2)
             p = round(data[label]["precision"], 2)
@@ -347,14 +255,12 @@ def grouped_bar_chart():
         recalls.append(recall)
         precisions.append(precision)
 
-    # bars = [[0.23, 0.43, 0.67, 0.54, 0.81], [0.39, 0.42, 0.63, 0.57, 0.83], [0.35, 0.42, 0.60, 0.62, 0.78], [0.32, 0.56, 0.66, 0.53, 0.83]]
     print("bars: ", bars)
-    # Set position of bar on X axis
     r = [np.arange(len(bars[0]))]
 
     for i in range(1, len(methods_to_show)):
         r_prev = r[i - 1]
-        r.append([x + barWidth + 0.03 for x in r_prev])
+        r.append([x + barWidth + 0.08 for x in r_prev])
 
     # Make the plot
     # fig, ax = plt.subplot()

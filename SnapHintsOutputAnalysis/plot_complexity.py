@@ -6,36 +6,62 @@ import matplotlib.pyplot as plt
 plt.rcParams["font.family"] ="Times New Roman"
 plt.rcParams["font.size"] = 22
 plt.figure(figsize=(13,10))
+import matplotlib.colors as mc
+import colorsys
 
 # behavior_labels = [ "costopall"]
 # behavior_labels = ["cochangescore", "keymove", "jump",  "movetomouse", "costopall"]
 # behavior_labels_to_show = ["keymove", "cochangescore", "jump",  "movetomouse", "costopall"]
 behavior_labels_to_show = ["jump"]
 behavior_labels_to_show = list(reversed(behavior_labels_to_show))
-methods_to_show = ['OneHot2']
+methods_to_show = ['OneHotRules_[0.1, 0.2, 0.3, 0.4, 0.5]']
 for p in range(1, 4):
     for q in range(1, 5):
-        methods_to_show.append("pqGram")
+        methods_to_show.append("pqRules_" + str(p) + "_" + str(q))
+
+for n in range(2, 11):
+    methods_to_show.append("nGramRules_" + str(n) + "_[0.1, 0.2, 0.3, 0.4, 0.5]")
+
 methods_to_show = list(reversed(methods_to_show))
 
-label_dict = {
+label_dict = {}
+color_dict = {}
 
-}
 
-color_dict = { 'AllOneHot': "#D6F2C2",
-            'Neighbor': '#8BD9C3',
-            'All': '#45B3BF',
-            'nGram': '#45B3BF',
-            'pqGram': '#45B3BF',
-               'OneHotSupport>0':"#D6F2C2",
-               'NeighborSupport>0': '#8BD9C3',
-               'AllAllFinalSupportOver0': '#45B3BF',
-               'OneHot2': '#D6F2C2',
-               'DPM': '#8BD9C3',
-              'AndAllFull': '#45B3BF',
-              'AndAll': '#1FA2BF',
-               'AndAllComplete-3-4Gram': '#F2B6BC'}
+def darken_color(color, amount):
+    """
+    Lightens the given color by multiplying (1-luminosity) by the given amount.
+    Input can be matplotlib color string, hex string, or RGB tuple.
 
+    Examples:
+    >> lighten_color('g', 0.3)
+    >> lighten_color('#F034A3', 0.6)
+    >> lighten_color((.3,.55,.1), 0.5)
+    """
+    c = color
+    c = colorsys.rgb_to_hls(*mc.to_rgb(c))
+    return colorsys.hls_to_rgb(c[0], 1 + amount * (1 - c[1]), c[2])
+
+
+for method in methods_to_show:
+    if method == "OneHotRules_[0.1, 0.2, 0.3, 0.4, 0.5]":
+        label_dict[method] = "Bag-of-Words"
+        color_dict[method] = "#D9CCC5"
+    else:
+        method_list = method.split("_")
+        if method_list[0] == "pqRules":
+            p, q = method_list[1], method_list[2]
+            label_dict[method] = "p(" + str(p) + ")" + "q(" + str(q) + ")-Gram"
+            color_dict[method] = darken_color("#A69586", 0.3*(int(p)+ int(q)-2))
+            color_dict[method] = "#A69586"
+        elif method_list[0] == "nGramRules":
+            n = method_list[1]
+            label_dict[method] = "n(" + str(n) + ")-Gram"
+            color_dict[method] = darken_color("#868C81", 0.3*(int(n)-2))
+            color_dict[method] = "#868C81"
+
+
+#
 behavior_dict = {
     "keymove": "KeyboardMove (#n = 197/413)",
     "cochangescore": "CollisionChangeVar (#n = 146/413)",
@@ -46,33 +72,12 @@ behavior_dict = {
 
 
 def grouped_bar_chart():
-    # set width of bar
-    # behavior_results = load_obj("svm_behaviors9", root_dir, "SnapHintsOutputAnalysis")
-    behavior_results = load_obj("svm_behaviors15_conjunction_DPM1", root_dir, "SnapHintsOutputAnalysis")
-    barWidth = 0.13
-    all_methods = ["pqgram_[0.1, 0.2, 0.3, 0.4, 0.5]_conjunction_diff[0.2, 0.3, 0.4, 0.5, 0.6]", "pqgram_only_[0.1, 0.2, 0.3, 0.4, 0.5]",
-                   "neighbor_[0.1, 0.2, 0.3, 0.4, 0.5]", "onehot_[0.1, 0.2, 0.3, 0.4, 0.5]"]
-    all_methods = ["pqgram_[0.1, 0.2, 0.3, 0.4, 0.5]_conjunction_diff[0.2, 0.3, 0.4, 0.5, 0.6]", "pqgram_all",
-                   "neighbor_all", "onehot_all"]
-    all_methods = ["training_onehot_[0.1, 0.2, 0.3, 0.4, 0.5]",
-                   "training_neighbor_[0.1, 0.2, 0.3, 0.4, 0.5]", "training_pqgram_only_[0.1, 0.2, 0.3, 0.4, 0.5]"]
-
-    all_methods = ["pqRules_[0.1, 0.2, 0.3, 0.4, 0.5]",
-                   "NeighborRules_[0.1, 0.2, 0.3, 0.4, 0.5]", "OneHotRules_[0.1, 0.2, 0.3, 0.4, 0.5]"]
-
-
-    all_methods = ["OneHotRules_[0.1, 0.2, 0.3, 0.4, 0.5]"]
-
-    methods_seed = "pqRules"
-    for p in range(1, 4):
-        for q in range(1, 5):
-            method = methods_seed + "_" + str(p) + "_" + str(q)
-            all_methods.append(method)
+    barWidth = 0.05
     bars = []
     recalls = []
     precisions  = []
-    for method in all_methods:
-        data = load_obj("final_score_dict", "score_df_c_tuned", method)
+    for method in methods_to_show:
+        data = load_obj("final_score_dict",  "/Users/wwang33/Documents/IJAIED20/CuratingExamples/SnapHintsOutputAnalysis/score_df_c_tuned/", method)
         bar = []
         recall = []
         precision = []
@@ -85,18 +90,18 @@ def grouped_bar_chart():
             recall.append(r)
             precision.append(p)
 
-        bars.append(bar)
-        recalls.append(recall)
-        precisions.append(precision)
+        bars.append(bar[0])
+        recalls.append(recall[0])
+        precisions.append(precision[0])
 
     # bars = [[0.23, 0.43, 0.67, 0.54, 0.81], [0.39, 0.42, 0.63, 0.57, 0.83], [0.35, 0.42, 0.60, 0.62, 0.78], [0.32, 0.56, 0.66, 0.53, 0.83]]
     print("bars: ", bars)
     # Set position of bar on X axis
-    r = [np.arange(len(bars[0]))]
+    r = [np.arange(len(bars))]
 
     for i in range(1, len(methods_to_show)):
         r_prev = r[i - 1]
-        r.append([x + barWidth + 0.03 for x in r_prev])
+        r.append([x + barWidth + 0.07 for x in r_prev])
 
     # Make the plot
     # fig, ax = plt.subplot()
@@ -113,7 +118,7 @@ def grouped_bar_chart():
             rect = rects[j]
             height = rect.get_width()
             # print("height: ", height)
-            ax.annotate( "F1: " + '{}'.format(height) + " (P: " + str(p[j]) + "; R: " + str(r[j]) + ")",
+            ax.annotate( "F1: " + '{}'.format(height) + " (P: " + str(p) + "; R: " + str(r) + ")",
                         xy=(height, rect.get_y() + rect.get_height() / 2),
                         xytext=(90, -9),  # 3 points vertical offset
                         textcoords="offset points",
@@ -124,7 +129,8 @@ def grouped_bar_chart():
         p = precisions[i]
         autolabel(bar_plots[i], r, p)
     plt.ylabel('Game Behaviors')
-    plt.yticks([r + barWidth for r in range(len(bars[0]))],  ([behavior_dict[i] for i in behavior_labels_to_show]))
+    plt.yticks(list(range(len(bars))), label_dict.values())
+    # plt.yticks([r + barWidth for r in range(len(bars[0]))],  ([behavior_dict[i] for i in behavior_labels_to_show]))
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
     start, end = ax.get_xlim()
