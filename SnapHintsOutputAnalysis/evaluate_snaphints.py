@@ -203,12 +203,18 @@ def snaphints_crossvalidation():
 
 
 behavior_labels_to_show = ["keymove", "cochangescore", "jump",  "movetomouse", "costopall"]
+behavior_labels_to_show = ["jump"]
 # behavior_labels_to_show = ["keymove", "jump", "cochangescore", "movetomouse", "moveanimate"]
 behavior_labels_to_show = list(reversed(behavior_labels_to_show))
 # methods_to_show = ['All', 'AndAllComplete-3-4Gram']
 # methods_to_show = ['PQGra', 'DPM', "AndAllFull", "AndAll"]
 methods_to_show = ['OneHot2', 'Neighbor', 'All', "AndAllComplete-3-4Gram"]
-methods_to_show = ['OneHot2', 'Neighbor', 'All']
+methods_to_show = ['OneHot2']
+# for i in [2, 3, 5, 10]:
+#     methods_to_show.append("nGram")
+for p in range(1, 4):
+    for q in range(1, 5):
+        methods_to_show.append("pqGram")
 # methods_to_show = methods
 methods_to_show = list(reversed(methods_to_show))
 # label_dict = {'AllOneHot': "One-hot encoding",
@@ -231,11 +237,15 @@ label_dict = {'OneHot2': "Bag-of-Words",
               'DPM': 'PQGram DPM',
               'AndAllFull': 'All-based Conjunctions',
               'AndAll': 'DPM-based Conjunctions',
-              'AndAllComplete-3-4Gram': 'pq-Gram Conjunction Mining'}
+              'AndAllComplete-3-4Gram': 'pq-Gram Conjunction Mining',
+              "nGram": "nGram",
+              "pqGram": "pqGram"}
 
 color_dict = { 'AllOneHot': "#D6F2C2",
             'Neighbor': '#8BD9C3',
             'All': '#45B3BF',
+            'nGram': '#45B3BF',
+            'pqGram': '#45B3BF',
                'OneHotSupport>0':"#D6F2C2",
                'NeighborSupport>0': '#8BD9C3',
                'AllAllFinalSupportOver0': '#45B3BF',
@@ -269,6 +279,17 @@ def grouped_bar_chart():
     all_methods = ["pqRules_[0.1, 0.2, 0.3, 0.4, 0.5]",
                    "NeighborRules_[0.1, 0.2, 0.3, 0.4, 0.5]", "OneHotRules_[0.1, 0.2, 0.3, 0.4, 0.5]"]
 
+
+    all_methods = ["OneHotRules_[0.1, 0.2, 0.3, 0.4, 0.5]"]
+
+
+    # for i in range(2, 11):
+    #     all_methods.append("nGramRules_" + str(i) + "_[0.1, 0.2, 0.3, 0.4, 0.5]")
+    methods_seed = "pqRules"
+    for p in range(1, 4):
+        for q in range(1, 5):
+            method = methods_seed + "_" + str(p) + "_" + str(q)
+            all_methods.append(method)
     # all_methods = ["training_pqRules_[0.1, 0.2, 0.3, 0.4, 0.5]",
     #                "training_NeighborRules_[0.1, 0.2, 0.3, 0.4, 0.5]", "training_OneHotRules_[0.1, 0.2, 0.3, 0.4, 0.5]"]
    # print(behavior_results)
@@ -298,7 +319,8 @@ def grouped_bar_chart():
         bar = []
         recall = []
         precision = []
-        for label in ["costopall", "movetomouse", "jump", "cochangescore", "keymove"]:
+        # for label in ["costopall", "movetomouse", "jump", "cochangescore", "keymove"]:
+        for label in [ "jump"]:
             d = round(data[label]["f1"], 2)
             r = round(data[label]["recall"], 2)
             p = round(data[label]["precision"], 2)

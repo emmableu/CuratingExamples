@@ -1,0 +1,3 @@
+,jump0,jump1,jump2,jump3,jump4
+best_grid_set,"(-1, <classifiers.svm_classifiers.SVM_Linear.SVMLinear100 object at 0x111a9b710>, 100)","(-1, <classifiers.svm_classifiers.SVM_Linear.SVMLinearP01 object at 0x124957b50>, 100)","(-1, <classifiers.svm_classifiers.SVM_Linear.SVMLinearModel object at 0x1254a7350>, 100)","(-1, <classifiers.svm_classifiers.SVM_Linear.SVMLinearP1 object at 0x111a9b410>, 100)","(-1, <classifiers.svm_classifiers.SVM_Linear.SVMLinearP01 object at 0x124957b50>, 100)"
+val_f1,0.6923076923076923,0.7894736842105263,0.6428571428571429,0.7428571428571428,0.64
