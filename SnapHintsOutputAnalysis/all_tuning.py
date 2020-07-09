@@ -109,10 +109,13 @@ def all_tuning_with_grid_from_disk(tuning_methd):
 
             best_key = get_best_key_from_disk(method, label, fold)
             # print(best_key)
-            real_y_pred, y_test = get_y_pred(y_data, train, val, best_key[0], best_key[1], best_key[2],
-                                             best_key[3])
+            # real_y_pred, y_test = get_y_pred(y_data, train, val, best_key[0], best_key[1], best_key[2],
+            #                                  best_key[3])
             # real_y_pred, y_test = get_y_pred(y_data, all_train, test, best_key[0], best_key[1], best_key[2],
             #                                  best_key[3])
+
+            real_y_pred, y_test = get_y_pred(y_data, all_train, test, best_key[0], best_key[1], best_key[2],
+                                             best_key[3])
 
             full_y_pred.extend(real_y_pred)
             full_y_test.extend(y_test)
@@ -171,23 +174,26 @@ def get_y_pred(y_data, train, val, c_grid, p_thres, q_thres, n_thres):
 
 
 
-
-# methods = ["pqRules", "nGramRules"]
-methods = ["nGramRules"]
-for method in methods:
-    rule_data = pd.read_csv(
-        "/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/csedm20/CRV_new_413/" + method + ".csv")
-
-    for validation_f1 in [True, False]:
-        grid_score_dict, best_score_dict, final_score_dict = all_tuning(method)
-
-        grid_score_df = pd.DataFrame(grid_score_dict)
-        best_score_dict = pd.DataFrame(best_score_dict)
-
-        save_obj(grid_score_df, "grid_score_dict", "all" + "_validation" * validation_f1 + "_tuning", method)
-        save_obj(best_score_dict, "best_score_dict",  "all" + "_validation" * validation_f1 + "_tuning", method)
-        try:
-            final_score_dict = pd.Series(final_score_dict)
-        except:
-            pass
-        save_obj(final_score_dict, "final_score_dict",  "all" + "_validation" * validation_f1 + "_tuning",method)
+#
+# # methods = ["pqRules", "nGramRules"]
+# methods = ["nGramRules", "pqRules", "OneHotRules"]
+# # methods = ["OneHotRules"]
+# for method in methods:
+#     rule_data = pd.read_csv(
+#         "/Users/wwang33/Documents/SnapHints/data/csc110/fall2019project1/csedm20/CRV_new_413/" + method + ".csv")
+#
+#     # for validation_f1 in [True, False]:
+#     #     grid_score_dict, best_score_dict, final_score_dict = all_tuning(method)
+#     #
+#     #     grid_score_df = pd.DataFrame(grid_score_dict)
+#     #     best_score_dict = pd.DataFrame(best_score_dict)
+#     #
+#     #     save_obj(grid_score_df, "grid_score_dict", "all" + "_validation" * validation_f1 + "_tuning", method)
+#     #     save_obj(best_score_dict, "best_score_dict",  "all" + "_validation" * validation_f1 + "_tuning", method)
+#     #     try:
+#     #         final_score_dict = pd.Series(final_score_dict)
+#     #     except:
+#     #         pass
+#     #     save_obj(final_score_dict, "final_score_dict",  "all" + "_validation" * validation_f1 + "_tuning",method)
+#     final_score_dict = all_tuning_with_grid_from_disk(method)
+#     save_obj(final_score_dict, "final_score_dict", "all_tuning", method)

@@ -20,7 +20,7 @@ behavior_labels = ["cochangescore", "keymove", "jump",  "movetomouse", "costopal
 
 
 def get_best_key_from_disk(method, label, fold):
-    best_score_dict = load_obj("best_score_dict", "all_tuning", method)
+    best_score_dict = load_obj("best_score_dict", "all_validation_tuning", method)
     sub_dict = best_score_dict[label + str(fold)]
     print(sub_dict["best_grid_set"])
     return sub_dict["best_grid_set"]
@@ -30,7 +30,10 @@ def get_best_key(sub_dict):
 
 
 
-
+def get_f1_from_disk(method, label, fold, c_grid, p_thres, q_thres, n_thres):
+    grid_score_dict = load_obj("grid_score_dict", "all_validation_tuning", method)
+    f1 = grid_score_dict.at[(c_grid, p_thres, q_thres, n_thres), label+str(fold)]
+    return f1
 
 def get_yes_no(data, yes_no_group):
     yes_x = data[yes_no_group].tolist()
@@ -406,4 +409,4 @@ def grouped_bar_chart():
 
 
 # snaphints_crossvalidation()
-grouped_bar_chart()
+# grouped_bar_chart()

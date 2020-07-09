@@ -307,7 +307,7 @@ def grouped_bar_chart():
     # Create legend & Show graphic
     plt.title("Testing F1 Scores")
     plt.tight_layout()
-    plt.savefig("f1_c_tuned"+ datetime.now().strftime("%H-%M-%S"))
+    plt.savefig("plots/f1_c_tuned"+ datetime.now().strftime("%H-%M-%S"))
     plt.show()
 
 
